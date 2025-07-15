@@ -1,0 +1,54 @@
+/* Service Placeholder Page Styles */
+.service-placeholder-page {
+  background: #fff;
+  color: #333;
+  min-height: 100vh;
+}
+.service-placeholder-hero {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f8fc;
+}
+.service-placeholder-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.7);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+.service-placeholder-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: #fff;
+}
+.service-placeholder-content h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+}
+.service-placeholder-content p {
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin-bottom: 1.2rem;
+}
+@media (max-width: 700px) {
+  .service-placeholder-hero {
+    height: 180px;
+  }
+  .service-placeholder-content h1 {
+    font-size: 1.2rem;
+  }
+} 

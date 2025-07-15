@@ -1,0 +1,89 @@
+/* Interior Painting Page Styles */
+.interior-painting-page {
+  background: #fff;
+  color: #333;
+  min-height: 100vh;
+}
+.interior-hero {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f8fc;
+}
+.interior-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.7);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+.interior-hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: #fff;
+}
+.interior-hero-content h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.interior-hero-content p {
+  font-size: 1.2rem;
+  font-weight: 400;
+}
+.interior-features-section {
+  max-width: 700px;
+  margin: 2.5rem auto 0 auto;
+  padding: 0 1rem 2rem 1rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(80, 125, 188, 0.07);
+  text-align: center;
+}
+.interior-features-section h2 {
+  color: #507DBC;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+}
+.interior-features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem 0;
+  text-align: left;
+}
+.interior-features-list li {
+  font-size: 1.08rem;
+  color: #333;
+  margin-bottom: 0.7rem;
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+}
+.feature-icon {
+  color: #F4C542;
+  font-size: 1.1em;
+}
+.interior-cta {
+  margin-top: 1.5rem;
+}
+@media (max-width: 700px) {
+  .interior-hero {
+    height: 180px;
+  }
+  .interior-hero-content h1 {
+    font-size: 1.5rem;
+  }
+  .interior-features-section {
+    margin-top: 1.2rem;
+    padding: 0.5rem 0.5rem 1.5rem 0.5rem;
+  }
+} 

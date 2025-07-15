@@ -1,0 +1,339 @@
+/* Quote Form */
+.quote-form {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.form-section {
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--medium-gray);
+}
+
+.form-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.form-section h3 {
+  color: var(--primary-blue);
+  margin-bottom: var(--spacing-md);
+  font-size: 1.25rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.form-section h3::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  background: var(--cta-yellow);
+  border-radius: 2px;
+}
+
+.form-help {
+  color: var(--dark-gray);
+  font-size: 0.875rem;
+  margin-bottom: var(--spacing-md);
+  font-style: italic;
+}
+
+/* File Upload */
+.file-upload-area {
+  border: 2px dashed var(--medium-gray);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  text-align: center;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  margin-bottom: var(--spacing-md);
+}
+
+.file-upload-area:hover {
+  border-color: var(--primary-blue);
+  background-color: rgba(80, 125, 188, 0.05);
+}
+
+.file-input {
+  display: none;
+}
+
+.file-upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  cursor: pointer;
+  color: var(--dark-gray);
+  font-weight: 500;
+}
+
+.file-upload-label svg {
+  font-size: 2rem;
+  color: var(--primary-blue);
+}
+
+.file-upload-label:hover {
+  color: var(--primary-blue);
+}
+
+/* Uploaded Files */
+.uploaded-files {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: var(--light-gray);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--medium-gray);
+}
+
+.file-item svg:first-child {
+  color: var(--primary-blue);
+  font-size: 1.125rem;
+}
+
+.file-item span {
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--charcoal);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.remove-file {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.remove-file:hover {
+  background-color: rgba(220, 53, 69, 0.1);
+  transform: scale(1.1);
+}
+
+/* Form Sections Animation */
+.form-section {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.form-section:nth-child(1) { animation-delay: 0.1s; }
+.form-section:nth-child(2) { animation-delay: 0.2s; }
+.form-section:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Submit Button */
+.quote-form .btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-lg);
+  font-size: 1.125rem;
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.quote-form .btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .quote-form {
+    padding: var(--spacing-md);
+    margin: var(--spacing-sm);
+  }
+  
+  .form-section {
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+  }
+  
+  .form-section h3 {
+    font-size: 1.125rem;
+  }
+  
+  .file-upload-area {
+    padding: var(--spacing-lg);
+  }
+  
+  .file-upload-label svg {
+    font-size: 1.5rem;
+  }
+  
+  .file-item {
+    padding: var(--spacing-xs);
+  }
+  
+  .file-item span {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .quote-form {
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+  }
+  
+  .form-section h3 {
+    font-size: 1rem;
+  }
+  
+  .file-upload-area {
+    padding: var(--spacing-md);
+  }
+  
+  .file-upload-label {
+    gap: var(--spacing-xs);
+  }
+  
+  .file-upload-label svg {
+    font-size: 1.25rem;
+  }
+  
+  .file-upload-label span {
+    font-size: 0.875rem;
+  }
+}
+
+/* Progress Indicator */
+.form-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: var(--light-gray);
+  border-radius: var(--radius-md);
+}
+
+.progress-step {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: 0.875rem;
+  color: var(--dark-gray);
+}
+
+.progress-step.active {
+  color: var(--primary-blue);
+  font-weight: 600;
+}
+
+.progress-step::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--medium-gray);
+}
+
+.progress-step.active::before {
+  background: var(--primary-blue);
+}
+
+.progress-step.completed::before {
+  background: var(--cta-yellow-dark);
+}
+
+/* Validation Enhancements */
+.form-control:valid {
+  border-color: #28a745;
+}
+
+.form-control:valid:focus {
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+}
+
+.form-group:has(.form-control:valid) .form-label svg {
+  color: #28a745;
+}
+
+/* Drag and Drop Enhancement */
+.file-upload-area.drag-over {
+  border-color: var(--primary-blue);
+  background-color: rgba(80, 125, 188, 0.1);
+  transform: scale(1.02);
+}
+
+.file-upload-area.drag-over .file-upload-label {
+  color: var(--primary-blue);
+}
+
+/* File Type Icons */
+.file-item svg:first-child {
+  font-size: 1.25rem;
+}
+
+.file-item[data-type="image"] svg:first-child {
+  color: #17a2b8;
+}
+
+.file-item[data-type="pdf"] svg:first-child {
+  color: #dc3545;
+}
+
+.file-item[data-type="doc"] svg:first-child {
+  color: #007bff;
+}
+
+/* Loading State for File Upload */
+.file-item.uploading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.file-item.uploading::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--medium-gray);
+  border-top: 2px solid var(--primary-blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: auto;
+}
+
+/* Success and Error States */
+.file-item.success {
+  border-color: #28a745;
+  background-color: rgba(40, 167, 69, 0.05);
+}
+
+.file-item.error {
+  border-color: #dc3545;
+  background-color: rgba(220, 53, 69, 0.05);
+}
+
+.file-item.error .file-item span {
+  color: #dc3545;
+} 
