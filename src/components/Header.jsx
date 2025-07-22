@@ -1,23 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaBars, FaTimes, FaPhone, FaEnvelope, FaChevronDown } from 'react-icons/fa';
+import { FaBars, FaTimes, FaPhone, FaEnvelope, FaChevronDown, FaHome, FaPaintBrush } from 'react-icons/fa';
 import AnnouncementBanner from './AnnouncementBanner';
 import './Header.css';
 import logoPainter from '../assets/logo_painter.png';
 
-const residentialDropdown = [
-  { path: '/interior-painting', label: 'Interior Painting' },
-  { path: '/exterior-painting', label: 'Exterior Painting' },
-  { path: '/power-washing', label: 'Power Washing' },
-  { path: '/stucco-repair', label: 'Stucco Repair and Painting' },
-  { path: '/vinyl-aluminum', label: 'Vinyl and Aluminum Siding' },
-  { path: '/deck-fence', label: 'Deck & Fence Services' },
-  { path: '/cabinet-refinishing', label: 'Cabinet Refinishing/Repainting' },
-  { path: '/wallpaper-removal', label: 'Wallpaper Removal' },
-  { path: '/textured-walls', label: 'Textured Wall & Ceiling Painting' },
-  { path: '/woodwork-trim', label: 'Woodwork and Trim Painting' },
-];
+// Updated dropdown structure with two columns
+const residentialDropdown = {
+  exterior: {
+    title: 'Exterior Services',
+    mainLink: '/exterior-painting',
+    services: [
+      { path: '/exterior-painting', label: 'Exterior Painting' },
+      { path: '/power-washing', label: 'Power Washing' },
+      { path: '/stucco-repair', label: 'Stucco Repair and Painting' },
+      { path: '/vinyl-aluminum', label: 'Vinyl and Aluminum Siding' },
+      { path: '/deck-fence', label: 'Deck & Fence Services' },
+    ]
+  },
+  interior: {
+    title: 'Interior Services',
+    mainLink: '/interior-painting',
+    services: [
+      { path: '/interior-painting', label: 'Interior Painting' },
+      { path: '/cabinet-refinishing', label: 'Cabinet Refinishing/Repainting' },
+      { path: '/wallpaper-removal', label: 'Wallpaper Removal' },
+      { path: '/textured-walls', label: 'Textured Wall & Ceiling Painting' },
+      { path: '/woodwork-trim', label: 'Woodwork and Trim Painting' },
+    ]
+  }
+};
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -99,13 +112,45 @@ const Header = () => {
                         <Link to={link.path} className={location.pathname.startsWith('/residential') ? 'active' : ''}>
                           {link.label} <FaChevronDown className="dropdown-icon" />
                         </Link>
-                        <ul className={`dropdown-menu${resDropdownOpen ? ' open' : ''}`}>
-                          {residentialDropdown.map((item) => (
-                            <li key={item.path}>
-                              <Link to={item.path}>{item.label}</Link>
-                            </li>
-                          ))}
-                        </ul>
+                        <div className={`dropdown-menu${resDropdownOpen ? ' open' : ''}`}>
+                          <div className="dropdown-content">
+                            {/* Exterior Services Column */}
+                            <div className="dropdown-column">
+                              <div className="dropdown-header">
+                                <FaPaintBrush className="dropdown-icon-small" />
+                                <h4>{residentialDropdown.exterior.title}</h4>
+                                <Link to={residentialDropdown.exterior.mainLink} className="dropdown-main-link">
+                                  View All Exterior Services
+                                </Link>
+                              </div>
+                              <ul className="dropdown-services">
+                                {residentialDropdown.exterior.services.map((item) => (
+                                  <li key={item.path}>
+                                    <Link to={item.path}>{item.label}</Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+
+                            {/* Interior Services Column */}
+                            <div className="dropdown-column">
+                              <div className="dropdown-header">
+                                <FaHome className="dropdown-icon-small" />
+                                <h4>{residentialDropdown.interior.title}</h4>
+                                <Link to={residentialDropdown.interior.mainLink} className="dropdown-main-link">
+                                  View All Interior Services
+                                </Link>
+                              </div>
+                              <ul className="dropdown-services">
+                                {residentialDropdown.interior.services.map((item) => (
+                                  <li key={item.path}>
+                                    <Link to={item.path}>{item.label}</Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
                       </>
                     ) : (
                       <Link to={link.path} className={location.pathname === link.path ? 'active' : ''}>
@@ -156,18 +201,55 @@ const Header = () => {
                   Get Free Site Visit
                 </Link>
               </li>
+              
+              {/* Mobile Residential Dropdown */}
               <li className="has-dropdown">
                 <button className="dropdown-toggle" onClick={toggleResDropdown}>
                   Residential <FaChevronDown className="dropdown-icon" />
                 </button>
-                <ul className={`dropdown-menu${resDropdownOpen ? ' open' : ''}`}>
-                  {residentialDropdown.map((item) => (
-                    <li key={item.path}>
-                      <Link to={item.path} onClick={() => setIsMenuOpen(false)}>{item.label}</Link>
-                    </li>
-                  ))}
-                </ul>
+                <div className={`dropdown-menu${resDropdownOpen ? ' open' : ''}`}>
+                  {/* Exterior Services Section */}
+                  <div className="mobile-dropdown-section">
+                    <div className="mobile-dropdown-header">
+                      <FaPaintBrush className="dropdown-icon-small" />
+                      <h5>{residentialDropdown.exterior.title}</h5>
+                    </div>
+                    <ul className="mobile-dropdown-services">
+                      <li>
+                        <Link to={residentialDropdown.exterior.mainLink} onClick={() => setIsMenuOpen(false)}>
+                          View All Exterior Services
+                        </Link>
+                      </li>
+                      {residentialDropdown.exterior.services.map((item) => (
+                        <li key={item.path}>
+                          <Link to={item.path} onClick={() => setIsMenuOpen(false)}>{item.label}</Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Interior Services Section */}
+                  <div className="mobile-dropdown-section">
+                    <div className="mobile-dropdown-header">
+                      <FaHome className="dropdown-icon-small" />
+                      <h5>{residentialDropdown.interior.title}</h5>
+                    </div>
+                    <ul className="mobile-dropdown-services">
+                      <li>
+                        <Link to={residentialDropdown.interior.mainLink} onClick={() => setIsMenuOpen(false)}>
+                          View All Interior Services
+                        </Link>
+                      </li>
+                      {residentialDropdown.interior.services.map((item) => (
+                        <li key={item.path}>
+                          <Link to={item.path} onClick={() => setIsMenuOpen(false)}>{item.label}</Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
               </li>
+              
               <li><Link to="/commercial" onClick={() => setIsMenuOpen(false)}>Commercial</Link></li>
               <li><Link to="/reviews" onClick={() => setIsMenuOpen(false)}>Reviews</Link></li>
               <li><Link to="/about" onClick={() => setIsMenuOpen(false)}>About Us</Link></li>
