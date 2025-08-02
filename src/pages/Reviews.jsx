@@ -34,34 +34,28 @@ const Reviews = () => {
         <div className="reviews-grid">
           {[
             {
-              name: 'Sarah M.',
-              avatar: 'https://randomuser.me/api/portraits/women/68.jpg',
+              name: "Michael",
+              project: "Exterior Painting",
               rating: 5,
-              text: 'Absolutely thrilled with the quality and professionalism! The team was on time, tidy, and the results exceeded my expectations.'
+              text: "Excellent work. Did exterior paint for condo association and did interior work,also would recommend them to anyone.Very neat, will use them again."
             },
             {
-              name: 'James R.',
-              avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+              name: "Kelly",
+              project: "Interior Painting",
               rating: 5,
-              text: 'From the color consultation to the final touch, everything was seamless. Highly recommend The Painter Guys Pros!'
+              text: "Sami and his crew were awesome! sami and christy were very responsive and answered all of our questions and concerns. the paint crew was respectable,efficient and showed pride in their work. The cost was reasonable and fair. The entire process was seamless and a pleasure. Thanks Painter guys!"
             },
             {
-              name: 'Priya S.',
-              avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+              name: "Jennifer D",
+              project: "Exterior Painting",
               rating: 5,
-              text: 'They transformed our home! Friendly crew, great communication, and beautiful results.'
+              text: "The painter guys delivered amazing quality work faster than we could have hoped fori sami was very professional, personable and easy to work with. Working with painter guys was a postivie experience and we're thankful we found them!"
             },
             {
-              name: 'Carlos D.',
-              avatar: 'https://randomuser.me/api/portraits/men/85.jpg',
-              rating: 4,
-              text: 'Very satisfied with the exterior paint job. Would use them again for future projects.'
-            },
-            {
-              name: 'Emily W.',
-              avatar: 'https://randomuser.me/api/portraits/women/12.jpg',
+              name: "Donald S",
+              project: "Exterior Painting",
               rating: 5,
-              text: 'The best painting company we have ever worked with. Attention to detail and customer service were top notch.'
+              text: "They did an awesome job on our house and shed painting project. Sami was extremely knowledgeable, gave us all info about what they were using, and would give us the best results. his crew was very polite and cleaned up ater every shift. We would recommend them for any painting project."
             }
           ].map((review, idx) => (
             <motion.div
@@ -72,9 +66,9 @@ const Reviews = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.15 }}
             >
-              <img src={review.avatar} alt={`Avatar of ${review.name}`} className="review-avatar" />
               <div className="review-info">
                 <div className="review-name">{review.name}</div>
+                <div className="review-project">{review.project}</div>
                 <div className="review-stars">
                   {[...Array(review.rating)].map((_, i) => (
                     <FaStar key={i} className="star" />

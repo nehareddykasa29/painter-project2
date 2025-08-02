@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaBars, FaTimes, FaPhone, FaEnvelope, FaChevronDown, FaHome, FaPaintBrush } from 'react-icons/fa';
-import AnnouncementBanner from './AnnouncementBanner';
+import { FaChevronLeft, FaChevronRight, FaPaintBrush, FaHome, FaBuilding, FaCheckCircle, 
+  FaStar, FaQuoteLeft, FaImages, FaPalette, FaCogs, FaPhone, FaChevronDown, FaBars, FaTimes, FaSearch, FaEnvelope } from 'react-icons/fa';
 import './Header.css';
 import logoPainter from '../assets/logo_painter.png';
 
-// Updated dropdown structure with two columns
+// Dropdown structure
 const residentialDropdown = {
   exterior: {
     title: 'Exterior Services',
@@ -67,197 +67,112 @@ const Header = () => {
     <>
       {/* Top Bar */}
       <div className="top-bar">
-        <div className="container">
-          <div className="top-bar-content">
-            <div className="contact-info">
-              <a href="tel:1-262-993-3465" className="contact-link">
-                <FaPhone /> 1-262-993-3465
-              </a>
-            </div>
-            <div className="top-bar-cta">
-              <Link to="/free-quote" className="btn btn-cta btn-small">
-                Get Free Site Visit
-              </Link>
-            </div>
-          </div>
+        <div className="top-bar-content">
+          <a href="tel:1-262-993-3465" className="contact-link">
+            <FaPhone /> 1-262-993-3465
+          </a>
+          <a href="mailto:the.painter.guys@live.com" className="contact-link">
+            <FaEnvelope /> the.painter.guys@live.com
+          </a>
+          <Link to="/free-quote" className="btn btn-cta btn-small">
+            Book Free Visit
+          </Link>
         </div>
       </div>
 
-      {/* Announcement Banner */}
-      {/* <AnnouncementBanner /> */}
-
       {/* Main Header */}
       <header className={`header ${isScrolled ? 'scrolled' : ''}`}> 
-        <div className="container">
-          <div className="header-content">
-            {/* Logo */}
-            <Link to="/" className="logo">
-              <div className="logo-icon">
-                <img src={logoPainter} alt="The Painter Guys Pros Logo" className="logo-img" />
-              </div>
-              <div className="logo-text">
-                <h1>The Painter Guys Pros</h1>
-              </div>
-            </Link>
+        <div className="header-content">
+          <Link to="/" className="logo">
+            <div className="logo-icon">
+              <img src={logoPainter} alt="The Painter Guys Pros Logo" className="logo-img" />
+            </div>
+            <div className="logo-text">
+              <h1>The Painter Guys Pros</h1>
+            </div>
+          </Link>
 
-            {/* Desktop Navigation */}
-            <nav className="desktop-nav">
-              <ul className="nav-links">
-                {navLinks.map((link) => (
-                  <li key={link.path} className={link.dropdown ? 'has-dropdown' : ''}
-                      onMouseEnter={() => link.dropdown && setResDropdownOpen(true)}
-                      onMouseLeave={() => link.dropdown && setResDropdownOpen(false)}>
-                    {link.dropdown ? (
-                      <>
-                        <Link to={link.path} className={location.pathname.startsWith('/residential') ? 'active' : ''}>
-                          {link.label} <FaChevronDown className="dropdown-icon" />
-                        </Link>
-                        <div className={`dropdown-menu${resDropdownOpen ? ' open' : ''}`}>
-                          <div className="dropdown-content">
-                            {/* Exterior Services Column */}
-                            <div className="dropdown-column">
-                              <div className="dropdown-header">
-                                <FaPaintBrush className="dropdown-icon-small" />
-                                <h4>{residentialDropdown.exterior.title}</h4>
-                                <Link to={residentialDropdown.exterior.mainLink} className="dropdown-main-link">
-                                  View All Exterior Services
-                                </Link>
-                              </div>
-                              <ul className="dropdown-services">
-                                {residentialDropdown.exterior.services.map((item) => (
-                                  <li key={item.path}>
-                                    <Link to={item.path}>{item.label}</Link>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-
-                            {/* Interior Services Column */}
-                            <div className="dropdown-column">
-                              <div className="dropdown-header">
-                                <FaHome className="dropdown-icon-small" />
-                                <h4>{residentialDropdown.interior.title}</h4>
-                                <Link to={residentialDropdown.interior.mainLink} className="dropdown-main-link">
-                                  View All Interior Services
-                                </Link>
-                              </div>
-                              <ul className="dropdown-services">
-                                {residentialDropdown.interior.services.map((item) => (
-                                  <li key={item.path}>
-                                    <Link to={item.path}>{item.label}</Link>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      <Link to={link.path} className={location.pathname === link.path ? 'active' : ''}>
+          {/* Desktop Navigation */}
+          <nav className="desktop-nav">
+            <ul className="nav-links">
+              {navLinks.map((link) => (
+                <li key={link.path} className={link.dropdown ? 'has-dropdown' : ''}
+                    onMouseEnter={() => link.dropdown && setResDropdownOpen(true)}
+                    onMouseLeave={() => link.dropdown && setResDropdownOpen(false)}>
+                  {link.dropdown ? (
+                    <>
+                      <Link to={link.path} className={location.pathname.startsWith('/residential') ? 'active' : ''}>
                         {link.label}
                       </Link>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </nav>
+                      <div className={`dropdown-menu${resDropdownOpen ? ' open' : ''}`}>
+                        <div className="dropdown-content">
+                          {/* Exterior Services Column */}
+                          <div className="dropdown-column">
+                            <div className="dropdown-header">
+                              <FaPaintBrush className="dropdown-icon-small" />
+                              <h4>{residentialDropdown.exterior.title}</h4>
+                              <Link to={residentialDropdown.exterior.mainLink} className="dropdown-main-link">
+                                View All Exterior Services
+                              </Link>
+                            </div>
+                            <ul className="dropdown-services">
+                              {residentialDropdown.exterior.services.map((item) => (
+                                <li key={item.path}>
+                                  <Link to={item.path}>{item.label}</Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
 
-            {/* Mobile Menu Toggle */}
-            <button 
-              className="mobile-menu-toggle"
-              onClick={toggleMenu}
-              aria-label="Toggle menu"
-            >
-              {isMenuOpen ? <FaTimes /> : <FaBars />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Navigation */}
-        <motion.nav 
-          className={`mobile-nav ${isMenuOpen ? 'open' : ''}`}
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ 
-            opacity: isMenuOpen ? 1 : 0, 
-            height: isMenuOpen ? 'auto' : 0 
-          }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="container">
-            <ul className="mobile-nav-links">
-              <li>
-                <Link to="/" className="mobile-logo" onClick={() => setIsMenuOpen(false)}>
-                  <img src={logoPainter} alt="The Painter Guys Pros Logo" className="logo-img" style={{ height: '40px', width: 'auto', display: 'block', margin: '0 auto' }} />
-                  <div className="logo-text" style={{ textAlign: 'center', color: 'var(--palette-yellow)', fontWeight: 'bold', letterSpacing: '2px', fontSize: '1.1rem' }}>THE PAINTER GUYS PROS</div>
-                </Link>
-              </li>
-              <li>
-                <a href="tel:1-262-993-3465" className="contact-link">
-                  <FaPhone /> 1-262-993-3465
-                </a>
-              </li>
-              <li>
-                <Link to="/free-quote" className="btn btn-cta">
-                  Get Free Site Visit
-                </Link>
-              </li>
-              
-              {/* Mobile Residential Dropdown */}
-              <li className="has-dropdown">
-                <button className="dropdown-toggle" onClick={toggleResDropdown}>
-                  Residential <FaChevronDown className="dropdown-icon" />
-                </button>
-                <div className={`dropdown-menu${resDropdownOpen ? ' open' : ''}`}>
-                  {/* Exterior Services Section */}
-                  <div className="mobile-dropdown-section">
-                    <div className="mobile-dropdown-header">
-                      <FaPaintBrush className="dropdown-icon-small" />
-                      <h5>{residentialDropdown.exterior.title}</h5>
-                    </div>
-                    <ul className="mobile-dropdown-services">
-                      <li>
-                        <Link to={residentialDropdown.exterior.mainLink} onClick={() => setIsMenuOpen(false)}>
-                          View All Exterior Services
-                        </Link>
-                      </li>
-                      {residentialDropdown.exterior.services.map((item) => (
-                        <li key={item.path}>
-                          <Link to={item.path} onClick={() => setIsMenuOpen(false)}>{item.label}</Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Interior Services Section */}
-                  <div className="mobile-dropdown-section">
-                    <div className="mobile-dropdown-header">
-                      <FaHome className="dropdown-icon-small" />
-                      <h5>{residentialDropdown.interior.title}</h5>
-                    </div>
-                    <ul className="mobile-dropdown-services">
-                      <li>
-                        <Link to={residentialDropdown.interior.mainLink} onClick={() => setIsMenuOpen(false)}>
-                          View All Interior Services
-                        </Link>
-                      </li>
-                      {residentialDropdown.interior.services.map((item) => (
-                        <li key={item.path}>
-                          <Link to={item.path} onClick={() => setIsMenuOpen(false)}>{item.label}</Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </li>
-              
-              <li><Link to="/commercial" onClick={() => setIsMenuOpen(false)}>Commercial</Link></li>
-              <li><Link to="/reviews" onClick={() => setIsMenuOpen(false)}>Reviews</Link></li>
-              <li><Link to="/about" onClick={() => setIsMenuOpen(false)}>About Us</Link></li>
-              <li><Link to="/gallery" onClick={() => setIsMenuOpen(false)}>Gallery</Link></li>
-              <li><Link to="/faq" onClick={() => setIsMenuOpen(false)}>FAQ</Link></li>
+                          {/* Interior Services Column */}
+                          <div className="dropdown-column">
+                            <div className="dropdown-header">
+                              <FaHome className="dropdown-icon-small" />
+                              <h4>{residentialDropdown.interior.title}</h4>
+                              <Link to={residentialDropdown.interior.mainLink} className="dropdown-main-link">
+                                View All Interior Services
+                              </Link>
+                            </div>
+                            <ul className="dropdown-services">
+                              {residentialDropdown.interior.services.map((item) => (
+                                <li key={item.path}>
+                                  <Link to={item.path}>{item.label}</Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <Link to={link.path} className={location.pathname === link.path ? 'active' : ''}>
+                      {link.label}
+                    </Link>
+                  )}
+                </li>
+              ))}
             </ul>
-          </div>
-        </motion.nav>
+            <div className="search-container">
+              <input 
+                type="text" 
+                placeholder="Search for color inspiration" 
+                className="search-input"
+              />
+              <button className="search-icon" aria-label="Search">
+                <FaSearch />
+              </button>
+            </div>
+          </nav>
+
+          {/* Mobile Menu Toggle */}
+          <button 
+            className="mobile-menu-toggle"
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? <FaTimes /> : <FaBars />}
+          </button>
+        </div>
       </header>
     </>
   );

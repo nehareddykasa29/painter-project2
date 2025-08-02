@@ -33,6 +33,343 @@
   line-height: 1.7;
 }
 
+/* Search Section Styles */
+.search-section {
+  padding: 2rem 1rem;
+  background: #f8f9fa;
+}
+
+.search-container {
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.search-input-wrapper:focus-within {
+  border-color: #507DBC;
+  box-shadow: 0 4px 20px rgba(80, 125, 188, 0.2);
+}
+
+.search-icon {
+  color: #507DBC;
+  font-size: 1.2rem;
+  margin-left: 1rem;
+  margin-right: 0.5rem;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 1rem 0.5rem 1rem 0;
+  font-size: 1.1rem;
+  background: transparent;
+  color: #333;
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+.clear-search {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.clear-search:hover {
+  background: #f0f0f0;
+  color: #666;
+}
+
+/* Search Results Styles */
+.search-results {
+  margin-top: 1.5rem;
+  background: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-results h3 {
+  margin: 0;
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  color: #365B8C;
+  font-size: 1.3rem;
+  font-weight: 700;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.results-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s ease;
+}
+
+.result-item:hover {
+  background: #f8f9fa;
+}
+
+.result-item:last-child {
+  border-bottom: none;
+}
+
+.result-location {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex: 1;
+}
+
+.result-icon {
+  color: #507DBC;
+  font-size: 1rem;
+}
+
+.result-city {
+  font-weight: 600;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.result-county {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.result-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-icon.served {
+  color: #28a745;
+  font-size: 1.1rem;
+}
+
+.status-text {
+  color: #28a745;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.no-results {
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.no-results h3 {
+  color: #666;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.no-results p {
+  color: #999;
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Interactive Map Styles */
+.interactive-map-section {
+  padding: 2rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.map-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: transparent;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.map-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #365B8C;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.wisconsin-map {
+  background: transparent;
+  border-radius: 8px;
+  overflow: visible;
+}
+
+.county-path {
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.county-path:hover {
+  fill-opacity: 0.8;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  transform: scale(1.02);
+}
+
+.county-label {
+  font-size: 10px;
+  font-weight: 600;
+  fill: #FFFFFF;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+}
+
+.lake-label {
+  font-size: 8px;
+  font-weight: 600;
+  fill: #4A90E2;
+  text-anchor: middle;
+}
+
+/* Popup Styles */
+.county-popup {
+  position: absolute;
+  background: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border: 2px solid #507DBC;
+  min-width: 280px;
+  max-width: 320px;
+  z-index: 1000;
+  animation: popupFadeIn 0.3s ease-out;
+  transform: translate(-50%, -100%);
+  margin-top: -10px;
+}
+
+@keyframes popupFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -100%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -100%) scale(1);
+  }
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1rem 0.5rem 1rem;
+  border-bottom: 1px solid #e0e0e0;
+  background: linear-gradient(135deg, #507DBC 0%, #365B8C 100%);
+  color: #FFFFFF;
+  border-radius: 10px 10px 0 0;
+}
+
+.popup-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.popup-close {
+  background: none;
+  border: none;
+  color: #FFFFFF;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.2rem;
+  border-radius: 50%;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.popup-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.popup-content {
+  padding: 1rem;
+}
+
+.popup-content h4 {
+  margin: 0 0 0.8rem 0;
+  font-size: 1rem;
+  color: #365B8C;
+  font-weight: 600;
+}
+
+.popup-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.popup-content li {
+  font-size: 0.95rem;
+  color: #333;
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.2rem 0;
+}
+
+.city-bullet {
+  color: #F4C542;
+  font-size: 0.9em;
+  flex-shrink: 0;
+}
+
 .service-areas-list-section {
   padding: 2rem 0 1rem 0;
 }
@@ -67,11 +404,6 @@
   display: flex;
   align-items: center;
   gap: 0.5em;
-}
-
-.city-bullet {
-  color: #F4C542;
-  font-size: 1em;
 }
 
 .service-areas-cta-section {
@@ -120,5 +452,40 @@
   }
   .service-areas-hero h1 {
     font-size: 1.3rem;
+  }
+  
+  .interactive-map-section {
+    padding: 1rem 0.5rem;
+  }
+  
+  .map-container {
+    padding: 1rem;
+  }
+  
+  .county-popup {
+    min-width: 250px;
+    max-width: 280px;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin-top: 0 !important;
+  }
+  
+  .search-section {
+    padding: 1rem 0.5rem;
+  }
+  
+  .search-input {
+    font-size: 1rem;
+  }
+  
+  .result-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .result-status {
+    align-self: flex-end;
   }
 } 

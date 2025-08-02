@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { motion } from 'framer-motion';
@@ -15,26 +15,47 @@ import {
 } from 'react-icons/fa';
 import './QuoteForm.css';
 
-const QuoteForm = ({ onSubmit, isLoading = false }) => {
+const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    serviceType: '',
-    projectType: '',
-    rooms: '',
-    squareFootage: '',
-    timeframe: '',
-    budget: '',
-    description: '',
-    appointmentDate: null,
-    appointmentSlot: '',
+    name: initialData?.name || '',
+    email: initialData?.email || '',
+    phone: initialData?.phone || '',
+    address: initialData?.address || '',
+    serviceType: initialData?.serviceType || '',
+    projectType: initialData?.projectType || '',
+    rooms: initialData?.rooms || '',
+    squareFootage: initialData?.squareFootage || '',
+    timeframe: initialData?.timeframe || '',
+    budget: initialData?.budget || '',
+    description: initialData?.description || '',
+    appointmentDate: initialData?.appointmentDate ? new Date(initialData.appointmentDate) : null,
+    appointmentSlot: initialData?.appointmentSlot || '',
   });
 
   const [files, setFiles] = useState([]);
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+
+  // Update form data when initialData changes
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        name: initialData.name || '',
+        email: initialData.email || '',
+        phone: initialData.phone || '',
+        address: initialData.address || '',
+        serviceType: initialData.serviceType || '',
+        projectType: initialData.projectType || '',
+        rooms: initialData.rooms || '',
+        squareFootage: initialData.squareFootage || '',
+        timeframe: initialData.timeframe || '',
+        budget: initialData.budget || '',
+        description: initialData.description || '',
+        appointmentDate: initialData.appointmentDate ? new Date(initialData.appointmentDate) : null,
+        appointmentSlot: initialData.appointmentSlot || '',
+      });
+    }
+  }, [initialData]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -113,19 +134,19 @@ const QuoteForm = ({ onSubmit, isLoading = false }) => {
       await onSubmit(submitData);
       setSubmitted(true);
       setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        address: '',
-        serviceType: '',
-        projectType: '',
-        rooms: '',
-        squareFootage: '',
-        timeframe: '',
-        budget: '',
-        description: '',
-        appointmentDate: null,
-        appointmentSlot: '',
+        name: initialData?.name || '',
+        email: initialData?.email || '',
+        phone: initialData?.phone || '',
+        address: initialData?.address || '',
+        serviceType: initialData?.serviceType || '',
+        projectType: initialData?.projectType || '',
+        rooms: initialData?.rooms || '',
+        squareFootage: initialData?.squareFootage || '',
+        timeframe: initialData?.timeframe || '',
+        budget: initialData?.budget || '',
+        description: initialData?.description || '',
+        appointmentDate: initialData?.appointmentDate ? new Date(initialData.appointmentDate) : null,
+        appointmentSlot: initialData?.appointmentSlot || '',
       });
       setFiles([]);
     } catch (error) {

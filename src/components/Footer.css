@@ -112,38 +112,42 @@
   gap: var(--spacing-md);
 }
 
-.contact-item {
+.footer .contact-item {
   display: flex;
   align-items: flex-start;
   gap: var(--spacing-sm);
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  transition: none;
 }
 
-.contact-item svg {
-  color: var(--primary-blue);
+.footer .contact-item svg {
+  color: var(--medium-gray);
   margin-top: 2px;
   font-size: 1.125rem;
 }
 
-.contact-item strong {
+.footer .contact-item strong {
   display: block;
-  color: var(--primary-blue);
+  color: var(--white);
   margin-bottom: var(--spacing-xs);
   font-size: 0.875rem;
 }
 
-.contact-item p {
-  color: var(--primary-blue);
+.footer .contact-item p {
+  color: var(--medium-gray);
   margin: 0;
   font-size: 0.875rem;
 }
 
-.contact-item a {
-  color: var(--primary-blue);
+.footer .contact-item a {
+  color: var(--medium-gray);
   text-decoration: none;
   transition: color var(--transition-fast);
 }
 
-.contact-item a:hover {
+.footer .contact-item a:hover {
   color: var(--cta-yellow);
 }
 
@@ -318,7 +322,7 @@
     justify-content: center;
   }
   
-  .contact-item {
+  .footer .contact-item {
     flex-direction: column;
     text-align: center;
     gap: var(--spacing-xs);
@@ -346,7 +350,7 @@
   transition: transform var(--transition-fast);
 }
 
-.contact-item:hover svg {
+.footer .contact-item:hover svg {
   transform: scale(1.1);
   transition: transform var(--transition-fast);
 } 

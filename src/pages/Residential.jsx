@@ -1,19 +1,27 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import residentialImage from '../assets/residential.png';
+import colorexpertsatwork from '../assets/colorexpertsatwork.png';
+import flawlessfinish from '../assets/flawlessfinish.png';
+import alwaysonschedule from '../assets/alwaysonschedule.png';
+import honestcommunication from '../assets/honestcommunication.png';
+import wallpainting from '../assets/wallpainting.png';
+import ceilingpainting from '../assets/ceilingpainting.png';
+import trimandmolding from '../assets/trimandmolding.png';
+import accentwalls from '../assets/accentwalls.png';
 import { 
-  FaHome, 
-  FaPaintBrush, 
-  FaShieldAlt, 
-  FaClock, 
-  FaCheckCircle, 
-  FaStar,
   FaPhone,
-  FaQuoteLeft
+  FaStar,
+  FaArrowRight,
+  FaChevronLeft,
+  FaChevronRight
 } from 'react-icons/fa';
 import './Residential.css';
 
 const Residential = () => {
+  const [currentReview, setCurrentReview] = useState(0);
+
   useEffect(() => {
     document.title = 'Residential Painting Services | The Painter Guys Pros';
     document.querySelector('meta[name="description"]')?.setAttribute('content', 
@@ -21,294 +29,270 @@ const Residential = () => {
     );
   }, []);
 
-  const services = [
+  const reviews = [
     {
-      icon: <FaHome />,
-      title: 'Interior Painting',
-      description: 'Transform your living spaces with expert interior painting services. We handle walls, ceilings, trim, and specialty finishes.',
-      features: ['Premium paint brands', 'Color consultation', 'Furniture protection', 'Clean-up included']
+      name: "Michael",
+      project: "Exterior Painting",
+      text: "Excellent work. Did exterior paint for condo association and did interior work,also would recommend them to anyone.Very neat, will use them again.",
+      rating: 5
     },
     {
-      icon: <FaPaintBrush />,
-      title: 'Exterior Painting',
-      description: 'Protect and beautify your home\'s exterior with weather-resistant paints and professional techniques.',
-      features: ['Weather-resistant coatings', 'Surface preparation', 'Power washing', '10-year warranty']
+      name: "Kelly",
+      project: "Interior Painting",
+      text: "Sami and his crew were awesome! sami and christy were very responsive and answered all of our questions and concerns. the paint crew was respectable,efficient and showed pride in their work. The cost was reasonable and fair. The entire process was seamless and a pleasure. Thanks Painter guys!",
+      rating: 5
     },
     {
-      icon: <FaShieldAlt />,
-      title: 'Cabinet Refinishing',
-      description: 'Give your kitchen a fresh new look with professional cabinet painting and refinishing services.',
-      features: ['Kitchen cabinets', 'Bathroom vanities', 'Built-in furniture', 'Hardware installation']
+      name: "Jennifer D",
+      project: "Exterior Painting",
+      text: "The painter guys delivered amazing quality work faster than we could have hoped fori sami was very professional, personable and easy to work with. Working with painter guys was a postivie experience and we're thankful we found them!",
+      rating: 5
+    },
+    {
+      name: "Donald S",
+      project: "Exterior Painting",
+      text: "They did an awesome job on our house and shed painting project. Sami was extremely knowledgeable, gave us all info about what they were using, and would give us the best results. his crew was very polite and cleaned up ater every shift. We would recommend them for any painting project.",
+      rating: 5
     }
   ];
 
-  const testimonials = [
-    {
-      name: 'Sarah Johnson',
-      location: 'Downtown Area',
-      rating: 5,
-      text: 'The Painter Guys Pros transformed our entire home. The attention to detail and quality of work exceeded our expectations. Highly recommend!'
-    },
-    {
-      name: 'Mike Chen',
-      location: 'Suburban District',
-      rating: 5,
-      text: 'Professional, punctual, and pristine work. They painted our exterior and it looks amazing. The team was respectful and cleaned up perfectly.'
-    },
-    {
-      name: 'Lisa Rodriguez',
-      location: 'Historic Neighborhood',
-      rating: 5,
-      text: 'Excellent cabinet refinishing service. Our kitchen looks brand new! The color consultation was invaluable in choosing the perfect shade.'
-    }
-  ];
+  const nextReview = () => setCurrentReview((prev) => (prev + 1) % reviews.length);
+  const prevReview = () => setCurrentReview((prev) => (prev - 1 + reviews.length) % reviews.length);
 
-  const processSteps = [
-    {
-      step: '01',
-      title: 'Free Consultation',
-      description: 'We visit your home to assess the project, discuss your vision, and provide a detailed estimate.'
-    },
-    {
-      step: '02',
-      title: 'Color Selection',
-      description: 'Our color experts help you choose the perfect palette that complements your home and style.'
-    },
-    {
-      step: '03',
-      title: 'Preparation',
-      description: 'We protect your furniture, prepare surfaces, and ensure everything is ready for painting.'
-    },
-    {
-      step: '04',
-      title: 'Professional Painting',
-      description: 'Our skilled painters apply premium paints with precision and attention to detail.'
-    },
-    {
-      step: '05',
-      title: 'Final Inspection',
-      description: 'We conduct a thorough inspection and touch-ups to ensure perfect results.'
-    }
-  ];
 
   return (
     <div className="residential-page">
       {/* Hero Section */}
-      <section className="hero-section">
+      <section 
+        className="hero-section"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)),url(${residentialImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
         <div className="container">
-          <div className="hero-content">
-            <motion.div 
-              className="hero-text"
+          <div className="hero-content-centered">
+            <motion.div
+              className="hero-text-centered"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1>Professional Residential Painting Services</h1>
-              <p>Transform your home with expert painting services. From interior walls to exterior facades, we deliver exceptional results that last.</p>
+              <h1>Interior Painting That Transforms Your Space</h1>
+              <p>From cozy bedrooms to bold feature walls — we bring life and elegance to every corner of your home.</p>
               <div className="hero-buttons">
-                <Link to="/free-quote" className="btn btn-primary">
-                  Get Free Quote
-                </Link>
-                <Link to="/color-consultation" className="btn btn-secondary">
-                  Free Color Consultation
+                <Link to="/free-quote" className="btn btn-yellow">
+                  Get Free Estimate
                 </Link>
               </div>
             </motion.div>
-            <motion.div 
-              className="hero-image"
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              <img src="/api/placeholder/600/400" alt="Professional residential painting" />
-            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Services Section */}
-      <section className="services-section">
-        <div className="container">
-          <motion.div 
-            className="section-header"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2>Our Residential Services</h2>
-            <p>Comprehensive painting solutions for every room and surface in your home</p>
-          </motion.div>
-
-          <div className="services-grid">
-            {services.map((service, index) => (
-              <motion.div 
-                key={index}
-                className="service-card"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                <div className="service-icon">{service.icon}</div>
-                <h3>{service.title}</h3>
-                <p>{service.description}</p>
-                <ul className="service-features">
-                  {service.features.map((feature, idx) => (
-                    <li key={idx}>
-                      <FaCheckCircle /> {feature}
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Process Section */}
-      <section className="process-section">
-        <div className="container">
-          <motion.div 
-            className="section-header"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2>Our Painting Process</h2>
-            <p>A systematic approach ensuring quality results every time</p>
-          </motion.div>
-
-          <div className="process-steps">
-            {processSteps.map((step, index) => (
-              <motion.div 
-                key={index}
-                className="process-step"
-                initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                <div className="step-number">{step.step}</div>
-                <div className="step-content">
-                  <h3>{step.title}</h3>
-                  <p>{step.description}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Why Choose Us Section */}
-      <section className="why-choose-section">
-        <div className="container">
-          <div className="why-choose-content">
-            <motion.div 
-              className="why-choose-text"
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <h2>Why Choose The Painter Guys Pros?</h2>
-              <div className="benefits-list">
-                <div className="benefit-item">
-                  <FaShieldAlt className="benefit-icon" />
-                  <div>
-                    <h4>Licensed & Insured</h4>
-                    <p>Fully licensed and insured for your peace of mind</p>
-                  </div>
-                </div>
-                <div className="benefit-item">
-                  <FaClock className="benefit-icon" />
-                  <div>
-                    <h4>On-Time Completion</h4>
-                    <p>We respect your schedule and complete projects on time</p>
-                  </div>
-                </div>
-                <div className="benefit-item">
-                  <FaStar className="benefit-icon" />
-                  <div>
-                    <h4>Quality Guarantee</h4>
-                    <p>100% satisfaction guarantee on all our work</p>
-                  </div>
-                </div>
+      {/* Trust Section */}
+      <section className="trust-section">
+        <div className="trust-container">
+          <h2 className="trust-title">Why Homeowners Trust Painter Guys Pros</h2>
+          <p className="trust-subtitle">
+            From flawless finishes to on-time service, here's why clients across Southeast Wisconsin 
+            choose us for their interior transformations.
+          </p>
+          
+          <div className="trust-cards">
+            <div className="trust-card">
+              <div className="card-image">
+                <img src={colorexpertsatwork} alt="Color Experts at Work" />
               </div>
-            </motion.div>
-            <motion.div 
-              className="why-choose-image"
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <img src="/api/placeholder/500/400" alt="Professional painting team" />
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="testimonials-section">
-        <div className="container">
-          <motion.div 
-            className="section-header"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2>What Our Clients Say</h2>
-            <p>Real feedback from satisfied homeowners</p>
-          </motion.div>
-
-          <div className="testimonials-grid">
-            {testimonials.map((testimonial, index) => (
-              <motion.div 
-                key={index}
-                className="testimonial-card"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                <div className="testimonial-content">
-                  <FaQuoteLeft className="quote-icon" />
-                  <p>"{testimonial.text}"</p>
-                  <div className="testimonial-rating">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <FaStar key={i} className="star" />
-                    ))}
-                  </div>
-                  <div className="testimonial-author">
-                    <strong>{testimonial.name}</strong>
-                    <span>{testimonial.location}</span>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="cta-section">
-        <div className="container">
-          <motion.div 
-            className="cta-content"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2>Ready to Transform Your Home?</h2>
-            <p>Get a free, no-obligation quote for your residential painting project today</p>
-            <div className="cta-buttons">
-              <Link to="/free-quote" className="btn btn-primary">
-                Get Free Quote
-              </Link>
-              <a href="tel:+1234567890" className="btn btn-secondary">
-                <FaPhone /> Call Now
-              </a>
+              <div className="card-content">
+                <h3 className="card-title">
+                  Color Experts at Work
+                  <span className="arrow-icon">↗</span>
+                </h3>
+              </div>
             </div>
-          </motion.div>
+            
+            <div className="trust-card">
+              <div className="card-image">
+                <img src={flawlessfinish} alt="Flawless, Lasting Finish" />
+              </div>
+              <div className="card-content">
+                <h3 className="card-title">
+                  Flawless, Lasting Finish
+                  <span className="arrow-icon">↗</span>
+                </h3>
+              </div>
+            </div>
+            
+            <div className="trust-card">
+              <div className="card-image">
+                <img src={alwaysonschedule} alt="Always On Schedule" />
+              </div>
+              <div className="card-content">
+                <h3 className="card-title">
+                  Always On Schedule
+                  <span className="arrow-icon">↗</span>
+                </h3>
+              </div>
+            </div>
+            
+            <div className="trust-card">
+              <div className="card-image">
+                <img src={honestcommunication} alt="Honest Communication" />
+              </div>
+              <div className="card-content">
+                <h3 className="card-title">
+                  Honest Communication
+                  <span className="arrow-icon">↗</span>
+                </h3>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
-    </div>
-  );
-};
+
+      {/* Transform Every Room Section */}
+      <section className="transform-section">
+        <div className="transform-container">
+          <motion.div 
+            className="transform-header"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2>Transform Every Room — With Precision & Style</h2>
+            <p>From living rooms to detailed trim work, our interior painting services cover it all. Explore what we offer — crafted to match your vision.</p>
+          </motion.div>
+          
+          <div className="transform-cards">
+                         <motion.div 
+               className="transform-card"
+               initial={{ opacity: 0, y: 20 }}
+               whileInView={{ opacity: 1, y: 0 }}
+               transition={{ duration: 0.6, delay: 0.1 }}
+             >
+               <div className="transform-card-image">
+                 <img src={wallpainting} alt="Wall Painting" />
+                 <div className="transform-card-overlay">
+                   <h3>Wall Painting</h3>
+                 </div>
+               </div>
+             </motion.div>
+             
+             <motion.div 
+               className="transform-card"
+               initial={{ opacity: 0, y: 20 }}
+               whileInView={{ opacity: 1, y: 0 }}
+               transition={{ duration: 0.6, delay: 0.2 }}
+             >
+               <div className="transform-card-image">
+                 <img src={ceilingpainting} alt="Ceiling Painting" />
+                 <div className="transform-card-overlay">
+                   <h3>Ceiling Painting</h3>
+                 </div>
+               </div>
+             </motion.div>
+             
+             <motion.div 
+               className="transform-card"
+               initial={{ opacity: 0, y: 20 }}
+               whileInView={{ opacity: 1, y: 0 }}
+               transition={{ duration: 0.6, delay: 0.3 }}
+             >
+               <div className="transform-card-image">
+                 <img src={trimandmolding} alt="Trim & Molding Painting" />
+                 <div className="transform-card-overlay">
+                   <h3>Trim & Molding Painting</h3>
+                 </div>
+               </div>
+             </motion.div>
+             
+             <motion.div 
+               className="transform-card"
+               initial={{ opacity: 0, y: 20 }}
+               whileInView={{ opacity: 1, y: 0 }}
+               transition={{ duration: 0.6, delay: 0.4 }}
+             >
+               <div className="transform-card-image">
+                 <img src={accentwalls} alt="Accent Walls" />
+                 <div className="transform-card-overlay">
+                   <h3>Accent Walls</h3>
+                 </div>
+               </div>
+             </motion.div>
+          </div>
+          
+          <div className="transform-navigation">
+            <button className="nav-arrow nav-arrow-left">
+              <span>←</span>
+            </button>
+            <button className="nav-arrow nav-arrow-right">
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+                    </section>
+
+       {/* Reviews Section */}
+       <section className="reviews-section">
+         <div className="reviews-container">
+           <div className="reviews-header">
+             <div className="reviews-title">
+               <h2>What Our Customers Say</h2>
+               <p>Don't just take our word for it — hear from homeowners and businesses who trusted us to transform their spaces.</p>
+             </div>
+           </div>
+           
+           <div className="reviews-wrapper">
+             <div className="reviews-slider">
+               <div className="reviews-track" style={{ transform: `translateX(-${currentReview * 420}px)` }}>
+                 {reviews.map((review, idx) => (
+                   <motion.div
+                     key={idx}
+                     className="review-card"
+                     initial={{ opacity: 0, y: 20 }}
+                     whileInView={{ opacity: 1, y: 0 }}
+                     transition={{ duration: 0.5, delay: idx * 0.1 }}
+                   >
+                     <div className="review-content">
+                       <div className="review-rating">
+                         {[...Array(review.rating)].map((_, i) => (
+                           <FaStar key={i} />
+                         ))}
+                       </div>
+                       <p className="review-text">{review.text}</p>
+                       <div className="review-author">
+                         <h4>{review.name}</h4>
+                         <span>{review.project}</span>
+                       </div>
+                     </div>
+                   </motion.div>
+                 ))}
+                 <Link to="/reviews" className="review-link">
+                   <div className="review-arrow">
+                     <FaArrowRight />
+                   </div>
+                 </Link>
+               </div>
+             </div>
+             
+             <button className="review-nav prev" onClick={prevReview}>
+               <FaChevronLeft />
+             </button>
+             <button className="review-nav next" onClick={nextReview}>
+               <FaChevronRight />
+             </button>
+           </div>
+         </div>
+               </section>
+     </div>
+   );
+ };
 
 export default Residential; 
