@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaChevronLeft, FaChevronRight, FaPaintBrush, FaHome, FaBuilding, FaCheckCircle, 
-  FaStar, FaQuoteLeft, FaImages, FaPalette, FaCogs, FaPhone, FaChevronDown, FaBars, FaTimes, FaSearch, FaEnvelope } from 'react-icons/fa';
+  FaStar, FaQuoteLeft, FaImages, FaPalette, FaCogs, FaPhone, FaChevronDown, FaBars, FaTimes, FaSearch, FaEnvelope, FaUserShield } from 'react-icons/fa';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../store/authSlice';
 import './Header.css';
 import logoPainter from '../assets/logo_painter.png';
+import AdminLoginModal from './AdminLoginModal';
 
 // Dropdown structure
 const residentialDropdown = {
@@ -36,7 +39,10 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [resDropdownOpen, setResDropdownOpen] = useState(false);
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const location = useLocation();
+  const dispatch = useDispatch();
+  const { isAuthenticated, user } = useSelector(state => state.auth);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,6 +59,14 @@ const Header = () => {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleResDropdown = () => setResDropdownOpen((open) => !open);
+  
+  const handleAdminLogin = () => {
+    setIsAdminModalOpen(true);
+  };
+  
+  const handleLogout = () => {
+    dispatch(logout());
+  };
 
   const navLinks = [
     { path: '/residential', label: 'Residential', dropdown: true },
@@ -61,6 +75,11 @@ const Header = () => {
     { path: '/about', label: 'About Us' },
     { path: '/gallery', label: 'Gallery' },
     { path: '/faq', label: 'FAQ' },
+  ];
+
+  const adminNavLinks = [
+    { path: '/manage-users', label: 'Manage Users' },
+    { path: '/view-quotes', label: 'View Quotes' },
   ];
 
   return (
@@ -77,6 +96,18 @@ const Header = () => {
           <Link to="/free-quote" className="btn btn-cta btn-small">
             Book Free Visit
           </Link>
+          {isAuthenticated ? (
+            <div className="admin-user-info">
+              <span className="admin-welcome">Welcome, {user?.name}</span>
+              <button onClick={handleLogout} className="btn btn-logout btn-small">
+                Logout
+              </button>
+            </div>
+          ) : (
+            <button onClick={handleAdminLogin} className="btn btn-admin btn-small">
+              <FaUserShield /> Admin Login
+            </button>
+          )}
         </div>
       </div>
 
@@ -151,17 +182,28 @@ const Header = () => {
                   )}
                 </li>
               ))}
+              {/* Admin Navigation Links */}
+              {isAuthenticated && adminNavLinks.map((link) => (
+                <li key={link.path}>
+                  <Link to={link.path} className={location.pathname === link.path ? 'active' : ''}>
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
-            <div className="search-container">
-              <input 
-                type="text" 
-                placeholder="Search for color inspiration" 
-                className="search-input"
-              />
-              <button className="search-icon" aria-label="Search">
-                <FaSearch />
-              </button>
-            </div>
+            {/* Show search bar only when not authenticated as admin */}
+            {!isAuthenticated && (
+              <div className="search-container">
+                <input 
+                  type="text" 
+                  placeholder="Search for color inspiration" 
+                  className="search-input"
+                />
+                <button className="search-icon" aria-label="Search">
+                  <FaSearch />
+                </button>
+              </div>
+            )}
           </nav>
 
           {/* Mobile Menu Toggle */}
@@ -174,6 +216,12 @@ const Header = () => {
           </button>
         </div>
       </header>
+      
+      {/* Admin Login Modal */}
+      <AdminLoginModal 
+        isOpen={isAdminModalOpen} 
+        onClose={() => setIsAdminModalOpen(false)} 
+      />
     </>
   );
 };

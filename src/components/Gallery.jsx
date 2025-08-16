@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaTimes, FaChevronLeft, FaChevronRight, FaExpand } from 'react-icons/fa';
+import { FaTimes, FaChevronLeft, FaChevronRight, FaExpand, FaPlus, FaEdit, FaTrash, FaTrashAlt, FaEye } from 'react-icons/fa';
 import './Gallery.css';
 
 const Gallery = ({ showFilters = true, limit = null }) => {
@@ -8,6 +8,7 @@ const Gallery = ({ showFilters = true, limit = null }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(false);
+  const isAdmin = true; // Always show admin buttons for demo
 
   // Sample gallery data - in production, this would come from API
   const galleryData = [
@@ -129,19 +130,59 @@ const Gallery = ({ showFilters = true, limit = null }) => {
     { value: 'commercial', label: 'Commercial' }
   ];
 
+  const handleAddImage = () => {
+    // No functionality - button is just for display
+  };
+
+  const handleEditImage = (image) => {
+    // No functionality - button is just for display
+  };
+
+  const handleDeleteImage = (imageId) => {
+    // No functionality - button is just for display
+  };
+
+  const handleShowJunk = () => {
+    // No functionality - button is just for display
+  };
+
+  const handlePermanentlyDelete = (imageId) => {
+    // No functionality - button is just for display
+  };
+
   return (
     <div className="gallery-container">
       {showFilters && (
-        <div className="gallery-filters">
-          {filterOptions.map(option => (
-            <button
-              key={option.value}
-              className={`filter-btn ${filter === option.value ? 'active' : ''}`}
-              onClick={() => setFilter(option.value)}
-            >
-              {option.label}
-            </button>
-          ))}
+        <div className="gallery-header">
+          <div className="gallery-filters">
+            {filterOptions.map(option => (
+              <button
+                key={option.value}
+                className={`filter-btn ${filter === option.value ? 'active' : ''}`}
+                onClick={() => setFilter(option.value)}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+          {isAdmin && (
+            <div className="gallery-admin-controls">
+              <button
+                className="gallery-admin-btn gallery-admin-btn-primary"
+                onClick={handleAddImage}
+              >
+                <FaPlus />
+                Add Image
+              </button>
+              <button
+                className="gallery-admin-btn gallery-admin-btn-secondary"
+                onClick={handleShowJunk}
+              >
+                <FaEye />
+                Show Junk
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -156,9 +197,8 @@ const Gallery = ({ showFilters = true, limit = null }) => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.3 }}
-              onClick={() => openLightbox(item, index)}
             >
-              <div className="gallery-image-container">
+              <div className="gallery-image-container" onClick={() => openLightbox(item, index)}>
                 <img
                   src={item.image}
                   alt={item.title}
@@ -182,6 +222,40 @@ const Gallery = ({ showFilters = true, limit = null }) => {
                   </div>
                 </div>
               </div>
+                             {isAdmin && (
+                 <div className="gallery-admin-actions">
+                   <button
+                     className="gallery-admin-action-btn gallery-edit-btn"
+                     onClick={(e) => {
+                       e.stopPropagation();
+                       handleEditImage(item);
+                     }}
+                     title="Edit Image"
+                   >
+                     <FaEdit />
+                   </button>
+                   <button
+                     className="gallery-admin-action-btn gallery-delete-btn"
+                     onClick={(e) => {
+                       e.stopPropagation();
+                       handleDeleteImage(item.id);
+                     }}
+                     title="Delete Image"
+                   >
+                     <FaTrash />
+                   </button>
+                   <button
+                     className="gallery-admin-action-btn gallery-permanent-delete-btn"
+                     onClick={(e) => {
+                       e.stopPropagation();
+                       handlePermanentlyDelete(item.id);
+                     }}
+                     title="Permanently Delete"
+                   >
+                     <FaTrashAlt />
+                   </button>
+                 </div>
+               )}
             </motion.div>
           ))}
         </AnimatePresence>

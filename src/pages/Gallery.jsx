@@ -1,24 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaImages } from 'react-icons/fa';
+import { FaImages, FaTrash, FaPlus, FaUndo, FaTrashAlt, FaEdit } from 'react-icons/fa';
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteImage, restoreImage, permanentlyDeleteImage, toggleJunkView, toggleUploadModal } from '../store/gallerySlice';
+import ImageUploadModal from '../components/ImageUploadModal';
 import './Gallery.css';
 
-const galleryImages = [
-  'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1523413363574-c30aa1c2a516?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1519985176271-adb1088fa94c?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80',
-];
+
 
 const Gallery = () => {
+  const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector(state => state.auth);
+  const { activeImages, deletedImages, showJunk, showUploadModal } = useSelector(state => state.gallery);
   const [lightboxIdx, setLightboxIdx] = useState(null);
 
   useEffect(() => {
@@ -27,6 +20,30 @@ const Gallery = () => {
       'Browse our gallery of completed painting projects and transformations by The Painter Guys Pros.'
     );
   }, []);
+
+  const handleDeleteImage = (imageId) => {
+    // No functionality - button is just for display
+  };
+
+  const handleEditImage = (image) => {
+    // No functionality - button is just for display
+  };
+
+  const handleRestoreImage = (imageId) => {
+    // No functionality - button is just for display
+  };
+
+  const handlePermanentlyDeleteImage = (imageId) => {
+    // No functionality - button is just for display
+  };
+
+  const handleToggleJunkView = () => {
+    // No functionality - button is just for display
+  };
+
+  const handleToggleUploadModal = () => {
+    // No functionality - button is just for display
+  };
 
   return (
     <div className="gallery-page">
@@ -45,21 +62,96 @@ const Gallery = () => {
       </section>
 
       <section className="gallery-grid-section">
+        {/* Admin Controls */}
+        {isAuthenticated && (
+          <div className="admin-gallery-controls">
+            <button 
+              className="upload-btn"
+              onClick={handleToggleUploadModal}
+            >
+              <FaPlus /> Upload Image
+            </button>
+          </div>
+        )}
+
         <div className="gallery-grid">
-          {galleryImages.map((src, idx) => (
+          {(showJunk ? deletedImages : activeImages).map((image, idx) => (
             <motion.div
               className="gallery-img-card"
-              key={src}
+              key={image.id}
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: idx * 0.05 }}
-              onClick={() => setLightboxIdx(idx)}
-              tabIndex={0}
-              role="button"
-              aria-label="View larger image"
             >
-              <img src={src} alt={`Project ${idx + 1}`} className="gallery-img" />
+              <img 
+                src={image.url} 
+                alt={image.alt} 
+                className={`gallery-img ${showJunk ? 'deleted-image' : ''}`}
+                onClick={() => setLightboxIdx(idx)}
+                tabIndex={0}
+                role="button"
+                aria-label="View larger image"
+              />
+              
+              {showJunk && image.deletedAt && (
+                <div className="deleted-date">
+                  Deleted: {new Date(image.deletedAt).toLocaleDateString()}
+                </div>
+              )}
+              
+              {/* Admin-only controls */}
+              {isAuthenticated && (
+                <div className="admin-image-controls">
+                  {showJunk ? (
+                    <>
+                      <button 
+                        className="admin-btn restore-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRestoreImage(image.id);
+                        }}
+                        title="Restore Image"
+                      >
+                        <FaUndo />
+                      </button>
+                      <button 
+                        className="admin-btn permanent-delete-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handlePermanentlyDeleteImage(image.id);
+                        }}
+                        title="Permanently Delete Image"
+                      >
+                        <FaTrashAlt />
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button 
+                        className="admin-btn edit-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditImage(image);
+                        }}
+                        title="Edit Image"
+                      >
+                        <FaEdit />
+                      </button>
+                      <button 
+                        className="admin-btn delete-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteImage(image.id);
+                        }}
+                        title="Delete Image"
+                      >
+                        <FaTrash />
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
             </motion.div>
           ))}
         </div>
@@ -77,8 +169,8 @@ const Gallery = () => {
           >
             <motion.img
               className="lightbox-img"
-              src={galleryImages[lightboxIdx]}
-              alt={`Large view of project ${lightboxIdx + 1}`}
+              src={(showJunk ? deletedImages : activeImages)[lightboxIdx]?.url}
+              alt={`Large view of ${(showJunk ? deletedImages : activeImages)[lightboxIdx]?.alt || 'project'}`}
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -88,6 +180,12 @@ const Gallery = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      
+      {/* Image Upload Modal */}
+      <ImageUploadModal 
+        isOpen={showUploadModal} 
+        onClose={() => dispatch(toggleUploadModal())} 
+      />
     </div>
   );
 };

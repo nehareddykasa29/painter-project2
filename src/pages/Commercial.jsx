@@ -57,93 +57,195 @@ const Commercial = () => {
     <div className="commercial-page">
       {/* Hero Section */}
       <section className="commercial-hero">
-        <img src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1200&q=80" alt="Commercial Painting" className="commercial-hero-img" />
+        <img src="/src/assets/commercial-hero.png" alt="Professional Commercial Painting" className="commercial-hero-img" />
         <div className="commercial-hero-overlay" />
         <div className="commercial-hero-content">
-          <h1>Commercial Painting</h1>
-          <p>Enhance your business image with professional painting solutions — minimal disruption, maximum impact.</p>
-          <Link to="/free-quote" className="btn btn-cta btn-large">Get Free Estimate</Link>
+          <h1>Professional Painting for<br />Every Business</h1>
+          <p>We deliver high-quality interior and exterior painting solutions that enhance your brand image with minimal disruption to your operations.</p>
+          <Link to="/free-quote" className="btn btn-cta btn-large">Get Your Free Commercial</Link>
         </div>
       </section>
 
-      {/* Industries We Serve */}
-      <section className="industries-section">
-        <h2>Industries We Serve</h2>
-        <div className="industries-grid">
-          {industries.map((ind, idx) => (
-            <div className="industry-card" key={idx}>
-              <div className="industry-icon">{ind.icon}</div>
-              <h3>{ind.title}</h3>
-              <p>{ind.desc}</p>
+      {/* Your Business Deserves the Best Section */}
+      <section className="business-deserves-best">
+        <div className="business-deserves-container">
+          <div className="business-deserves-content">
+            <h2>Your Business Deserves the Best</h2>
+            <p className="business-deserves-intro">We combine professional project management, flexible scheduling, and premium materials.</p>
+            
+            <div className="business-benefits">
+              <div className="benefit-item">
+                <h3>Minimal Disruption</h3>
+                <p>Flexible scheduling, including evenings and weekends.</p>
+              </div>
+              <hr className="benefit-divider" />
+              
+              <div className="benefit-item">
+                <h3>Professional Project Management</h3>
+                <p>Clear communication & timelines.</p>
+              </div>
+              <hr className="benefit-divider" />
+              
+              <div className="benefit-item">
+                <h3>Local Expertise</h3>
+                <p>15+ years serving Southeast Wisconsin businesses.</p>
+              </div>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Additional Services */}
-      <section className="add-services-section">
-        <h2>Additional Services</h2>
-        <div className="add-services-scroller">
-          {addServices.map((srv, idx) => (
-            <div className="add-service-card" key={idx}>
-              <div className="add-service-icon">{srv.icon}</div>
-              <h4>{srv.title}</h4>
-              <p>{srv.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Why Choose Us */}
-      <section className="why-choose-section">
-        <h2>Why Choose Painter Guys Pros?</h2>
-        <div className="why-choose-grid">
-          {whyChoose.map((item, idx) => (
-            <div className="why-card" key={idx}>
-              <div className="why-icon">{item.icon}</div>
-              <h4>{item.title}</h4>
-              <p>{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Process Section */}
-      <section className="process-section">
-        <h2>Our Process</h2>
-        <div className="process-grid">
-          {process.map((step, idx) => (
-            <div className="process-card" key={idx}>
-              <div className="process-step">{step.step}</div>
-              <div className="process-icon">{step.icon}</div>
-              <h4>{step.title}</h4>
-              <p>{step.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Testimonial Section */}
-      <section className="testimonial-section">
-        <div className="testimonial-card">
-          <div className="testimonial-stars">
-            {[...Array(testimonial.rating)].map((_, i) => (
-              <FaStar key={i} />
-            ))}
           </div>
-          <p className="testimonial-text">“{testimonial.text}”</p>
-          <div className="testimonial-author">
-            <strong>{testimonial.name}</strong> <span>({testimonial.company})</span>
+          
+          <div className="business-deserves-image">
+            <img src="/src/assets/your-bussiness-deserves-the-best.png" alt="Professional painters working on commercial building" />
           </div>
         </div>
       </section>
 
-      {/* Final CTA Section */}
-      <section className="commercial-final-cta">
-        <h2>Ready to Transform Your Business?</h2>
-        <p>Get a free, no-obligation quote for your commercial painting project today.</p>
-        <Link to="/free-quote" className="btn btn-cta btn-large">Schedule Your Free Commercial Estimate</Link>
+      {/* Comprehensive Painting Solutions Section */}
+      <section className="comprehensive-solutions">
+        <div className="comprehensive-container">
+          <div className="comprehensive-header">
+            <div className="comprehensive-text">
+              <h2>Comprehensive Painting Solutions for Your Business</h2>
+              <p>From offices to industrial facilities, we handle projects of every scale — with the same attention to detail that defines our work.</p>
+            </div>
+            <Link to="/services" className="btn btn-explore">
+              Explore All <span className="arrow">→</span>
+            </Link>
+          </div>
+          
+          <div className="solutions-grid">
+            <div className="solution-card">
+              <div className="solution-image">
+                <img src="/src/assets/office-building.png" alt="Office Buildings" />
+              </div>
+              <div className="solution-content">
+                <h3>Office Buildings</h3>
+                <p>Fresh, professional interiors and exteriors.</p>
+                <Link to="/commercial/office" className="btn btn-view-service">View Service</Link>
+              </div>
+            </div>
+            
+            <div className="solution-card">
+              <div className="solution-image">
+                <img src="/src/assets/healthcare-facilities.png" alt="Healthcare Facilities" />
+              </div>
+              <div className="solution-content">
+                <h3>Healthcare Facilities</h3>
+                <p>Clean, hygienic finishes for hospitals and clinics.</p>
+                <Link to="/commercial/healthcare" className="btn btn-view-service">View Service</Link>
+              </div>
+            </div>
+            
+            <div className="solution-card">
+              <div className="solution-image">
+                <img src="/src/assets/educational-institutions.png" alt="Educational Institutions" />
+              </div>
+              <div className="solution-content">
+                <h3>Educational Institutions</h3>
+                <p>Safe, durable coatings for schools and universities.</p>
+                <Link to="/commercial/educational" className="btn btn-view-service">View Service</Link>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
+
+      {/* How We Work Section */}
+      <section className="how-we-work">
+        <div className="how-we-work-container">
+          <h2>How We Work — Simple, Transparent, and On Time</h2>
+          
+          <div className="work-steps">
+            <div className="work-step-card step-1">
+              <div className="step-image">
+                <img src="/src/assets/req.png" alt="Request Free Estimate" />
+              </div>
+              <div className="step-content">
+                <h3>Request Your Free Estimate</h3>
+                <p>Fill a quick form or call us to schedule your site visit.</p>
+              </div>
+            </div>
+            
+            <div className="work-step-card step-2">
+              <div className="step-image">
+                <img src="/src/assets/approve.png" alt="Approve Customized Proposal" />
+              </div>
+              <div className="step-content">
+                <h3>Approve Your Customized Proposal</h3>
+                <p>Clear timelines, costs, and scope</p>
+              </div>
+            </div>
+            
+            <div className="work-step-card step-3">
+              <div className="step-image">
+                <img src="/src/assets/transform.png" alt="Transform Your Space" />
+              </div>
+              <div className="step-content">
+                <h3>Transform Your Space</h3>
+                <p>Skilled painters complete the job</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* See How We Transform Section */}
+      <section className="see-how-transform">
+        <div className="transform-container">
+          <div className="transform-header">
+            <h2>See How We Transform</h2>
+            <p>Browse our recent work to see the difference a professional paint job can make.</p>
+          </div>
+          
+          <div className="transform-gallery">
+            <div className="transform-card">
+              <img src="/src/assets/trans1.png" alt="Cafe/Restaurant Interior" />
+            </div>
+            <div className="transform-card">
+              <img src="/src/assets/trans2.png" alt="Modern Restaurant/Bar" />
+            </div>
+            <div className="transform-card">
+              <img src="/src/assets/trans3.png" alt="Modern Office Space" />
+            </div>
+            <div className="transform-card">
+              <img src="/src/assets/trans4.png" alt="Stylish Lounge/Restaurant" />
+            </div>
+            <div className="transform-card">
+              <img src="/src/assets/trans5.png" alt="Bright Office Hallway" />
+            </div>
+            <div className="transform-card">
+              <img src="/src/assets/trans6.png" alt="Rustic Coffee Shop" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Let's Transform Section */}
+      <section className="lets-transform">
+        <div className="lets-transform-container">
+          <div className="lets-transform-image">
+            <img src="/src/assets/lets-transform.png" alt="Modern Office Interior" />
+          </div>
+          <div className="lets-transform-content">
+            <h2>Let's Transform Your Business Space</h2>
+            <p>Get in touch today for your free commercial painting estimate and color consultation.</p>
+            <Link to="/free-quote" className="btn btn-book-now">
+              Book Now <span className="arrow">→</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      
+
+      
+
+   
+
+
+
+ 
+
+   
     </div>
   );
 };

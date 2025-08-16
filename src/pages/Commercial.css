@@ -2,18 +2,16 @@
 .commercial-hero {
   position: relative;
   width: 100%;
-  height: 340px;
+  height: 500px;
   overflow: hidden;
   display: flex;
   align-items: center;
-  justify-content: center;
   background: #f5f8fc;
 }
 .commercial-hero-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: brightness(0.6);
   position: absolute;
   top: 0;
   left: 0;
@@ -22,36 +20,435 @@
 .commercial-hero-overlay {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(135deg, rgba(80,125,188,0.7), rgba(54,91,140,0.7));
+  background: linear-gradient(135deg, rgba(0,0,0,0.7), rgba(0,0,0,0.4));
   z-index: 2;
 }
 .commercial-hero-content {
   position: relative;
   z-index: 3;
-  text-align: center;
+  text-align: left;
   color: #fff;
+  padding-left: 5%;
+  
 }
 .commercial-hero-content h1 {
-  font-size: 2.7rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
+  font-size: 3rem;
+  font-weight: 400;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  max-width: 800px;
 }
 .commercial-hero-content p {
-  font-size: 1.2rem;
-  font-weight: 400;
-  margin-bottom: 1.2rem;
-}
-.commercial-hero-content .btn {
   font-size: 1.1rem;
-  padding: 0.75rem 2rem;
+  font-weight: 400;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+  max-width: 500px;
 }
+ .commercial-hero-content .btn {
+   font-size: 1rem;
+   padding: 0.8rem 1.5rem;
+   background: #F4C542;
+   color: #333;
+   font-weight: 700;
+   border-radius: 8px;
+   border: none;
+   transition: background 0.2s;
+   text-decoration: none;
+   display: inline-block;
+ }
+ .commercial-hero-content .btn:hover {
+   background: #e8b42e;
+ }
 
-/* Industries We Serve */
-.industries-section {
-  padding: 2.5rem 0 1.5rem 0;
-  background: #fff;
-  text-align: center;
-}
+ /* Your Business Deserves the Best Section */
+ .business-deserves-best {
+   background: #fff;
+   padding: 4rem 0;
+ }
+ .business-deserves-container {
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   gap: 3rem;
+   max-width: 1200px;
+   margin: 0 auto;
+   padding: 0 2rem;
+   align-items: flex-start;
+ }
+ .business-deserves-content h2 {
+   font-size: 2.5rem;
+   font-weight: 500;
+   color: #365B8C;
+   margin-bottom: 1rem;
+   line-height: 1.2;
+   white-space: nowrap;
+ }
+ .business-deserves-intro {
+   font-size: 1.1rem;
+   color: #365B8C;
+   margin-bottom: 2rem;
+   line-height: 1.5;
+ }
+ .business-benefits {
+   display: flex;
+   flex-direction: column;
+   gap: 0;
+   min-height: 400px;
+   justify-content: flex-start;
+ }
+ .benefit-item {
+   display: flex;
+   flex-direction: column;
+   gap: 0.1rem;
+   padding: 1rem 0;
+ }
+ .benefit-item h3 {
+   font-size: 1.2rem;
+   font-weight: 700;
+   color: #365B8C;
+   margin-bottom: 0;
+ }
+ .benefit-item p {
+   font-size: 1rem;
+   color: #6B7280;
+   line-height: 1.4;
+   margin: 0;
+ }
+ .benefit-divider {
+   border: none;
+   height: 1px;
+   background: #E5E7EB;
+   margin: 0;
+   width: 100%;
+ }
+ .business-deserves-image {
+   display: flex;
+   justify-content: flex-start;
+   align-items: flex-start;
+   padding-top: 0;
+ }
+ .business-deserves-image img {
+   width: 100%;
+   max-width: 500px;
+   height: 400px;
+   border-radius: 12px;
+   object-fit: cover;
+ }
+
+   /* Comprehensive Painting Solutions Section */
+  .comprehensive-solutions {
+    background: #f8f9fa;
+    padding: 4rem 0;
+  }
+  .comprehensive-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+  .comprehensive-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 3rem;
+    gap: 2rem;
+  }
+  .comprehensive-text h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #365B8C;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+  .comprehensive-text p {
+    font-size: 1.1rem;
+    color: #6B7280;
+    line-height: 1.5;
+    max-width: 600px;
+  }
+   .btn-explore {
+   background: #F4C542;
+   color: #333;
+   font-weight: 700;
+   padding: 0.8rem 1.5rem;
+   border-radius: 8px;
+   text-decoration: none;
+   display: inline-flex;
+   align-items: center;
+   gap: 0.5rem;
+   transition: background 0.2s;
+   white-space: nowrap;
+ }
+ .btn-explore:hover {
+   background: #e8b42e;
+ }
+  .arrow {
+    font-size: 1.2rem;
+  }
+  .solutions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+  .solution-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .solution-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+  .solution-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+  }
+  .solution-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .solution-content {
+    padding: 1.5rem;
+  }
+  .solution-content h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #365B8C;
+    margin-bottom: 0.5rem;
+  }
+  .solution-content p {
+    font-size: 1rem;
+    color: #6B7280;
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
+  }
+   .btn-view-service {
+   background: #F4C542;
+   color: #333;
+   font-weight: 700;
+   padding: 0.6rem 1.2rem;
+   border-radius: 6px;
+   text-decoration: none;
+   display: inline-block;
+   transition: background 0.2s;
+   font-size: 0.9rem;
+ }
+   .btn-view-service:hover {
+    background: #e8b42e;
+  }
+
+  /* How We Work Section */
+  .how-we-work {
+    background: #fff;
+    padding: 4rem 0;
+  }
+  .how-we-work-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+  }
+  .how-we-work-container h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #365B8C;
+    margin-bottom: 3rem;
+    line-height: 1.2;
+  }
+  .work-steps {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  .work-step-card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .step-1 {
+    grid-row: span 2;
+    background: #4a5568;
+  }
+  .step-2, .step-3 {
+    background: #fff;
+    display: flex;
+    align-items: center;
+  }
+  .work-step-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+  .step-2 {
+    background: #d69e2e;
+  }
+  .step-3 {
+    background: #f6ad55;
+  }
+  .step-image {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    padding: 1rem;
+  }
+  .step-2 .step-image, .step-3 .step-image {
+    width: 50%;
+    height: 160px;
+    flex-shrink: 0;
+  }
+  .step-1 .step-image {
+    height: 280px;
+  }
+  .step-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .step-content {
+    padding: 1rem;
+    color: #fff;
+  }
+  .step-2 .step-content, .step-3 .step-content {
+    width: 50%;
+    padding: 0.8rem 1rem;
+  }
+  .step-content h3 {
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #fff;
+  }
+  .step-2 .step-content h3, .step-3 .step-content h3 {
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+  }
+  .step-content p {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 300;
+  }
+  .step-2 .step-content p, .step-3 .step-content p {
+    font-size: 0.85rem;
+    line-height: 1.3;
+  }
+
+  /* See How We Transform Section */
+  .see-how-transform {
+    background: #f8f9fa;
+    padding: 4rem 0;
+  }
+  .transform-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+  }
+  .transform-header h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #365B8C;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+  .transform-header p {
+    font-size: 1.1rem;
+    color: #6B7280;
+    margin-bottom: 3rem;
+    line-height: 1.5;
+  }
+  .transform-gallery {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+    scrollbar-width: thin;
+  }
+  .transform-card {
+    flex: 0 0 auto;
+    width: 300px;
+    height: 380px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .transform-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Let's Transform Section */
+  .lets-transform {
+    background: #f8f9fa;
+    padding: 4rem 0;
+  }
+  .lets-transform-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    align-items: center;
+  }
+  .lets-transform-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .lets-transform-image img {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    border-radius: 12px;
+    object-fit: cover;
+  }
+  .lets-transform-content {
+    padding: 2rem 0;
+  }
+  .lets-transform-content h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #365B8C;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+  .lets-transform-content p {
+    font-size: 1.1rem;
+    color: #6B7280;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+  }
+  .btn-book-now {
+    background: #F4C542;
+    color: #333;
+    font-weight: 700;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background 0.2s;
+    font-size: 1rem;
+  }
+  .btn-book-now:hover {
+    background: #e8b42e;
+  }
+
+  /* Industries We Serve */
+  .industries-section {
+    padding: 2.5rem 0 1.5rem 0;
+    background: #fff;
+    text-align: center;
+  }
 .industries-section h2 {
   color: #507DBC;
   font-size: 1.5rem;
@@ -305,16 +702,194 @@
 }
 
 @media (max-width: 900px) {
+  .business-deserves-container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    text-align: center;
+  }
+  .business-deserves-content h2 {
+    font-size: 2rem;
+  }
+  .business-benefits {
+    min-height: auto;
+    gap: 0;
+  }
+  .benefit-item {
+    padding: 0.2rem 0;
+  }
+  .business-deserves-image img {
+    height: 300px;
+  }
+  .comprehensive-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  .comprehensive-text h2 {
+    font-size: 2rem;
+  }
+  .solutions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  .how-we-work-container h2 {
+    font-size: 2rem;
+  }
+  .work-steps {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  .step-1 {
+    grid-row: span 2;
+  }
+  .step-2, .step-3 {
+    flex-direction: column;
+  }
+  .step-2 .step-image, .step-3 .step-image {
+    width: 100%;
+    height: 180px;
+  }
+  .step-2 .step-content, .step-3 .step-content {
+    width: 100%;
+  }
+  .transform-header h2 {
+    font-size: 2rem;
+  }
+  .transform-card {
+    width: 250px;
+    height: 300px;
+  }
+  .lets-transform-container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    text-align: center;
+  }
+  .lets-transform-content h2 {
+    font-size: 2rem;
+  }
   .industries-grid, .why-choose-grid, .process-grid {
     grid-template-columns: 1fr 1fr;
   }
 }
 @media (max-width: 600px) {
   .commercial-hero {
-    height: 180px;
+    height: 300px;
+  }
+  .commercial-hero-content {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    text-align: center;
   }
   .commercial-hero-content h1 {
-    font-size: 1.3rem;
+    font-size: 1.8rem;
+    font-weight: 400;
+  }
+  .commercial-hero-content p {
+    font-size: 1rem;
+  }
+  .business-deserves-best {
+    padding: 2rem 0;
+  }
+  .business-deserves-container {
+    padding: 0 1rem;
+  }
+  .business-deserves-content h2 {
+    font-size: 1.8rem;
+  }
+  .business-deserves-intro {
+    font-size: 1rem;
+  }
+  .business-benefits {
+    min-height: auto;
+    gap: 0;
+  }
+  .benefit-item {
+    padding: 0.1rem 0;
+  }
+  .benefit-item h3 {
+    font-size: 1.1rem;
+  }
+  .business-deserves-image img {
+    height: 250px;
+  }
+  .comprehensive-solutions {
+    padding: 2rem 0;
+  }
+  .comprehensive-container {
+    padding: 0 1rem;
+  }
+  .comprehensive-text h2 {
+    font-size: 1.8rem;
+  }
+  .solutions-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .solution-image {
+    height: 180px;
+  }
+  .how-we-work {
+    padding: 2rem 0;
+  }
+  .how-we-work-container {
+    padding: 0 1rem;
+  }
+  .how-we-work-container h2 {
+    font-size: 1.8rem;
+  }
+  .work-steps {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .step-1 {
+    grid-row: auto;
+  }
+  .step-1 .step-image {
+    height: 220px;
+  }
+  .step-2, .step-3 {
+    flex-direction: column;
+  }
+  .step-2 .step-image, .step-3 .step-image {
+    width: 100%;
+    height: 140px;
+  }
+  .step-2 .step-content, .step-3 .step-content {
+    width: 100%;
+  }
+  .step-image {
+    height: 160px;
+  }
+  .see-how-transform {
+    padding: 2rem 0;
+  }
+  .transform-container {
+    padding: 0 1rem;
+  }
+  .transform-header h2 {
+    font-size: 1.8rem;
+  }
+  .transform-header p {
+    font-size: 1rem;
+  }
+  .transform-card {
+    width: 200px;
+    height: 240px;
+  }
+  .transform-gallery {
+    gap: 0.3rem;
+  }
+  .lets-transform {
+    padding: 2rem 0;
+  }
+  .lets-transform-container {
+    padding: 0 1rem;
+  }
+  .lets-transform-content h2 {
+    font-size: 1.8rem;
+  }
+  .lets-transform-content p {
+    font-size: 1rem;
   }
   .industries-grid, .why-choose-grid, .process-grid {
     grid-template-columns: 1fr;

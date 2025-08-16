@@ -99,6 +99,13 @@
   margin-bottom: 0.25rem;
 }
 
+.deleted-date {
+  font-size: 0.8rem;
+  color: #dc3545;
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
 .review-stars {
   display: flex;
   justify-content: center;
@@ -116,6 +123,111 @@
   font-style: italic;
   opacity: 0.95;
   margin-top: 0.5rem;
+}
+
+/* Admin Controls */
+.admin-controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  justify-content: center;
+}
+
+.admin-btn {
+  background: none;
+  border: none;
+  padding: 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+
+
+.delete-btn {
+  color: #dc3545;
+}
+
+.delete-btn:hover {
+  background-color: rgba(220, 53, 69, 0.1);
+  transform: scale(1.1);
+}
+
+.restore-btn {
+  color: #28a745;
+}
+
+.restore-btn:hover {
+  background-color: rgba(40, 167, 69, 0.1);
+  transform: scale(1.1);
+}
+
+.permanent-delete-btn {
+  color: #dc3545;
+}
+
+.permanent-delete-btn:hover {
+  background-color: rgba(220, 53, 69, 0.1);
+  transform: scale(1.1);
+}
+
+/* Admin Junk Controls */
+.admin-junk-controls {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  gap: 16px;
+}
+
+.add-review-btn {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+}
+
+.add-review-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+  background: linear-gradient(135deg, #218838 0%, #1ea085 100%);
+}
+
+.add-review-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+}
+
+.junk-toggle-btn {
+  background: linear-gradient(135deg, #0A5B84 0%, #507DBC 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.junk-toggle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(10, 91, 132, 0.3);
 }
 
 @media (max-width: 768px) {

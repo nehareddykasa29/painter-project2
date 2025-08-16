@@ -87,6 +87,62 @@
   background-color: #e5b73a;
 }
 
+/* Admin Login Button */
+.btn-admin {
+  background-color: #0A5B84;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.btn-admin:hover {
+  background-color: #084a6b;
+}
+
+.btn-admin svg {
+  font-size: 0.9em;
+}
+
+/* Admin User Info */
+.admin-user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 12px;
+}
+
+.admin-welcome {
+  color: #333;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.btn-logout {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.btn-logout:hover {
+  background-color: #c82333;
+}
+
 .top-bar-cta {
   display: flex;
   align-items: center;
@@ -671,6 +727,27 @@
     flex-direction: column;
     gap: 0.5rem;
     padding: 0.75rem 0.5rem;
+  }
+  
+  /* Admin button responsive */
+  .btn-admin {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+  
+  .admin-user-info {
+    flex-direction: column;
+    gap: 8px;
+    margin-left: 8px;
+  }
+  
+  .admin-welcome {
+    font-size: 0.8rem;
+  }
+  
+  .btn-logout {
+    font-size: 0.8rem;
+    padding: 6px 12px;
   }
 }
 
