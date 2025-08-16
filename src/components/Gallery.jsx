@@ -1,89 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaTimes, FaChevronLeft, FaChevronRight, FaExpand, FaPlus, FaEdit, FaTrash, FaTrashAlt, FaEye } from 'react-icons/fa';
+import { FaTimes, FaChevronLeft, FaChevronRight, FaExpand, FaTrash, FaEdit } from 'react-icons/fa';
 import './Gallery.css';
 
-const Gallery = ({ showFilters = true, limit = null }) => {
+const Gallery = ({ images = [], showFilters = true, limit = null, isAuthenticated = false, onOpenUploadModal, onDeleteImage, onEditImage }) => {
   const [filter, setFilter] = useState('all');
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const isAdmin = true; // Always show admin buttons for demo
 
-  // Sample gallery data - in production, this would come from API
-  const galleryData = [
-    {
-      id: 1,
-      title: 'Modern Living Room Transformation',
-      description: 'Complete interior painting with accent wall',
-      category: 'interior',
-      serviceType: 'residential',
-      image: '/api/placeholder/600/400',
-      beforeImage: '/api/placeholder/300/200',
-      afterImage: '/api/placeholder/300/200',
-      tags: ['living room', 'modern', 'accent wall']
-    },
-    {
-      id: 2,
-      title: 'Commercial Office Building',
-      description: 'Exterior painting and restoration',
-      category: 'exterior',
-      serviceType: 'commercial',
-      image: '/api/placeholder/600/400',
-      beforeImage: '/api/placeholder/300/200',
-      afterImage: '/api/placeholder/300/200',
-      tags: ['office', 'commercial', 'exterior']
-    },
-    {
-      id: 3,
-      title: 'Kitchen Cabinet Refinishing',
-      description: 'Cabinet painting and hardware update',
-      category: 'interior',
-      serviceType: 'residential',
-      image: '/api/placeholder/600/400',
-      beforeImage: '/api/placeholder/300/200',
-      afterImage: '/api/placeholder/300/200',
-      tags: ['kitchen', 'cabinets', 'refinishing']
-    },
-    {
-      id: 4,
-      title: 'Victorian Home Exterior',
-      description: 'Historic home exterior restoration',
-      category: 'exterior',
-      serviceType: 'residential',
-      image: '/api/placeholder/600/400',
-      beforeImage: '/api/placeholder/300/200',
-      afterImage: '/api/placeholder/300/200',
-      tags: ['historic', 'victorian', 'restoration']
-    },
-    {
-      id: 5,
-      title: 'Retail Store Interior',
-      description: 'Brand-focused interior painting',
-      category: 'interior',
-      serviceType: 'commercial',
-      image: '/api/placeholder/600/400',
-      beforeImage: '/api/placeholder/300/200',
-      afterImage: '/api/placeholder/300/200',
-      tags: ['retail', 'branding', 'commercial']
-    },
-    {
-      id: 6,
-      title: 'Deck Staining Project',
-      description: 'Deck cleaning and staining',
-      category: 'exterior',
-      serviceType: 'residential',
-      image: '/api/placeholder/600/400',
-      beforeImage: '/api/placeholder/300/200',
-      afterImage: '/api/placeholder/300/200',
-      tags: ['deck', 'staining', 'outdoor']
-    }
-  ];
-
-  const filteredImages = galleryData.filter(item => {
-    if (filter === 'all') return true;
-    return item.category === filter || item.serviceType === filter;
-  });
+  // Filtering logic based on serviceType
+  const filteredImages = images
+    .slice() // copy array to avoid mutating original
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // sort by createdAt desc
+    .filter(item => {
+      if (filter === 'all') return true;
+      return (item.serviceType && item.serviceType.toLowerCase().includes(filter)) ||
+             (item.caption && item.caption.toLowerCase().includes(filter));
+    });
 
   const displayImages = limit ? filteredImages.slice(0, limit) : filteredImages;
 
@@ -130,26 +63,6 @@ const Gallery = ({ showFilters = true, limit = null }) => {
     { value: 'commercial', label: 'Commercial' }
   ];
 
-  const handleAddImage = () => {
-    // No functionality - button is just for display
-  };
-
-  const handleEditImage = (image) => {
-    // No functionality - button is just for display
-  };
-
-  const handleDeleteImage = (imageId) => {
-    // No functionality - button is just for display
-  };
-
-  const handleShowJunk = () => {
-    // No functionality - button is just for display
-  };
-
-  const handlePermanentlyDelete = (imageId) => {
-    // No functionality - button is just for display
-  };
-
   return (
     <div className="gallery-container">
       {showFilters && (
@@ -165,24 +78,6 @@ const Gallery = ({ showFilters = true, limit = null }) => {
               </button>
             ))}
           </div>
-          {isAdmin && (
-            <div className="gallery-admin-controls">
-              <button
-                className="gallery-admin-btn gallery-admin-btn-primary"
-                onClick={handleAddImage}
-              >
-                <FaPlus />
-                Add Image
-              </button>
-              <button
-                className="gallery-admin-btn gallery-admin-btn-secondary"
-                onClick={handleShowJunk}
-              >
-                <FaEye />
-                Show Junk
-              </button>
-            </div>
-          )}
         </div>
       )}
 
@@ -190,7 +85,7 @@ const Gallery = ({ showFilters = true, limit = null }) => {
         <AnimatePresence>
           {displayImages.map((item, index) => (
             <motion.div
-              key={item.id}
+              key={item._id || item.id}
               className="gallery-item"
               layout
               initial={{ opacity: 0, scale: 0.8 }}
@@ -200,21 +95,68 @@ const Gallery = ({ showFilters = true, limit = null }) => {
             >
               <div className="gallery-image-container" onClick={() => openLightbox(item, index)}>
                 <img
-                  src={item.image}
-                  alt={item.title}
+                  src={item.imageUrl}
+                  alt={item.caption}
                   className="gallery-image"
                   loading="lazy"
                 />
+                {/* Show edit and delete buttons on image if authenticated */}
+                {isAuthenticated && (
+                  <div style={{ position: "absolute", top: 8, right: 8, zIndex: 2, display: "flex", gap: "8px" }}>
+                    <button
+                      className="gallery-admin-action-btn gallery-edit-btn"
+                      title="Edit Image"
+                      style={{
+                        background: "rgba(40,167,69,0.9)",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "50%",
+                        width: "32px",
+                        height: "32px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        cursor: "pointer"
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (onEditImage) onEditImage(item);
+                      }}
+                    >
+                      <FaEdit />
+                    </button>
+                    <button
+                      className="gallery-admin-action-btn gallery-delete-btn"
+                      title="Delete Image"
+                      style={{
+                        background: "rgba(220,53,69,0.9)",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "50%",
+                        width: "32px",
+                        height: "32px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        cursor: "pointer"
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (onDeleteImage) onDeleteImage(item._id || item.id);
+                      }}
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
+                )}
                 <div className="gallery-overlay">
                   <div className="gallery-overlay-content">
-                    <h3>{item.title}</h3>
-                    <p>{item.description}</p>
+                    <h3>{item.caption}</h3>
+                    <p>{item.serviceType}</p>
                     <div className="gallery-tags">
-                      {item.tags.map(tag => (
-                        <span key={tag} className="tag">
-                          {tag}
-                        </span>
-                      ))}
+                      {isAuthenticated && (
+                        <span className="tag">{new Date(item.createdAt).toLocaleDateString()}</span>
+                      )}
                     </div>
                     <button className="expand-btn">
                       <FaExpand />
@@ -222,40 +164,6 @@ const Gallery = ({ showFilters = true, limit = null }) => {
                   </div>
                 </div>
               </div>
-                             {isAdmin && (
-                 <div className="gallery-admin-actions">
-                   <button
-                     className="gallery-admin-action-btn gallery-edit-btn"
-                     onClick={(e) => {
-                       e.stopPropagation();
-                       handleEditImage(item);
-                     }}
-                     title="Edit Image"
-                   >
-                     <FaEdit />
-                   </button>
-                   <button
-                     className="gallery-admin-action-btn gallery-delete-btn"
-                     onClick={(e) => {
-                       e.stopPropagation();
-                       handleDeleteImage(item.id);
-                     }}
-                     title="Delete Image"
-                   >
-                     <FaTrash />
-                   </button>
-                   <button
-                     className="gallery-admin-action-btn gallery-permanent-delete-btn"
-                     onClick={(e) => {
-                       e.stopPropagation();
-                       handlePermanentlyDelete(item.id);
-                     }}
-                     title="Permanently Delete"
-                   >
-                     <FaTrashAlt />
-                   </button>
-                 </div>
-               )}
             </motion.div>
           ))}
         </AnimatePresence>
@@ -291,11 +199,10 @@ const Gallery = ({ showFilters = true, limit = null }) => {
 
               <div className="lightbox-image-container">
                 <img
-                  src={selectedImage.image}
-                  alt={selectedImage.title}
+                  src={selectedImage.imageUrl} // <-- imageUrl is used here for the lightbox image
+                  alt={selectedImage.caption}
                   className="lightbox-image"
                 />
-                
                 {filteredImages.length > 1 && (
                   <>
                     <button className="lightbox-nav prev" onClick={prevImage}>
@@ -309,37 +216,14 @@ const Gallery = ({ showFilters = true, limit = null }) => {
               </div>
 
               <div className="lightbox-info">
-                <h3>{selectedImage.title}</h3>
-                <p>{selectedImage.description}</p>
-                
-                {selectedImage.beforeImage && selectedImage.afterImage && (
-                  <div className="before-after">
-                    <div className="before-after-item">
-                      <h4>Before</h4>
-                      <img src={selectedImage.beforeImage} alt="Before" />
-                    </div>
-                    <div className="before-after-item">
-                      <h4>After</h4>
-                      <img src={selectedImage.afterImage} alt="After" />
-                    </div>
-                  </div>
-                )}
-
+                <h3>{selectedImage.caption}</h3>
+                <p>{selectedImage.serviceType}</p>
                 <div className="project-details">
-                  <span className="detail-item">
-                    <strong>Category:</strong> {selectedImage.category}
-                  </span>
-                  <span className="detail-item">
-                    <strong>Service:</strong> {selectedImage.serviceType}
-                  </span>
-                </div>
-
-                <div className="lightbox-tags">
-                  {selectedImage.tags.map(tag => (
-                    <span key={tag} className="tag">
-                      {tag}
+                  {isAuthenticated && (
+                    <span className="detail-item">
+                      <strong>Created:</strong> {new Date(selectedImage.createdAt).toLocaleDateString()}
                     </span>
-                  ))}
+                  )}
                 </div>
               </div>
 
@@ -354,4 +238,4 @@ const Gallery = ({ showFilters = true, limit = null }) => {
   );
 };
 
-export default Gallery; 
+export default Gallery;

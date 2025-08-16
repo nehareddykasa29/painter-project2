@@ -1,48 +1,52 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaImages, FaTrash, FaPlus, FaUndo, FaTrashAlt, FaEdit } from 'react-icons/fa';
+import { FaImages, FaPlus } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
-import { deleteImage, restoreImage, permanentlyDeleteImage, toggleJunkView, toggleUploadModal } from '../store/gallerySlice';
+import { toggleUploadModal, fetchGalleryImages, deleteImage, editImage } from '../store/gallerySlice';
 import ImageUploadModal from '../components/ImageUploadModal';
+import GalleryComponent from '../components/Gallery';
+import EditImageModal from '../components/EditImageModal';
 import './Gallery.css';
-
-
 
 const Gallery = () => {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector(state => state.auth);
-  const { activeImages, deletedImages, showJunk, showUploadModal } = useSelector(state => state.gallery);
+  const { activeImages, showUploadModal } = useSelector(state => state.gallery);
+  const { token } = useSelector(state => state.auth);
   const [lightboxIdx, setLightboxIdx] = useState(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editImageData, setEditImageData] = useState(null);
 
   useEffect(() => {
     document.title = 'Project Gallery | The Painter Guys Pros';
     document.querySelector('meta[name="description"]')?.setAttribute('content', 
       'Browse our gallery of completed painting projects and transformations by The Painter Guys Pros.'
     );
-  }, []);
+    dispatch(fetchGalleryImages()); // Fetch images from backend
+  }, [dispatch]);
 
-  const handleDeleteImage = (imageId) => {
-    // No functionality - button is just for display
+  const handleToggleUploadModal = () => {
+    if (isAuthenticated) {
+      dispatch(toggleUploadModal());
+    }
+  };
+
+  const handleDeleteImage = (id) => {
+    if (isAuthenticated && token) {
+      dispatch(deleteImage({ id, token }));
+    }
   };
 
   const handleEditImage = (image) => {
-    // No functionality - button is just for display
+    setEditImageData(image);
+    setEditModalOpen(true);
   };
 
-  const handleRestoreImage = (imageId) => {
-    // No functionality - button is just for display
-  };
-
-  const handlePermanentlyDeleteImage = (imageId) => {
-    // No functionality - button is just for display
-  };
-
-  const handleToggleJunkView = () => {
-    // No functionality - button is just for display
-  };
-
-  const handleToggleUploadModal = () => {
-    // No functionality - button is just for display
+  const handleEditSubmit = (updates) => {
+    if (isAuthenticated && token && editImageData?._id) {
+      dispatch(editImage({ id: editImageData._id, updates, token }))
+        .then(() => setEditModalOpen(false));
+    }
   };
 
   return (
@@ -74,87 +78,14 @@ const Gallery = () => {
           </div>
         )}
 
-        <div className="gallery-grid">
-          {(showJunk ? deletedImages : activeImages).map((image, idx) => (
-            <motion.div
-              className="gallery-img-card"
-              key={image.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: idx * 0.05 }}
-            >
-              <img 
-                src={image.url} 
-                alt={image.alt} 
-                className={`gallery-img ${showJunk ? 'deleted-image' : ''}`}
-                onClick={() => setLightboxIdx(idx)}
-                tabIndex={0}
-                role="button"
-                aria-label="View larger image"
-              />
-              
-              {showJunk && image.deletedAt && (
-                <div className="deleted-date">
-                  Deleted: {new Date(image.deletedAt).toLocaleDateString()}
-                </div>
-              )}
-              
-              {/* Admin-only controls */}
-              {isAuthenticated && (
-                <div className="admin-image-controls">
-                  {showJunk ? (
-                    <>
-                      <button 
-                        className="admin-btn restore-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRestoreImage(image.id);
-                        }}
-                        title="Restore Image"
-                      >
-                        <FaUndo />
-                      </button>
-                      <button 
-                        className="admin-btn permanent-delete-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handlePermanentlyDeleteImage(image.id);
-                        }}
-                        title="Permanently Delete Image"
-                      >
-                        <FaTrashAlt />
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button 
-                        className="admin-btn edit-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEditImage(image);
-                        }}
-                        title="Edit Image"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button 
-                        className="admin-btn delete-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteImage(image.id);
-                        }}
-                        title="Delete Image"
-                      >
-                        <FaTrash />
-                      </button>
-                    </>
-                  )}
-                </div>
-              )}
-            </motion.div>
-          ))}
-        </div>
+        {/* Use GalleryComponent and pass images */}
+        <GalleryComponent
+          images={activeImages}
+          isAuthenticated={isAuthenticated}
+          onOpenUploadModal={handleToggleUploadModal}
+          onDeleteImage={handleDeleteImage}
+          onEditImage={handleEditImage}
+        />
       </section>
 
       {/* Lightbox Modal */}
@@ -169,8 +100,8 @@ const Gallery = () => {
           >
             <motion.img
               className="lightbox-img"
-              src={(showJunk ? deletedImages : activeImages)[lightboxIdx]?.url}
-              alt={`Large view of ${(showJunk ? deletedImages : activeImages)[lightboxIdx]?.alt || 'project'}`}
+              src={activeImages[lightboxIdx]?.url}
+              alt={`Large view of ${activeImages[lightboxIdx]?.alt || 'project'}`}
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -186,8 +117,18 @@ const Gallery = () => {
         isOpen={showUploadModal} 
         onClose={() => dispatch(toggleUploadModal())} 
       />
+
+      {/* Edit Image Modal */}
+      {editModalOpen && (
+        <EditImageModal
+          image={editImageData}
+          isOpen={editModalOpen}
+          onClose={() => setEditModalOpen(false)}
+          onSubmit={handleEditSubmit}
+        />
+      )}
     </div>
   );
 };
 
-export default Gallery; 
+export default Gallery;

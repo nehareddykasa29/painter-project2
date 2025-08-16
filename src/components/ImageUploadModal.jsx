@@ -1,58 +1,27 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaTimes, FaUpload, FaImage, FaFileUpload, FaTrash } from 'react-icons/fa';
+import { FaTimes, FaUpload, FaImage } from 'react-icons/fa';
+import { useSelector, useDispatch } from "react-redux";
+import { uploadImage } from "../store/gallerySlice";
 import './ImageUploadModal.css';
 
 const ImageUploadModal = ({ isOpen, onClose }) => {
-  const fileInputRef = useRef(null);
+  const dispatch = useDispatch();
+  const { token, isAuthenticated } = useSelector(state => state.auth);
+  const { uploadLoading, uploadError } = useSelector(state => state.gallery);
+
   const [formData, setFormData] = useState({
-    alt: ''
+    imageUrl: '',
+    caption: '',
+    serviceType: ''
   });
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [isDragOver, setIsDragOver] = useState(false);
+  const [error, setError] = useState("");
 
   const handleClose = useCallback(() => {
-    console.log('Closing modal...'); // Debug log
-    setFormData({ alt: '' });
-    setSelectedFile(null);
-    setPreviewUrl('');
-    setIsDragOver(false);
-    if (onClose) {
-      console.log('Calling onClose...'); // Debug log
-      onClose();
-    }
+    setFormData({ imageUrl: '', caption: '', serviceType: '' });
+    setError("");
+    if (onClose) onClose();
   }, [onClose]);
-
-  // Add keyboard event listener for Escape key
-  useEffect(() => {
-    const handleEscape = (e) => {
-      if (e.key === 'Escape' && isOpen) {
-        handleClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      // Prevent body scroll when modal is open
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen, handleClose]);
-
-  // Cleanup preview URL when component unmounts or previewUrl changes
-  useEffect(() => {
-    return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-    };
-  }, [previewUrl]);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -61,80 +30,29 @@ const ImageUploadModal = ({ isOpen, onClose }) => {
     });
   };
 
-  const handleFileSelect = (file) => {
-    if (file && file.type.startsWith('image/')) {
-      setSelectedFile(file);
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-      // Show alert for demo purposes
-      alert('File selected: ' + file.name + ' (Upload functionality would be implemented here)');
-    }
-  };
-
-  const handleFileInputChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      handleFileSelect(file);
-    }
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDragOver(true);
-  };
-
-  const handleDragLeave = (e) => {
-    e.preventDefault();
-    setIsDragOver(false);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragOver(false);
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      handleFileSelect(file);
-    }
-    // Show alert for demo purposes
-    alert('File dropped: ' + (file ? file.name : 'No file') + ' (Upload functionality would be implemented here)');
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedFile) return;
+    if (!formData.imageUrl || !formData.caption || !formData.serviceType) return;
 
-    setIsLoading(true);
-    
-    try {
-      // Simulate upload delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Show alert instead of actual upload
-      alert('Image upload functionality would be implemented here');
-      
-      // Reset form and close modal
-      handleClose();
-    } catch (error) {
-      console.error('Upload error:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    setError("");
+    dispatch(
+      uploadImage({
+        imageUrl: formData.imageUrl,
+        caption: formData.caption,
+        serviceType: formData.serviceType,
+        token
+      })
+    )
+      .unwrap()
+      .then(() => {
+        handleClose();
+      })
+      .catch((err) => {
+        setError(err || "Upload failed");
+      });
   };
 
-  const removeFile = () => {
-    setSelectedFile(null);
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
-      setPreviewUrl('');
-    }
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-    // Show alert for demo purposes
-    alert('File removed (Remove functionality would be implemented here)');
-  };
-
-  if (!isOpen) return null;
+  if (!isOpen || !isAuthenticated) return null;
 
   return (
     <AnimatePresence>
@@ -150,7 +68,7 @@ const ImageUploadModal = ({ isOpen, onClose }) => {
           initial={{ scale: 0.8, opacity: 0, y: 50 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.8, opacity: 0, y: 50 }}
-          onClick={(e) => e.stopPropagation()}
+          onClick={e => e.stopPropagation()}
           onKeyDown={(e) => {
             if (e.key === 'Escape') {
               handleClose();
@@ -163,13 +81,12 @@ const ImageUploadModal = ({ isOpen, onClose }) => {
         >
           <div className="modal-header">
             <h2 id="modal-title">Upload New Image</h2>
-            <button 
+            <button
               type="button"
-              className="close-button" 
+              className="close-button"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Close button clicked'); // Debug log
                 handleClose();
               }}
               aria-label="Close modal"
@@ -180,91 +97,76 @@ const ImageUploadModal = ({ isOpen, onClose }) => {
           </div>
 
           <form onSubmit={handleSubmit} className="upload-form">
-            {/* File Upload Area */}
             <div className="form-group">
-              <label htmlFor="alt">
+              <label htmlFor="imageUrl">
                 <FaImage className="input-icon" />
-                Image Description (Optional)
+                Image URL
               </label>
               <input
                 type="text"
-                id="alt"
-                name="alt"
-                value={formData.alt}
+                id="imageUrl"
+                name="imageUrl"
+                value={formData.imageUrl}
                 onChange={handleInputChange}
-                placeholder="Enter image description"
-                disabled={isLoading}
+                placeholder="Enter direct image URL"
+                required
+                disabled={uploadLoading}
               />
             </div>
-
             <div className="form-group">
-              <label>
-                <FaFileUpload className="input-icon" />
-                Select Image File
-              </label>
-              
-              <div 
-                className={`file-upload-area ${isDragOver ? 'drag-over' : ''} ${previewUrl ? 'has-file' : ''}`}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileInputChange}
-                  style={{ display: 'none' }}
-                />
-                
-                {previewUrl ? (
-                  <div className="file-preview">
-                    <img src={previewUrl} alt="Preview" />
-                    <div className="file-info">
-                      <p>{selectedFile.name}</p>
-                      <p>{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
-                    </div>
-                    <button
-                      type="button"
-                      className="remove-file-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removeFile();
-                      }}
-                      title="Remove file"
-                    >
-                      <FaTrash />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="upload-placeholder">
-                    <FaUpload className="upload-icon" />
-                    <p>Click to select or drag and drop an image file</p>
-                    <p className="upload-hint">Supports: JPG, PNG, GIF, WebP (Max 10MB)</p>
-                  </div>
-                )}
-              </div>
+              <label htmlFor="caption">Caption</label>
+              <input
+                type="text"
+                id="caption"
+                name="caption"
+                value={formData.caption}
+                onChange={handleInputChange}
+                placeholder="Enter caption"
+                required
+                disabled={uploadLoading}
+              />
             </div>
+            <div className="form-group">
+              <label htmlFor="serviceType">
+                Service Type
+              </label>
+              <select
+                id="serviceType"
+                name="serviceType"
+                value={formData.serviceType}
+                onChange={handleInputChange}
+                required
+                disabled={uploadLoading}
+              >
+                <option value="">Select service type</option>
+                <option value="Interior Painting">Interior Painting</option>
+                <option value="Exterior Painting">Exterior Painting</option>
+                <option value="Residential Painting">Residential Painting</option>
+                <option value="Commercial Painting">Commercial Painting</option>
+                <option value="Cabinet Refinishing">Cabinet Refinishing</option>
+                <option value="Deck Staining">Deck Staining</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            {(error || uploadError) && (
+              <div className="upload-info">
+                <strong>{error || uploadError}</strong>
+              </div>
+            )}
 
             <button
               type="submit"
               className="upload-button"
-              disabled={isLoading || !selectedFile}
+              disabled={uploadLoading}
             >
-              {isLoading ? 'Uploading...' : (
+              {uploadLoading ? 'Uploading...' : (
                 <>
                   <FaUpload /> Upload Image
                 </>
               )}
             </button>
           </form>
-
-          <div className="upload-info">
-            <p><strong>Note:</strong> This is a demo modal - no actual upload functionality is implemented.</p>
-            <p>For best results, use high-quality images with aspect ratios between 1:1 and 16:9.</p>
-            <p>Maximum file size: 10MB</p>
-          </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>
@@ -272,4 +174,3 @@ const ImageUploadModal = ({ isOpen, onClose }) => {
 };
 
 export default ImageUploadModal;
-

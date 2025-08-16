@@ -1,37 +1,22 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { BACKEND_URL } from "./backend";
 
-// Test user credentials
-const TEST_USER = {
-  email: "admin@painterguys.com",
-  password: "admin123",
-  name: "Admin User",
-  role: "admin"
-};
-
-// Async thunk for login
+// Thunk for login
 export const loginUser = createAsyncThunk(
-  'auth/loginUser',
-  async ({ email, password }, { rejectWithValue }) => {
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      if (email === TEST_USER.email && password === TEST_USER.password) {
-        const token = "test-jwt-token-" + Date.now();
-        return {
-          user: {
-            id: 1,
-            name: TEST_USER.name,
-            email: TEST_USER.email,
-            role: TEST_USER.role
-          },
-          token: token
-        };
-      } else {
-        return rejectWithValue("Invalid email or password");
-      }
-    } catch (error) {
-      return rejectWithValue("Login failed. Please try again.");
+  "auth/loginUser",
+  async ({ email, password }, thunkAPI) => {
+    const res = await fetch(`${BACKEND_URL}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (res.ok && data.token) {
+      // Store token in localStorage for persistence
+      localStorage.setItem("jwtToken", data.token);
+      return { token: data.token };
+    } else {
+      throw new Error(data.message || "Login failed");
     }
   }
 );
@@ -39,19 +24,16 @@ export const loginUser = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    isAuthenticated: false,
-    user: null,
-    token: null,
+    token: localStorage.getItem("jwtToken") || null,
+    isAuthenticated: !!localStorage.getItem("jwtToken"),
     loading: false,
     error: null
   },
   reducers: {
     logout: (state) => {
-      state.isAuthenticated = false;
-      state.user = null;
       state.token = null;
-      state.loading = false;
-      state.error = null;
+      state.isAuthenticated = false;
+      localStorage.removeItem("jwtToken");
     },
     clearError: (state) => {
       state.error = null;
@@ -64,21 +46,18 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        state.isAuthenticated = true;
-        state.user = action.payload.user;
         state.token = action.payload.token;
+        state.isAuthenticated = true;
         state.loading = false;
         state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
-        state.isAuthenticated = false;
-        state.user = null;
-        state.token = null;
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.error.message;
       });
   }
 });
 
 export const { logout, clearError } = authSlice.actions;
 export default authSlice.reducer;
+
