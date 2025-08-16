@@ -3,34 +3,31 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FaStar, FaQuoteLeft, FaTrash, FaUndo, FaTrashAlt, FaCheck, FaPlus } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
-import { deleteReview, restoreReview, permanentlyDeleteReview, toggleJunkView } from '../store/reviewsSlice';
+import { toggleJunkView, fetchReviews, editReview, deleteReview } from '../store/reviewsSlice';
 import './Reviews.css';
 
 const Reviews = () => {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector(state => state.auth);
-  const { activeReviews, deletedReviews, showJunk } = useSelector(state => state.reviews);
+  const { activeReviews, deletedReviews, showJunk, loading, error, editLoading, editError, deleteLoading, deleteError } = useSelector(state => state.reviews);
+  const { token } = useSelector(state => state.auth); // Assuming token is in auth slice
 
   useEffect(() => {
     document.title = 'Customer Reviews | The Painter Guys Pros';
     document.querySelector('meta[name="description"]')?.setAttribute('content', 
       'Customer reviews and testimonials coming soon for The Painter Guys Pros painting services.'
     );
-  }, []);
+    dispatch(fetchReviews());
+  }, [dispatch]);
 
-  const handleDeleteReview = (reviewId) => {
-    // No functionality - button is just for display
-  };
+  // Print reviews to console when they change
+  useEffect(() => {
+    if (activeReviews && activeReviews.length > 0) {
+      console.log("Fetched reviews:", activeReviews);
+    }
+  }, [activeReviews]);
 
   const handleApproveReview = (reviewId) => {
-    // No functionality - button is just for display
-  };
-
-  const handleRestoreReview = (reviewId) => {
-    // No functionality - button is just for display
-  };
-
-  const handlePermanentlyDeleteReview = (reviewId) => {
     // No functionality - button is just for display
   };
 
@@ -41,6 +38,23 @@ const Reviews = () => {
   const handleAddReview = () => {
     // No functionality - button is just for display
   };
+
+  const handleEditReview = (reviewId, currentStatus) => {
+    if (!token) return;
+    dispatch(editReview({ id: reviewId, updates: { isApproved: !currentStatus }, token }));
+  };
+
+  const handleDeleteReview = (reviewId) => {
+    if (!token) return;
+    if (window.confirm("Are you sure you want to delete this review? This action cannot be undone.")) {
+      dispatch(deleteReview({ id: reviewId, token }));
+    }
+  };
+
+  // Filter reviews based on authentication
+  const displayedReviews = isAuthenticated
+    ? activeReviews
+    : activeReviews.filter(review => review.isApproved);
 
   return (
     <div className="reviews-page">
@@ -74,78 +88,82 @@ const Reviews = () => {
           </div>
         )}
 
+        {loading && <div>Loading reviews...</div>}
+        {error && <div>Error: {error}</div>}
         <div className="reviews-grid">
-          {(showJunk ? deletedReviews : activeReviews).map((review, idx) => (
+          {displayedReviews.length === 0 && !loading && !error && (
+            <div>No reviews found.</div>
+          )}
+          {displayedReviews.map((review, idx) => (
             <motion.div
               className="review-card"
-              key={review.name}
+              key={review._id || review.customerName || idx}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.15 }}
             >
               <div className="review-info">
-                <div className="review-name">{review.name}</div>
-                <div className="review-project">{review.project}</div>
-                {showJunk && review.deletedAt && (
-                  <div className="deleted-date">
-                    Deleted: {new Date(review.deletedAt).toLocaleDateString()}
+                <div className="review-name">{review.customerName}</div>
+                {/* Optionally show date */}
+                {review.createdAt && (
+                  <div className="review-date">
+                    {new Date(review.createdAt).toLocaleDateString()}
                   </div>
                 )}
+                {/* If you have a project field, display it; otherwise remove */}
+                {/* <div className="review-project">{review.project}</div> */}
                 <div className="review-stars">
-                  {[...Array(review.rating)].map((_, i) => (
-                    <FaStar key={i} className="star" />
+                  {[...Array(5)].map((_, i) => (
+                    <FaStar
+                      key={i}
+                      className="star"
+                      style={{
+                        color: i < review.rating ? "#FFD700" : "#e4e5e9"
+                      }}
+                    />
                   ))}
                 </div>
-                <div className="review-text">"{review.text}"</div>
-                
+                <div className="review-text">"{review.comment}"</div>
                 {/* Admin-only controls */}
                 {isAuthenticated && (
                   <div className="admin-controls">
-                    {showJunk ? (
-                      <>
-                        <button 
-                          className="admin-btn restore-btn"
-                          onClick={() => handleRestoreReview(review.id)}
-                          title="Restore Review"
-                        >
-                          <FaUndo />
-                        </button>
-                        <button 
-                          className="admin-btn permanent-delete-btn"
-                          onClick={() => handlePermanentlyDeleteReview(review.id)}
-                          title="Permanently Delete Review"
-                        >
-                          <FaTrashAlt />
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button 
-                          className="admin-btn approve-btn"
-                          onClick={() => handleApproveReview(review.id)}
-                          title="Approve Review"
-                        >
-                          <FaCheck />
-                        </button>
-                        <button 
-                          className="admin-btn delete-btn"
-                          onClick={() => handleDeleteReview(review.id)}
-                          title="Delete Review"
-                        >
-                          <FaTrash />
-                        </button>
-                      </>
-                    )}
+                    <button 
+                      className="admin-btn approve-btn"
+                      onClick={() => handleEditReview(review._id, review.isApproved)}
+                      title={review.isApproved ? "Approved (Click to unapprove)" : "Disapproved (Click to approve)"}
+                      disabled={editLoading}
+                      style={{
+                        color: review.isApproved ? "green" : "red",
+                        borderColor: review.isApproved ? "green" : "red"
+                      }}
+                    >
+                      <FaCheck />
+                    </button>
+                    <button
+                      className="admin-btn delete-btn"
+                      onClick={() => handleDeleteReview(review._id)}
+                      title="Delete Review"
+                      disabled={deleteLoading}
+                      style={{
+                        color: "red",
+                        marginLeft: "0.5rem"
+                      }}
+                    >
+                      <FaTrash />
+                    </button>
                   </div>
                 )}
               </div>
             </motion.div>
           ))}
         </div>
+        {editError && <div className="error">Edit error: {editError}</div>}
+        {deleteError && <div className="error">Delete error: {deleteError}</div>}
+        {/* ...existing code... */}
       </section>
     </div>
   );
 };
 
-export default Reviews; 
+export default Reviews;

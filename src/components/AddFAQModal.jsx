@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { addFaq, toggleAddModal } from '../store/faqSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { addFaqAsync, toggleAddModal } from '../store/faqSlice';
 import { FaTimes, FaPlus } from 'react-icons/fa';
 import './FAQModal.css';
 
 const AddFAQModal = () => {
   const dispatch = useDispatch();
+  const token = useSelector(state => state.auth.token); // Get JWT token from Redux
+
   const [formData, setFormData] = useState({
     question: '',
-    answer: ''
+    answer: '',
+    category: '',
+    displayOrder: 1
   });
   const [errors, setErrors] = useState({});
 
@@ -16,7 +20,7 @@ const AddFAQModal = () => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: name === "displayOrder" ? Number(value) : value
     }));
     // Clear error when user starts typing
     if (errors[name]) {
@@ -38,21 +42,34 @@ const AddFAQModal = () => {
       newErrors.answer = 'Answer is required';
     }
     
+    if (!formData.category.trim()) {
+      newErrors.category = 'Category is required';
+    }
+    
+    if (!formData.displayOrder) {
+      newErrors.displayOrder = 'Display order is required';
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (validateForm()) {
-      dispatch(addFaq({
-        question: formData.question.trim(),
-        answer: formData.answer.trim()
+      await dispatch(addFaqAsync({
+        faq: {
+          question: formData.question.trim(),
+          answer: formData.answer.trim(),
+          category: formData.category.trim(),
+          displayOrder: formData.displayOrder
+        },
+        token
       }));
       
       // Reset form
-      setFormData({ question: '', answer: '' });
+      setFormData({ question: '', answer: '', category: '', displayOrder: 1 });
       setErrors({});
       
       // Close modal
@@ -62,7 +79,7 @@ const AddFAQModal = () => {
 
   const handleClose = () => {
     dispatch(toggleAddModal());
-    setFormData({ question: '', answer: '' });
+    setFormData({ question: '', answer: '', category: '', displayOrder: 1 });
     setErrors({});
   };
 
@@ -111,6 +128,43 @@ const AddFAQModal = () => {
             />
             {errors.answer && (
               <span className="faq-error">{errors.answer}</span>
+            )}
+          </div>
+          
+          <div className="faq-form-group">
+            <label htmlFor="category" className="faq-form-label">
+              Category *
+            </label>
+            <input
+              type="text"
+              id="category"
+              name="category"
+              value={formData.category}
+              onChange={handleInputChange}
+              className="faq-form-input"
+              placeholder="Enter the category..."
+              maxLength={100}
+            />
+            {errors.category && (
+              <span className="faq-error">{errors.category}</span>
+            )}
+          </div>
+          
+          <div className="faq-form-group">
+            <label htmlFor="displayOrder" className="faq-form-label">
+              Display Order *
+            </label>
+            <input
+              type="number"
+              id="displayOrder"
+              name="displayOrder"
+              value={formData.displayOrder}
+              onChange={handleInputChange}
+              className="faq-form-input"
+              min={1}
+            />
+            {errors.displayOrder && (
+              <span className="faq-error">{errors.displayOrder}</span>
             )}
           </div>
           

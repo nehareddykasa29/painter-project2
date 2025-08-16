@@ -1,85 +1,142 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { BACKEND_URL } from "./backend"; // Import backend URL
+
+// Async thunk to fetch reviews from backend
+export const fetchReviews = createAsyncThunk(
+  "reviews/fetchReviews",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/reviews/approved`);
+      if (!response.ok) throw new Error("Failed to fetch reviews");
+      return await response.json();
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+// Async thunk to edit a review
+export const editReview = createAsyncThunk(
+  "reviews/editReview",
+  async ({ id, updates, token }, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/admin/reviews/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(updates)
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Failed to edit review");
+      return data;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+// Async thunk to delete a review
+export const deleteReview = createAsyncThunk(
+  "reviews/deleteReview",
+  async ({ id, token }, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/admin/reviews/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Failed to delete review");
+      return id;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
 
 const reviewsSlice = createSlice({
   name: "reviews",
   initialState: {
-    activeReviews: [
-      {
-        id: 1,
-        name: "Michael",
-        project: "Exterior Painting",
-        rating: 5,
-        text: "Excellent work. Did exterior paint for condo association and did interior work,also would recommend them to anyone.Very neat, will use them again."
-      },
-      {
-        id: 2,
-        name: "Kelly",
-        project: "Interior Painting",
-        rating: 5,
-        text: "Sami and his crew were awesome! sami and christy were very responsive and answered all of our questions and concerns. the paint crew was respectable,efficient and showed pride in their work. The cost was reasonable and fair. The entire process was seamless and a pleasure. Thanks Painter guys!"
-      },
-      {
-        id: 3,
-        name: "Jennifer D",
-        project: "Exterior Painting",
-        rating: 5,
-        text: "The painter guys delivered amazing quality work faster than we could have hoped fori sami was very professional, personable and easy to work with. Working with painter guys was a postivie experience and we're thankful we found them!"
-      },
-      {
-        id: 4,
-        name: "Donald S",
-        project: "Exterior Painting",
-        rating: 5,
-        text: "They did an awesome job on our house and shed painting project. Sami was extremely knowledgeable, gave us all info about what they were using, and would give us the best results. his crew was very polite and cleaned up ater every shift. We would recommend them for any painting project."
-      }
-    ],
-    deletedReviews: [], // Junk/trash for deleted reviews
-    showJunk: false
+    activeReviews: [],
+    deletedReviews: [], // Can be removed if not needed elsewhere
+    showJunk: false,
+    loading: false,
+    error: null,
+    editLoading: false,
+    editError: null,
+    deleteLoading: false,
+    deleteError: null
   },
   reducers: {
-    deleteReview: (state, action) => {
-      const reviewId = action.payload;
-      const reviewToDelete = state.activeReviews.find(review => review.id === reviewId);
-      if (reviewToDelete) {
-        state.activeReviews = state.activeReviews.filter(review => review.id !== reviewId);
-        state.deletedReviews.push({
-          ...reviewToDelete,
-          deletedAt: new Date().toISOString()
-        });
-      }
-    },
-    restoreReview: (state, action) => {
-      const reviewId = action.payload;
-      const reviewToRestore = state.deletedReviews.find(review => review.id === reviewId);
-      if (reviewToRestore) {
-        state.deletedReviews = state.deletedReviews.filter(review => review.id !== reviewId);
-        const { deletedAt, ...reviewWithoutDeletedAt } = reviewToRestore;
-        state.activeReviews.push(reviewWithoutDeletedAt);
-      }
-    },
-    permanentlyDeleteReview: (state, action) => {
-      const reviewId = action.payload;
-      state.deletedReviews = state.deletedReviews.filter(review => review.id !== reviewId);
-    },
     toggleJunkView: (state) => {
       state.showJunk = !state.showJunk;
     },
     addReview: (state, action) => {
       const newReview = {
         ...action.payload,
-        id: Date.now() // Simple ID generation
+        id: Date.now()
       };
       state.activeReviews.push(newReview);
     }
+    // Removed: deleteReview, restoreReview, permanentlyDeleteReview
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchReviews.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchReviews.fulfilled, (state, action) => {
+        state.loading = false;
+        state.activeReviews = action.payload;
+      })
+      .addCase(fetchReviews.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(editReview.pending, (state) => {
+        state.editLoading = true;
+        state.editError = null;
+      })
+      .addCase(editReview.fulfilled, (state, action) => {
+        state.editLoading = false;
+        state.editError = null;
+        // Update the review in activeReviews
+        const idx = state.activeReviews.findIndex(r => r._id === action.payload._id);
+        if (idx !== -1) {
+          state.activeReviews[idx] = action.payload;
+        }
+      })
+      .addCase(editReview.rejected, (state, action) => {
+        state.editLoading = false;
+        state.editError = action.payload;
+      })
+      .addCase(deleteReview.pending, (state) => {
+        state.deleteLoading = true;
+        state.deleteError = null;
+      })
+      .addCase(deleteReview.fulfilled, (state, action) => {
+        state.deleteLoading = false;
+        state.deleteError = null;
+        // Remove the deleted review from activeReviews
+        state.activeReviews = state.activeReviews.filter(r => r._id !== action.payload);
+      })
+      .addCase(deleteReview.rejected, (state, action) => {
+        state.deleteLoading = false;
+        state.deleteError = action.payload;
+      });
   }
 });
 
 export const { 
-  deleteReview, 
-  restoreReview, 
-  permanentlyDeleteReview, 
   toggleJunkView,
   addReview 
 } = reviewsSlice.actions;
 
 export default reviewsSlice.reducer;
+
+
+
