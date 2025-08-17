@@ -5,6 +5,8 @@ import authReducer from './authSlice';
 import reviewsReducer from './reviewsSlice';
 import galleryReducer from './gallerySlice';
 import faqReducer from './faqSlice';
+import usersReducer from './usersSlice';
+import bookingReducer from './bookingSlice';
 
 // Root persist config
 const persistConfig = {
@@ -19,7 +21,9 @@ const rootReducer = {
   auth: authReducer,
   reviews: reviewsReducer,
   gallery: galleryReducer,
-  faq: faqReducer
+  faq: faqReducer,
+  users: usersReducer,
+  booking: bookingReducer // use merged slice
 };
 
 // Persist the entire root reducer

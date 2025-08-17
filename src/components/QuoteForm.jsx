@@ -13,9 +13,20 @@ import {
   FaTrash,
   FaImage
 } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAvailability, submitQuote } from '../store/bookingSlice';
+import { BACKEND_URL } from '../store/backend';
 import './QuoteForm.css';
 
 const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
+  const dispatch = useDispatch();
+  const appointmentAvailability = useSelector(state => state.booking.availability);
+  const appointmentLoading = useSelector(state => state.booking.appointmentLoading);
+  const appointmentError = useSelector(state => state.booking.appointmentError);
+  const quoteSubmitting = useSelector(state => state.booking.quoteSubmitting);
+  const quoteSuccess = useSelector(state => state.booking.quoteSuccess);
+  const quoteError = useSelector(state => state.booking.quoteError);
+
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     email: initialData?.email || '',
@@ -34,7 +45,6 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
 
   const [files, setFiles] = useState([]);
   const [errors, setErrors] = useState({});
-  const [submitted, setSubmitted] = useState(false);
 
   // Update form data when initialData changes
   useEffect(() => {
@@ -56,6 +66,15 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
       });
     }
   }, [initialData]);
+
+  useEffect(() => {
+    if (appointmentAvailability) {
+      console.log('Appointment availability:', appointmentAvailability);
+    }
+    if (appointmentError) {
+      console.error('Appointment availability error:', appointmentError);
+    }
+  }, [appointmentAvailability, appointmentError]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -109,49 +128,49 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
-    const submitData = new FormData();
-    
-    // Append form data
-    Object.keys(formData).forEach(key => {
-      if (key === 'appointmentDate' && formData.appointmentDate) {
-        submitData.append('appointmentDate', formData.appointmentDate.toISOString());
-      } else {
-        submitData.append(key, formData[key]);
-      }
-    });
-    
-    // Append files
-    files.forEach((file, index) => {
-      submitData.append('images', file);
-    });
+    // Find the slot index for the selected time
+    const slotIndex = allPossibleSlots.findIndex(slot => slot === formData.appointmentSlot);
 
-    try {
-      await onSubmit(submitData);
-      setSubmitted(true);
-      setFormData({
-        name: initialData?.name || '',
-        email: initialData?.email || '',
-        phone: initialData?.phone || '',
-        address: initialData?.address || '',
-        serviceType: initialData?.serviceType || '',
-        projectType: initialData?.projectType || '',
-        rooms: initialData?.rooms || '',
-        squareFootage: initialData?.squareFootage || '',
-        timeframe: initialData?.timeframe || '',
-        budget: initialData?.budget || '',
-        description: initialData?.description || '',
-        appointmentDate: initialData?.appointmentDate ? new Date(initialData.appointmentDate) : null,
-        appointmentSlot: initialData?.appointmentSlot || '',
-      });
-      setFiles([]);
-    } catch (error) {
-      console.error('Form submission error:', error);
-    }
+    // Format appointmentDate as "YYYY-MM-DD"
+    const appointmentDateStr = formatDate(formData.appointmentDate);
+
+    // Build the JSON body
+    const quoteBody = {
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      address: formData.address,
+      serviceType: formData.serviceType,
+      projectType: formData.projectType,
+      timeframe: formData.timeframe,
+      budget: formData.budget,
+      description: formData.description,
+      appointmentDate: appointmentDateStr,
+      appointmentSlot: slotIndex
+    };
+
+    dispatch(submitQuote(quoteBody));
+    setFormData({
+      name: initialData?.name || '',
+      email: initialData?.email || '',
+      phone: initialData?.phone || '',
+      address: initialData?.address || '',
+      serviceType: initialData?.serviceType || '',
+      projectType: initialData?.projectType || '',
+      rooms: initialData?.rooms || '',
+      squareFootage: initialData?.squareFootage || '',
+      timeframe: initialData?.timeframe || '',
+      budget: initialData?.budget || '',
+      description: initialData?.description || '',
+      appointmentDate: initialData?.appointmentDate ? new Date(initialData.appointmentDate) : null,
+      appointmentSlot: initialData?.appointmentSlot || '',
+    });
+    setFiles([]);
   };
 
   const handleChange = (e) => {
@@ -195,7 +214,95 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
     setFiles(prev => prev.filter((_, i) => i !== index));
   };
 
-  if (submitted) {
+  // Replace fetchAvailability with Redux thunk dispatch
+  const handleAvailabilityFetch = () => {
+    dispatch(fetchAvailability());
+  };
+
+  // Helper to format date to YYYY-MM-DD for comparison
+  const formatDate = date =>
+    date
+      ? date.getFullYear() +
+        '-' +
+        String(date.getMonth() + 1).padStart(2, '0') +
+        '-' +
+        String(date.getDate()).padStart(2, '0')
+      : null;
+
+  const selectedDateStr = formatDate(formData.appointmentDate);
+
+  // Convert keys of appointmentAvailability to formatted strings for matching
+  let blockedIndexes = [];
+  if (
+    appointmentAvailability &&
+    formData.appointmentDate
+  ) {
+    Object.keys(appointmentAvailability).forEach(key => {
+      // key is a Date object, so format it
+      let keyStr;
+      if (typeof key === 'string' && key.includes('-')) {
+        keyStr = key;
+      } else if (key instanceof Date) {
+        keyStr = formatDate(key);
+      } else {
+        // Try to parse if it's not a string or Date
+        try {
+          keyStr = formatDate(new Date(key));
+        } catch {
+          keyStr = key;
+        }
+      }
+      if (keyStr === selectedDateStr) {
+        blockedIndexes = appointmentAvailability[key];
+      }
+    });
+  }
+
+  const allPossibleSlots = [
+    '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'
+  ];
+
+  let availableSlots = [];
+  if (selectedDateStr) {
+    availableSlots = allPossibleSlots.filter((_, idx) => blockedIndexes.indexOf(idx) === -1);
+  }
+
+  const minDate = new Date();
+  const maxDate = new Date();
+  maxDate.setFullYear(maxDate.getFullYear() + 1);
+
+  if (quoteSubmitting) {
+    return (
+      <motion.div
+        className="form-success"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        style={{ textAlign: 'center', padding: '40px 0' }}
+      >
+        <div className="spinner" style={{
+          width: '40px',
+          height: '40px',
+          border: '5px solid #eee',
+          borderTop: '5px solid #007bff',
+          borderRadius: '50%',
+          margin: '0 auto 16px auto',
+          animation: 'spin 1s linear infinite'
+        }} />
+        <div style={{ fontSize: '18px', color: '#007bff' }}>Submitting your quote...</div>
+        <style>
+          {`
+            @keyframes spin {
+              0% { transform: rotate(0deg);}
+              100% { transform: rotate(360deg);}
+            }
+          `}
+        </style>
+      </motion.div>
+    );
+  }
+
+  if (quoteSuccess) {
     return (
       <motion.div 
         className="form-success"
@@ -208,7 +315,7 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
         <p>Thank you for your quote request. We'll review your information and contact you within 24 hours to schedule your free estimate.</p>
         <button 
           className="btn btn-primary"
-          onClick={() => setSubmitted(false)}
+          onClick={() => window.location.reload()}
         >
           Submit Another Quote
         </button>
@@ -430,14 +537,50 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
         <div className="form-row">
           <div className="form-group">
             <label className="form-label">Select Date *</label>
-            <DatePicker
-              selected={formData.appointmentDate}
-              onChange={handleDateChange}
-              minDate={new Date()}
-              placeholderText="Choose a date"
-              className={`form-control ${errors.appointmentDate ? 'error' : ''}`}
-              dateFormat="MMMM d, yyyy"
-            />
+            <div style={{ position: 'relative' }}>
+              <DatePicker
+                selected={formData.appointmentDate}
+                onChange={handleDateChange}
+                minDate={minDate}
+                maxDate={maxDate}
+                placeholderText="Choose a date"
+                className={`form-control ${errors.appointmentDate ? 'error' : ''}`}
+                dateFormat="yyyy-MM-dd"
+                onFocus={handleAvailabilityFetch}
+                disabled={appointmentLoading}
+              />
+              {appointmentLoading && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 0, left: 0, right: 0, bottom: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'rgba(255,255,255,0.7)',
+                    zIndex: 2,
+                    borderRadius: '4px'
+                  }}
+                >
+                  <div className="spinner" style={{
+                    width: '32px',
+                    height: '32px',
+                    border: '4px solid #eee',
+                    borderTop: '4px solid #007bff',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite'
+                  }} />
+                  <style>
+                    {`
+                      @keyframes spin {
+                        0% { transform: rotate(0deg);}
+                        100% { transform: rotate(360deg);}
+                      }
+                    `}
+                  </style>
+                </div>
+              )}
+            </div>
             {errors.appointmentDate && <div className="form-error">{errors.appointmentDate}</div>}
           </div>
           <div className="form-group">
@@ -447,17 +590,18 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
               value={formData.appointmentSlot}
               onChange={handleChange}
               className={`form-control ${errors.appointmentSlot ? 'error' : ''}`}
+              disabled={!formData.appointmentDate || availableSlots.length === 0}
             >
               <option value="">Select a time slot</option>
-              <option value="9:00 AM - 10:00 AM">9:00 AM - 10:00 AM</option>
-              <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
-              <option value="11:00 AM - 12:00 PM">11:00 AM - 12:00 PM</option>
-              <option value="12:00 PM - 1:00 PM">12:00 PM - 1:00 PM</option>
-              <option value="1:00 PM - 2:00 PM">1:00 PM - 2:00 PM</option>
-              <option value="2:00 PM - 3:00 PM">2:00 PM - 3:00 PM</option>
-              <option value="3:00 PM - 4:00 PM">3:00 PM - 4:00 PM</option>
-              <option value="4:00 PM - 5:00 PM">4:00 PM - 5:00 PM</option>
+              {availableSlots.length > 0 && availableSlots.map(slot => (
+                <option key={slot} value={slot}>{slot}</option>
+              ))}
             </select>
+            {availableSlots.length === 0 && formData.appointmentDate && (
+              <div className="form-error" style={{ marginTop: '8px' }}>
+                No available time slots for the selected date. Please choose another date.
+              </div>
+            )}
             {errors.appointmentSlot && <div className="form-error">{errors.appointmentSlot}</div>}
           </div>
         </div>
@@ -520,4 +664,4 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
   );
 };
 
-export default QuoteForm; 
+export default QuoteForm;

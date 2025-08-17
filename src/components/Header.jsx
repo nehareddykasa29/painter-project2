@@ -98,7 +98,6 @@ const Header = () => {
           </Link>
           {isAuthenticated ? (
             <div className="admin-user-info">
-              <span className="admin-welcome">Welcome, {user?.name}</span>
               <button onClick={handleLogout} className="btn btn-logout btn-small">
                 Logout
               </button>
