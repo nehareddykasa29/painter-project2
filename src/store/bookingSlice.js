@@ -52,6 +52,28 @@ export const fetchQuotes = createAsyncThunk(
   }
 );
 
+// Thunk for updating a quote (PUT)
+export const updateQuote = createAsyncThunk(
+  'booking/updateQuote',
+  async ({ id, data }, { getState, rejectWithValue }) => {
+    try {
+      const token = getState().auth?.token;
+      const response = await fetch(`${BACKEND_URL}/api/admin/quotes/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error('Failed to update quote');
+      return await response.json();
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 const bookingSlice = createSlice({
   name: 'booking',
   initialState: {
@@ -65,6 +87,9 @@ const bookingSlice = createSlice({
     quotes: [],
     quotesLoading: false,
     quotesError: null,
+    updateLoading: false,
+    updateError: null,
+    updateSuccess: false,
   },
   reducers: {},
   extraReducers: builder => {
@@ -111,6 +136,21 @@ const bookingSlice = createSlice({
         state.quotesLoading = false;
         state.quotesError = action.payload;
         state.quotes = [];
+      })
+      // Update quote
+      .addCase(updateQuote.pending, state => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateSuccess = false;
+      })
+      .addCase(updateQuote.fulfilled, (state, action) => {
+        state.updateLoading = false;
+        state.updateSuccess = true;
+      })
+      .addCase(updateQuote.rejected, (state, action) => {
+        state.updateLoading = false;
+        state.updateError = action.payload;
+        state.updateSuccess = false;
       });
   }
 });

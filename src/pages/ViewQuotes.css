@@ -40,6 +40,75 @@
   opacity: 0.7;
 }
 
+.quotes-list-ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.quotes-list-item {
+  cursor: pointer;
+  padding: 8px;
+  transition: background 0.2s;
+}
+
+.quotes-list-item.selected {
+  background: #f0f0f0;
+  font-weight: bold;
+}
+
+.quote-details-box {
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.edit-btn,
+.save-btn,
+.cancel-btn {
+  margin-top: 16px;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.edit-btn {
+  background: #1976d2;
+  color: white;
+}
+
+.save-btn {
+  background: #388e3c;
+  color: white;
+  margin-right: 10px;
+}
+
+.cancel-btn {
+  background: #aaa;
+  color: white;
+}
+
+.edit-form .form-group {
+  margin-bottom: 10px;
+}
+
+.edit-form label {
+  font-weight: 500;
+}
+
+.edit-form input[type="text"],
+.edit-form input[type="number"],
+.edit-form input[type="date"] {
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin-left: 4px;
+}
+
 @media (max-width: 768px) {
   .hero-content h1 {
     font-size: 2.5rem;
