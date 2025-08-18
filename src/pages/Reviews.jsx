@@ -160,7 +160,85 @@ const Reviews = () => {
         </div>
         {editError && <div className="error">Edit error: {editError}</div>}
         {deleteError && <div className="error">Delete error: {deleteError}</div>}
-        {/* ...existing code... */}
+      </section>
+
+      {/* Review Form Section */}
+      <section className="review-form-section">
+        <div className="container">
+          <motion.div 
+            className="review-form-container"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <h2>Share Your Experience</h2>
+            <p>We'd love to hear about your experience with The Painter Guys Pros!</p>
+            
+            <form className="review-form">
+              <div className="form-group">
+                <label htmlFor="name">Your Name *</label>
+                <input 
+                  type="text" 
+                  id="name" 
+                  name="name" 
+                  placeholder="Enter your full name"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="serviceType">Type of Service *</label>
+                <select id="serviceType" name="serviceType" required>
+                  <option value="">Select a service</option>
+                  <option value="interior-painting">Interior Painting</option>
+                  <option value="exterior-painting">Exterior Painting</option>
+                  <option value="commercial-painting">Commercial Painting</option>
+                  <option value="residential-painting">Residential Painting</option>
+                  <option value="cabinet-refinishing">Cabinet Refinishing</option>
+                  <option value="deck-fence">Deck & Fence Painting</option>
+                  <option value="power-washing">Power Washing</option>
+                  <option value="vinyl-aluminum">Vinyl & Aluminum Painting</option>
+                  <option value="textured-walls">Textured Walls</option>
+                  <option value="wallpaper-removal">Wallpaper Removal</option>
+                  <option value="woodwork-trim">Woodwork & Trim</option>
+                  <option value="stucco-repair">Stucco Repair</option>
+                  <option value="color-consultation">Color Consultation</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="review">Your Review *</label>
+                <textarea 
+                  id="review" 
+                  name="review" 
+                  placeholder="Tell us about your experience with our services..."
+                  rows="5"
+                  required
+                ></textarea>
+              </div>
+
+              <div className="form-group">
+                <label>Rating *</label>
+                <div className="star-rating">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <FaStar
+                      key={star}
+                      className="star-input"
+                      style={{ color: "#e4e5e9" }}
+                    />
+                  ))}
+                  <span className="rating-text">Click to rate</span>
+                </div>
+              </div>
+
+              <button type="submit" className="btn btn-primary submit-review-btn">
+                Submit Review
+              </button>
+            </form>
+          </motion.div>
+        </div>
       </section>
     </div>
   );
