@@ -255,3 +255,161 @@
     min-height: 220px;
   }
 } 
+
+/* Review Form Section */
+.review-form-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: var(--spacing-xl) 0;
+  margin-top: var(--spacing-xl);
+}
+
+.review-form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+.review-form-container h2 {
+  text-align: center;
+  color: var(--primary-blue-dark);
+  font-size: 2.5rem;
+  margin-bottom: var(--spacing-md);
+  font-weight: 700;
+}
+
+.review-form-container p {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: var(--spacing-xl);
+}
+
+.review-form {
+  background: var(--white);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: var(--spacing-lg);
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: var(--spacing-sm);
+  font-weight: 600;
+  color: var(--primary-blue-dark);
+  font-size: 1rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 2px solid #e9ecef;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background: var(--white);
+}
+
+.form-group select {
+  padding: 0.75rem var(--spacing-md);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(10, 91, 132, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.star-rating {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.star-input {
+  font-size: 2rem;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.star-input:hover {
+  color: var(--cta-yellow) !important;
+  transform: scale(1.1);
+}
+
+.rating-text {
+  margin-left: var(--spacing-md);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.submit-review-btn {
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: var(--spacing-md);
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-light) 100%);
+  border: none;
+  color: var(--white);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(10, 91, 132, 0.2);
+}
+
+.submit-review-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(10, 91, 132, 0.3);
+  background: linear-gradient(135deg, var(--primary-blue-dark) 0%, var(--primary-blue) 100%);
+}
+
+.submit-review-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design for Review Form */
+@media (max-width: 768px) {
+  .review-form-container h2 {
+    font-size: 2rem;
+  }
+  
+  .review-form {
+    padding: var(--spacing-lg);
+  }
+  
+  .star-input {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .review-form-container {
+    padding: 0 var(--spacing-md);
+  }
+  
+  .review-form {
+    padding: var(--spacing-md);
+  }
+  
+  .star-input {
+    font-size: 1.5rem;
+  }
+  
+  .rating-text {
+    font-size: 0.8rem;
+  }
+}
