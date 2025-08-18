@@ -215,6 +215,88 @@ const Header = () => {
           </button>
         </div>
       </header>
+
+      {/* Mobile Navigation */}
+      <nav className={`mobile-nav ${isMenuOpen ? 'open' : ''}`}>
+        <ul className="mobile-nav-links">
+          {navLinks.map((link) => (
+            <li key={link.path}>
+              {link.dropdown ? (
+                <>
+                  <button 
+                    className="dropdown-toggle"
+                    onClick={toggleResDropdown}
+                  >
+                    {link.label}
+                    <FaChevronDown className={`dropdown-icon ${resDropdownOpen ? 'rotated' : ''}`} />
+                  </button>
+                  <div className={`dropdown-menu ${resDropdownOpen ? 'open' : ''}`}>
+                    {/* Exterior Services Section */}
+                    <div className="mobile-dropdown-section">
+                      <div className="mobile-dropdown-header">
+                        <FaPaintBrush className="dropdown-icon-small" />
+                        <h5>{residentialDropdown.exterior.title}</h5>
+                      </div>
+                      <ul className="mobile-dropdown-services">
+                        <li>
+                          <Link to={residentialDropdown.exterior.mainLink}>
+                            View All Exterior Services
+                          </Link>
+                        </li>
+                        {residentialDropdown.exterior.services.map((item) => (
+                          <li key={item.path}>
+                            <Link to={item.path}>{item.label}</Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Interior Services Section */}
+                    <div className="mobile-dropdown-section">
+                      <div className="mobile-dropdown-header">
+                        <FaHome className="dropdown-icon-small" />
+                        <h5>{residentialDropdown.interior.title}</h5>
+                      </div>
+                      <ul className="mobile-dropdown-services">
+                        <li>
+                          <Link to={residentialDropdown.interior.mainLink}>
+                            View All Interior Services
+                          </Link>
+                        </li>
+                        {residentialDropdown.interior.services.map((item) => (
+                          <li key={item.path}>
+                            <Link to={item.path}>{item.label}</Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <Link to={link.path} className={location.pathname === link.path ? 'active' : ''}>
+                  {link.label}
+                </Link>
+              )}
+            </li>
+          ))}
+          
+          {/* Admin Navigation Links for Mobile */}
+          {isAuthenticated && adminNavLinks.map((link) => (
+            <li key={link.path}>
+              <Link to={link.path} className={location.pathname === link.path ? 'active' : ''}>
+                {link.label}
+              </Link>
+            </li>
+          ))}
+          
+          {/* Mobile CTA Button */}
+          <li>
+            <Link to="/free-quote" className="btn btn-cta">
+              Book Free Visit
+            </Link>
+          </li>
+        </ul>
+      </nav>
       
       {/* Admin Login Modal */}
       <AdminLoginModal 
