@@ -57,6 +57,27 @@ export const deleteReview = createAsyncThunk(
   }
 );
 
+// Thunk to submit a new review
+export const submitReview = createAsyncThunk(
+  "reviews/submitReview",
+  async (reviewData, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/reviews`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(reviewData)
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Failed to submit review");
+      return data;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 const reviewsSlice = createSlice({
   name: "reviews",
   initialState: {
@@ -68,7 +89,10 @@ const reviewsSlice = createSlice({
     editLoading: false,
     editError: null,
     deleteLoading: false,
-    deleteError: null
+    deleteError: null,
+    submitLoading: false,
+    submitError: null,
+    submitSuccess: false
   },
   reducers: {
     toggleJunkView: (state) => {
@@ -127,6 +151,22 @@ const reviewsSlice = createSlice({
       .addCase(deleteReview.rejected, (state, action) => {
         state.deleteLoading = false;
         state.deleteError = action.payload;
+      })
+      .addCase(submitReview.pending, (state) => {
+        state.submitLoading = true;
+        state.submitError = null;
+        state.submitSuccess = false;
+      })
+      .addCase(submitReview.fulfilled, (state, action) => {
+        state.submitLoading = false;
+        state.submitSuccess = true;
+        // Optionally add the new review to activeReviews
+        // state.activeReviews.push(action.payload);
+      })
+      .addCase(submitReview.rejected, (state, action) => {
+        state.submitLoading = false;
+        state.submitError = action.payload;
+        state.submitSuccess = false;
       });
   }
 });
