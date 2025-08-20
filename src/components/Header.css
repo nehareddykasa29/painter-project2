@@ -158,6 +158,25 @@
   transition: all var(--transition-normal);
 }
 
+.header.header-authenticated {
+  background-color: #0A5B84; /* Example: primary blue */
+}
+
+.header.header-authenticated .logo-text h1,
+.header.header-authenticated .nav-links a,
+.header.header-authenticated .nav-links a.active,
+.header.header-authenticated .nav-links a:hover {
+  color: #fff;
+}
+
+.header.header-authenticated .nav-links a.active::after {
+  background-color: #F4C542;
+}
+
+.header.header-authenticated .mobile-menu-toggle {
+  color: #fff;
+}
+
 .header.scrolled {
   box-shadow: var(--shadow-md);
 }
@@ -895,4 +914,4 @@
   .dropdown-column:last-child {
     border-bottom: none;
   }
-} 
+}

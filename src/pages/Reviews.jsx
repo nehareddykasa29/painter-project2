@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FaStar, FaQuoteLeft, FaTrash, FaUndo, FaTrashAlt, FaCheck, FaPlus } from 'react-icons/fa';
@@ -20,6 +20,9 @@ const Reviews = () => {
   const submitLoading = useSelector(state => state.reviews.submitLoading);
   const submitError = useSelector(state => state.reviews.submitError);
   const submitSuccess = useSelector(state => state.reviews.submitSuccess);
+
+  // Ref for scrolling to review form
+  const reviewFormRef = useRef(null);
 
   useEffect(() => {
     document.title = 'Customer Reviews | The Painter Guys Pros';
@@ -77,9 +80,15 @@ const Reviews = () => {
           >
             <h1>Customer Reviews</h1>
             <p>See what our happy customers are saying about The Painter Guys Pros!</p>
-            <Link to="/free-quote" className="btn btn-primary" style={{ marginBottom: '2rem' }}>
-              Get Free Quote
-            </Link>
+            <button
+              className="btn btn-primary"
+              style={{ marginBottom: '2rem' }}
+              onClick={() => {
+                reviewFormRef.current?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
+              Write a Review
+            </button>
           </motion.div>
         </div>
       </section>
@@ -172,7 +181,7 @@ const Reviews = () => {
       </section>
 
       {/* Review Form Section */}
-      <section className="review-form-section">
+      <section className="review-form-section" ref={reviewFormRef}>
         <div className="container">
           <motion.div 
             className="review-form-container"
