@@ -2,12 +2,12 @@ import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FaPaintBrush, FaUsers, FaAward } from 'react-icons/fa';
-import paintbrushIcon from '../assets/paintbrush.png';
-import ourJourneyImage from '../assets/our-journey.png';
-import qualityCraftsmanshipIcon from '../assets/quality-craftmenship.png';
-import customerFirstIcon from '../assets/customer-first.png';
-import integrityTransparencyIcon from '../assets/integrity-and-transparency.png';
-import sustainablePracticesIcon from '../assets/sustainable-practices.png';
+import paintbrushIcon from '../../public/assets/paintbrush.png';
+import ourJourneyImage from '../../public/assets/our-journey.png';
+import qualityCraftsmanshipIcon from '../../public/assets/quality-craftmenship.png';
+import customerFirstIcon from '../../public/assets/customer-first.png';
+import integrityTransparencyIcon from '../../public/assets/integrity-and-transparency.png';
+import sustainablePracticesIcon from '../../public/assets/sustainable-practices.png';
 import './About.css';
 
 const About = () => {

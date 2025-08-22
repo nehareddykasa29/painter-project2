@@ -281,6 +281,19 @@
   color: #0A5B84;
 }
 
+.dropdown-trigger {
+  color: var(--charcoal);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: color var(--transition-normal);
+  cursor: pointer;
+}
+
+.dropdown-trigger:hover {
+  color: #0A5B84;
+}
+
 .nav-links a.active {
   color: #0A5B84;
   background-color: rgba(80, 125, 188, 0.15);

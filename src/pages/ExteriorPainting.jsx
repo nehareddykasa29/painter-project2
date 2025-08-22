@@ -42,6 +42,17 @@ const reviews = [
 
 const ExteriorPainting = () => {
   const [currentReview, setCurrentReview] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [lastHoverTime, setLastHoverTime] = useState(0);
+  const [isHovering, setIsHovering] = useState(false);
+  
+  const transformServices = [
+    { image: "/assets/full-home-painting.png", title: "Full Home Painting" },
+    { image: "/assets/deck-and-fence-finishing.png", title: "Deck & Fence Finishes" },
+    { image: "/assets/vinyl-and-aluminium-painting.png", title: "Vinyl & Aluminum Painting" },
+    { image: "/assets/powerwash-and-surfaceprep.png", title: "Power Washing & Surface Prep" }
+  ];
 
   useEffect(() => {
     document.title = 'Exterior Painting | The Painter Guys Pros';
@@ -50,13 +61,77 @@ const ExteriorPainting = () => {
     );
   }, []);
 
+  // Handle screen size changes
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth <= 700);
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
   const nextReview = () => setCurrentReview((prev) => (prev + 1) % reviews.length);
   const prevReview = () => setCurrentReview((prev) => (prev - 1 + reviews.length) % reviews.length);
+
+  const goToSlide = (index) => {
+    const maxSlides = isMobile ? transformServices.length - 1 : transformServices.length - 3;
+    if (index <= maxSlides) {
+      setCurrentSlide(index);
+    }
+  };
+
+  const goToPrevSlide = () => {
+    setCurrentSlide((prev) => prev > 0 ? prev - 1 : 0);
+  };
+
+  const goToNextSlide = () => {
+    const maxSlides = isMobile ? transformServices.length - 1 : transformServices.length - 3;
+    setCurrentSlide((prev) => prev < maxSlides ? prev + 1 : maxSlides);
+  };
+
+  // Mouse hover navigation with throttling
+  const handleMouseMove = (event) => {
+    const now = Date.now();
+    if (now - lastHoverTime < 1000) return; // Throttle to prevent rapid navigation
+    
+    const sliderElement = event.currentTarget;
+    const rect = sliderElement.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const sliderWidth = rect.width;
+    const leftZone = sliderWidth * 0.2; // Left 20% of slider
+    const rightZone = sliderWidth * 0.8; // Right 80% of slider
+    
+    if (mouseX < leftZone) {
+      setLastHoverTime(now);
+      goToPrevSlide();
+    } else if (mouseX > rightZone) {
+      setLastHoverTime(now);
+      goToNextSlide();
+    }
+  };
+
+  // Auto-play slider (paused when hovering)
+  useEffect(() => {
+    if (isHovering) return; // Don't auto-play when user is hovering
+    
+    const maxSlides = isMobile ? transformServices.length - 1 : transformServices.length - 3;
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => {
+        const nextSlide = prev + 1;
+        return nextSlide > maxSlides ? 0 : nextSlide;
+      });
+    }, 4000); // Change slide every 4 seconds
+
+    return () => clearInterval(interval);
+  }, [transformServices.length, isMobile, isHovering]);
 
   return (
     <div className="exterior-painting-page">
       <section className="exterior-hero">
-        <img src="/src/assets/exterior-hero.png" alt="Exterior Painting Hero" className="exterior-hero-img" />
+        <img src="/assets/exterior-hero.png" alt="Exterior Painting Hero" className="exterior-hero-img" />
         <div className="exterior-hero-content">
           <h1>Exterior Painting That Protects & Impresses</h1>
           <p>Boost curb appeal and protect your home with long-lasting, expert-applied exterior paint.</p>
@@ -74,7 +149,7 @@ const ExteriorPainting = () => {
           <div className="investment-grid">
             <div className="investment-card">
               <div className="card-image">
-                <img src="/src/assets/color-experts-at-work.png" alt="Color Experts at Work" />
+                <img src="/assets/color-experts-at-work.png" alt="Color Experts at Work" />
               </div>
               <div className="card-content">
                 <h3>Color Experts at Work</h3>
@@ -84,7 +159,7 @@ const ExteriorPainting = () => {
 
             <div className="investment-card">
               <div className="card-image">
-                <img src="/src/assets/premium-paint-brands.png" alt="Premium Paint Brands" />
+                <img src="/assets/premium-paint-brands.png" alt="Premium Paint Brands" />
               </div>
               <div className="card-content">
                 <h3>Premium Paint Brands</h3>
@@ -94,7 +169,7 @@ const ExteriorPainting = () => {
 
             <div className="investment-card">
               <div className="card-image">
-                <img src="/src/assets/on-time-on-budget.png" alt="On-Time, On-Budget" />
+                <img src="/assets/on-time-on-budget.png" alt="On-Time, On-Budget" />
               </div>
               <div className="card-content">
                 <h3>On-Time, On-Budget</h3>
@@ -104,7 +179,7 @@ const ExteriorPainting = () => {
 
             <div className="investment-card">
               <div className="card-image">
-                <img src="/src/assets/clean-and-respectful.png" alt="Clean & Respectful" />
+                <img src="/assets/clean-and-respectful.png" alt="Clean & Respectful" />
               </div>
               <div className="card-content">
                 <h3>Clean & Respectful</h3>
@@ -128,71 +203,43 @@ const ExteriorPainting = () => {
             <p>From living room to detailed trim work, our exterior painting services cover it all. Explore what we offer -- crafted to match your vision</p>
           </motion.div>
           
-          <div className="transform-cards">
-            <motion.div 
-              className="transform-card"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
-              <div className="transform-card-image">
-                <img src="/src/assets/full-home-painting.png" alt="Full Home Painting" />
-                <div className="transform-card-overlay">
-                  <h3>Full Home Painting</h3>
-                </div>
-              </div>
-            </motion.div>
-            
-            <motion.div 
-              className="transform-card"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <div className="transform-card-image">
-                <img src="/src/assets/deck-and-fence-finishing.png" alt="Deck & Fence Finishes" />
-                <div className="transform-card-overlay">
-                  <h3>Deck & Fence Finishes</h3>
-                </div>
-              </div>
-            </motion.div>
-            
-            <motion.div 
-              className="transform-card"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-            >
-              <div className="transform-card-image">
-                <img src="/src/assets/vinyl-and-aluminium-painting.png" alt="Vinyl & Aluminum Painting" />
-                <div className="transform-card-overlay">
-                  <h3>Vinyl & Aluminum Painting</h3>
-                </div>
-              </div>
-            </motion.div>
-            
-            <motion.div 
-              className="transform-card"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              <div className="transform-card-image">
-                <img src="/src/assets/powerwash-and-surfaceprep.png" alt="Power Washing & Surface Prep" />
-                <div className="transform-card-overlay">
-                  <h3>Power Washing & Surface Prep</h3>
-                </div>
-              </div>
-            </motion.div>
+          <div 
+            className="transform-slider-wrapper" 
+            onMouseMove={handleMouseMove}
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
+          >
+            <div className="transform-cards-slider" style={{ transform: `translateX(-${currentSlide * (isMobile ? 50 : 25)}%)` }}>
+              {transformServices.map((service, index) => (
+                <motion.div 
+                  key={index}
+                  className="transform-card"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                >
+                  <div className="transform-card-image">
+                    <img src={service.image} alt={service.title} />
+                    <div className="transform-card-overlay">
+                      <h3>{service.title}</h3>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
           
           <div className="transform-navigation">
-            <button className="nav-arrow nav-arrow-left">
-              <span>←</span>
-            </button>
-            <button className="nav-arrow nav-arrow-right">
-              <span>→</span>
-            </button>
+            <div className="slider-dots">
+              {Array.from({ length: (isMobile ? transformServices.length : transformServices.length - 2) }, (_, index) => (
+                <button
+                  key={index}
+                  className={`slider-dot ${currentSlide === index ? 'active' : ''}`}
+                  onClick={() => goToSlide(index)}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>

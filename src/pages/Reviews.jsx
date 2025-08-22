@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { FaStar, FaQuoteLeft, FaTrash, FaUndo, FaTrashAlt, FaCheck, FaPlus } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleJunkView, fetchReviews, editReview, deleteReview, submitReview } from '../store/reviewsSlice';
+import reviewsHeroImage from '../../public/assets/reviews-hero.jpg';
 import './Reviews.css';
 
 const Reviews = () => {
@@ -70,7 +71,12 @@ const Reviews = () => {
 
   return (
     <div className="reviews-page">
-      <section className="hero-section">
+      <section 
+        className="hero-section"
+        style={{
+          backgroundImage: `url(${reviewsHeroImage})`
+        }}
+      >
         <div className="container">
           <motion.div 
             className="hero-content"

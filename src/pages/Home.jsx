@@ -4,20 +4,20 @@ import { motion } from 'framer-motion';
 import { FaChevronLeft, FaChevronRight, FaPaintBrush, FaHome, FaBuilding, FaCheckCircle, FaStar, FaQuoteLeft, FaImages, FaPalette, FaCogs, FaArrowRight } from 'react-icons/fa';
 import './Home.css';
 import AnnouncementBanner from '../components/AnnouncementBanner';
-import heroImage from '../assets/hero-s1.jpg';
-import heroImage2 from '../assets/hero-s2.jpg';
-import heroImage3 from '../assets/hero-s3.jpg';
+import heroImage from '../../public/assets/hero-s1.jpg';
+import heroImage2 from '../../public/assets/hero-s2.jpg';
+import heroImage3 from '../../public/assets/hero-s3.jpg';
 
-import howItWorks1 from '../assets/how-it-works1.png';
-import howItWorks2 from '../assets/how-it-works2.png';
-import howItWorks3 from '../assets/how-it-works3.png';
-import bookSlotImage from '../assets/book-your-slot.png';
-import ourWork1 from '../assets/our-work1.png';
-import ourWork2 from '../assets/our-work2.png';
-import ourWork3 from '../assets/our-work3.png';
-import findColors1 from '../assets/find-your-colors1.png';
-import swLogo from '../assets/sw.jpg';
-import bmLogo from '../assets/bm.jpg';
+import howItWorks1 from '../../public/assets/how-it-works1.png';
+import howItWorks2 from '../../public/assets/how-it-works2.png';
+import howItWorks3 from '../../public/assets/how-it-works3.png';
+import bookSlotImage from '../../public/assets/book-your-slot.png';
+import ourWork1 from '../../public/assets/our-work1.png';
+import ourWork2 from '../../public/assets/our-work2.png';
+import ourWork3 from '../../public/assets/our-work3.png';
+import findColors1 from '../../public/assets/find-your-colors1.png';
+import swLogo from '../../public/assets/sw.jpg';
+import bmLogo from '../../public/assets/bm.jpg';
 
 const heroSlides = [
   {

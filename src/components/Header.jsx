@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaChevronLeft, FaChevronRight, FaPaintBrush, FaHome, FaBuilding, FaCheckCircle, 
-  FaStar, FaQuoteLeft, FaImages, FaPalette, FaCogs, FaPhone, FaChevronDown, FaBars, FaTimes, FaSearch, FaEnvelope, FaUserShield } from 'react-icons/fa';
+  FaStar, FaQuoteLeft, FaImages, FaPalette, FaCogs, FaPhone, FaChevronDown, FaBars, FaTimes, FaSearch, FaEnvelope } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/authSlice';
 import './Header.css';
-import logoPainter from '../assets/logo_painter.png';
-import AdminLoginModal from './AdminLoginModal';
+import logoPainter from '../../public/assets/logo_painter.png';
+
 
 // Dropdown structure
 const residentialDropdown = {
@@ -39,7 +39,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [resDropdownOpen, setResDropdownOpen] = useState(false);
-  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+
   const location = useLocation();
   const dispatch = useDispatch();
   const { isAuthenticated, user } = useSelector(state => state.auth);
@@ -60,16 +60,14 @@ const Header = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleResDropdown = () => setResDropdownOpen((open) => !open);
   
-  const handleAdminLogin = () => {
-    setIsAdminModalOpen(true);
-  };
+
   
   const handleLogout = () => {
     dispatch(logout());
   };
 
   const navLinks = [
-    { path: '/residential', label: 'Residential', dropdown: true },
+    { path: '#', label: 'Residential', dropdown: true },
     { path: '/commercial', label: 'Commercial' },
     { path: '/reviews', label: 'Reviews' },
     { path: '/about', label: 'About Us' },
@@ -96,16 +94,12 @@ const Header = () => {
           <Link to="/free-quote" className="btn btn-cta btn-small">
             Book Free Visit
           </Link>
-          {isAuthenticated ? (
+          {isAuthenticated && (
             <div className="admin-user-info">
               <button onClick={handleLogout} className="btn btn-logout btn-small">
                 Logout
               </button>
             </div>
-          ) : (
-            <button onClick={handleAdminLogin} className="btn btn-admin btn-small">
-              <FaUserShield /> Admin Login
-            </button>
           )}
         </div>
       </div>
@@ -136,9 +130,9 @@ const Header = () => {
                       onMouseLeave={() => link.dropdown && setResDropdownOpen(false)}>
                   {link.dropdown ? (
                     <>
-                      <Link to={link.path} className={location.pathname.startsWith('/residential') ? 'active' : ''}>
+                      <span className={location.pathname.startsWith('/interior-painting') || location.pathname.startsWith('/exterior-painting') ? 'active dropdown-trigger' : 'dropdown-trigger'}>
                         {link.label}
-                      </Link>
+                      </span>
                       <div className={`dropdown-menu${resDropdownOpen ? ' open' : ''}`}>
                         <div className="dropdown-content">
                           {/* Exterior Services Column */}
@@ -307,11 +301,7 @@ const Header = () => {
         </ul>
       </nav>
       
-      {/* Admin Login Modal */}
-      <AdminLoginModal 
-        isOpen={isAdminModalOpen} 
-        onClose={() => setIsAdminModalOpen(false)} 
-      />
+
     </>
   );
 };
