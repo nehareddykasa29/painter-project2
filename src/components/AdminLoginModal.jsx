@@ -142,11 +142,7 @@ const AdminLoginModal = ({ isOpen, onClose }) => {
              </button>
           </form>
 
-          <div className="test-credentials">
-            <p><strong>Test Credentials:</strong></p>
-            <p>Email: admin@painterguys.com</p>
-            <p>Password: admin123</p>
-          </div>
+
         </motion.div>
       </motion.div>
     </AnimatePresence>

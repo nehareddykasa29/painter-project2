@@ -57,7 +57,7 @@ const Commercial = () => {
     <div className="commercial-page">
       {/* Hero Section */}
       <section className="commercial-hero">
-        <img src="/src/assets/commercial-hero.png" alt="Professional Commercial Painting" className="commercial-hero-img" />
+        <img src="/assets/commercial-hero.png" alt="Professional Commercial Painting" className="commercial-hero-img" />
         <div className="commercial-hero-overlay" />
         <div className="commercial-hero-content">
           <h1>Professional Painting for<br />Every Business</h1>
@@ -94,7 +94,7 @@ const Commercial = () => {
           </div>
           
           <div className="business-deserves-image">
-            <img src="/src/assets/your-bussiness-deserves-the-best.png" alt="Professional painters working on commercial building" />
+            <img src="/assets/your-bussiness-deserves-the-best.png" alt="Professional painters working on commercial building" />
           </div>
         </div>
       </section>
@@ -115,7 +115,7 @@ const Commercial = () => {
           <div className="solutions-grid">
             <div className="solution-card">
               <div className="solution-image">
-                <img src="/src/assets/office-building.png" alt="Office Buildings" />
+                <img src="/assets/office-building.png" alt="Office Buildings" />
               </div>
               <div className="solution-content">
                 <h3>Office Buildings</h3>
@@ -126,7 +126,7 @@ const Commercial = () => {
             
             <div className="solution-card">
               <div className="solution-image">
-                <img src="/src/assets/healthcare-facilities.png" alt="Healthcare Facilities" />
+                <img src="/assets/healthcare-facilities.png" alt="Healthcare Facilities" />
               </div>
               <div className="solution-content">
                 <h3>Healthcare Facilities</h3>
@@ -137,7 +137,7 @@ const Commercial = () => {
             
             <div className="solution-card">
               <div className="solution-image">
-                <img src="/src/assets/educational-institutions.png" alt="Educational Institutions" />
+                <img src="/assets/educational-institutions.png" alt="Educational Institutions" />
               </div>
               <div className="solution-content">
                 <h3>Educational Institutions</h3>
@@ -157,7 +157,7 @@ const Commercial = () => {
           <div className="work-steps">
             <div className="work-step-card step-1">
               <div className="step-image">
-                <img src="/src/assets/req.png" alt="Request Free Estimate" />
+                <img src="/assets/req.png" alt="Request Free Estimate" />
               </div>
               <div className="step-content">
                 <h3>Request Your Free Estimate</h3>
@@ -167,7 +167,7 @@ const Commercial = () => {
             
             <div className="work-step-card step-2">
               <div className="step-image">
-                <img src="/src/assets/approve.png" alt="Approve Customized Proposal" />
+                <img src="/assets/approve.png" alt="Approve Customized Proposal" />
               </div>
               <div className="step-content">
                 <h3>Approve Your Customized Proposal</h3>
@@ -177,7 +177,7 @@ const Commercial = () => {
             
             <div className="work-step-card step-3">
               <div className="step-image">
-                <img src="/src/assets/transform.png" alt="Transform Your Space" />
+                <img src="/assets/transform.png" alt="Transform Your Space" />
               </div>
               <div className="step-content">
                 <h3>Transform Your Space</h3>
@@ -198,22 +198,22 @@ const Commercial = () => {
           
           <div className="transform-gallery">
             <div className="transform-card">
-              <img src="/src/assets/trans1.png" alt="Cafe/Restaurant Interior" />
+                              <img src="/assets/trans1.png" alt="Cafe/Restaurant Interior" />
             </div>
             <div className="transform-card">
-              <img src="/src/assets/trans2.png" alt="Modern Restaurant/Bar" />
+                              <img src="/assets/trans2.png" alt="Modern Restaurant/Bar" />
             </div>
             <div className="transform-card">
-              <img src="/src/assets/trans3.png" alt="Modern Office Space" />
+                              <img src="/assets/trans3.png" alt="Modern Office Space" />
             </div>
             <div className="transform-card">
-              <img src="/src/assets/trans4.png" alt="Stylish Lounge/Restaurant" />
+                              <img src="/assets/trans4.png" alt="Stylish Lounge/Restaurant" />
             </div>
             <div className="transform-card">
-              <img src="/src/assets/trans5.png" alt="Bright Office Hallway" />
+                              <img src="/assets/trans5.png" alt="Bright Office Hallway" />
             </div>
             <div className="transform-card">
-              <img src="/src/assets/trans6.png" alt="Rustic Coffee Shop" />
+                              <img src="/assets/trans6.png" alt="Rustic Coffee Shop" />
             </div>
           </div>
         </div>
@@ -223,7 +223,7 @@ const Commercial = () => {
       <section className="lets-transform">
         <div className="lets-transform-container">
           <div className="lets-transform-image">
-            <img src="/src/assets/lets-transform.png" alt="Modern Office Interior" />
+            <img src="/assets/lets-transform.png" alt="Modern Office Interior" />
           </div>
           <div className="lets-transform-content">
             <h2>Let's Transform Your Business Space</h2>

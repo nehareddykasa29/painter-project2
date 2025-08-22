@@ -14,7 +14,7 @@ import AnnouncementBanner from './components/AnnouncementBanner';
 // Pages
 import Home from './pages/Home';
 import Contact from './pages/Contact';
-import Residential from './pages/Residential';
+
 import Commercial from './pages/Commercial';
 import Reviews from './pages/Reviews';
 import About from './pages/About';
@@ -55,7 +55,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/residential" element={<Residential />} />
+
                 <Route path="/commercial" element={<Commercial />} />
                 <Route path="/reviews" element={<Reviews />} />
                 <Route path="/about" element={<About />} />

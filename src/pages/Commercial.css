@@ -78,14 +78,14 @@
  .business-deserves-content h2 {
    font-size: 2.5rem;
    font-weight: 500;
-   color: #365B8C;
+   color: #2B3674;
    margin-bottom: 1rem;
    line-height: 1.2;
    white-space: nowrap;
  }
  .business-deserves-intro {
    font-size: 1.1rem;
-   color: #365B8C;
+   color: #2B3674;
    margin-bottom: 2rem;
    line-height: 1.5;
  }
@@ -105,7 +105,7 @@
  .benefit-item h3 {
    font-size: 1.2rem;
    font-weight: 700;
-   color: #365B8C;
+   color: #2B3674;
    margin-bottom: 0;
  }
  .benefit-item p {
@@ -155,7 +155,7 @@
   .comprehensive-text h2 {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #365B8C;
+    color: #2B3674;
     margin-bottom: 1rem;
     line-height: 1.2;
   }
@@ -216,7 +216,7 @@
   .solution-content h3 {
     font-size: 1.3rem;
     font-weight: 700;
-    color: #365B8C;
+    color: #2B3674;
     margin-bottom: 0.5rem;
   }
   .solution-content p {
@@ -254,7 +254,7 @@
   .how-we-work-container h2 {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #365B8C;
+    color: #2B3674;
     margin-bottom: 3rem;
     line-height: 1.2;
   }
@@ -354,13 +354,13 @@
   .transform-header h2 {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #365B8C;
+    color: #2B3674 !important;
     margin-bottom: 1rem;
     line-height: 1.2;
   }
   .transform-header p {
     font-size: 1.1rem;
-    color: #6B7280;
+    color: #2B3674;
     margin-bottom: 3rem;
     line-height: 1.5;
   }
@@ -416,7 +416,7 @@
   .lets-transform-content h2 {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #365B8C;
+    color: #2B3674;
     margin-bottom: 1rem;
     line-height: 1.2;
   }
@@ -485,7 +485,7 @@
   margin-bottom: 0.4rem;
 }
 .industry-card p {
-  color: #365B8C;
+  color: #2B3674;
   font-size: 1rem;
 }
 
@@ -536,7 +536,7 @@
   margin-bottom: 0.3rem;
 }
 .add-service-card p {
-  color: #365B8C;
+  color: #2B3674;
   font-size: 0.98rem;
 }
 
@@ -582,7 +582,7 @@
   margin-bottom: 0.3rem;
 }
 .why-card p {
-  color: #365B8C;
+  color: #2B3674;
   font-size: 0.98rem;
 }
 
@@ -634,7 +634,7 @@
   margin-bottom: 0.3rem;
 }
 .process-card p {
-  color: #365B8C;
+  color: #2B3674;
   font-size: 0.98rem;
 }
 
@@ -672,7 +672,7 @@
 
 /* Final CTA Section */
 .commercial-final-cta {
-  background: linear-gradient(135deg, #507DBC 60%, #365B8C 100%);
+  background: linear-gradient(135deg, #507DBC 60%, #2B3674 100%);
   color: #fff;
   text-align: center;
   padding: 2.5rem 1rem 2.5rem 1rem;

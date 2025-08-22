@@ -105,6 +105,31 @@
   color: var(--cta-yellow);
 }
 
+/* Footer Admin Link */
+.footer-admin-link {
+  background: none;
+  border: none;
+  color: var(--medium-gray);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-admin-link:hover {
+  color: var(--cta-yellow);
+}
+
+.footer-admin-link svg {
+  font-size: 0.9em;
+}
+
 /* Contact Details */
 .contact-details {
   display: flex;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   FaPhone, 
@@ -9,13 +9,20 @@ import {
   FaInstagram, 
   FaLinkedin,
   FaClock,
-  FaShieldAlt
+  FaShieldAlt,
+  FaUserShield
 } from 'react-icons/fa';
 import './Footer.css';
-import logoPainter from '../assets/logo_painter.png';
+import logoPainter from '../../public/assets/logo_painter.png';
+import AdminLoginModal from './AdminLoginModal';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+
+  const handleAdminLogin = () => {
+    setIsAdminModalOpen(true);
+  };
 
   return (
     <footer className="footer">
@@ -74,6 +81,11 @@ const Footer = () => {
                 <li><Link to="/warranty">Warranty</Link></li>
                 <li><Link to="/contact">Contact Us</Link></li>
                 <li><Link to="/faq">FAQ</Link></li>
+                <li>
+                  <button onClick={handleAdminLogin} className="footer-admin-link">
+                    <FaUserShield /> Admin Login
+                  </button>
+                </li>
               </ul>
             </div>
 
@@ -146,6 +158,12 @@ const Footer = () => {
         <span>Serving Milwaukee and Southeast Wisconsin</span>
         <Link to="/service-areas" className="footer-service-area-link">View Full Service Area &rarr;</Link>
       </div>
+      
+      {/* Admin Login Modal */}
+      <AdminLoginModal 
+        isOpen={isAdminModalOpen} 
+        onClose={() => setIsAdminModalOpen(false)} 
+      />
     </footer>
   );
 };
