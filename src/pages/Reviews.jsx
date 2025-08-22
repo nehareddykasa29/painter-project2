@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FaStar, FaQuoteLeft, FaTrash, FaUndo, FaTrashAlt, FaCheck, FaPlus } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
-import { toggleJunkView, fetchReviews, editReview, deleteReview } from '../store/reviewsSlice';
+import { toggleJunkView, fetchReviews, editReview, deleteReview, submitReview } from '../store/reviewsSlice';
 import reviewsHeroImage from '../../public/assets/reviews-hero.jpg';
 import './Reviews.css';
 
@@ -12,6 +12,18 @@ const Reviews = () => {
   const { isAuthenticated } = useSelector(state => state.auth);
   const { activeReviews, deletedReviews, showJunk, loading, error, editLoading, editError, deleteLoading, deleteError } = useSelector(state => state.reviews);
   const { token } = useSelector(state => state.auth); // Assuming token is in auth slice
+
+  // Add local state for rating
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+
+  // Submit state for review form
+  const submitLoading = useSelector(state => state.reviews.submitLoading);
+  const submitError = useSelector(state => state.reviews.submitError);
+  const submitSuccess = useSelector(state => state.reviews.submitSuccess);
+
+  // Ref for scrolling to review form
+  const reviewFormRef = useRef(null);
 
   useEffect(() => {
     document.title = 'Customer Reviews | The Painter Guys Pros';
@@ -74,9 +86,15 @@ const Reviews = () => {
           >
             <h1>Customer Reviews</h1>
             <p>See what our happy customers are saying about The Painter Guys Pros!</p>
-            <Link to="/free-quote" className="btn btn-primary" style={{ marginBottom: '2rem' }}>
-              Get Free Quote
-            </Link>
+            <button
+              className="btn btn-primary"
+              style={{ marginBottom: '2rem' }}
+              onClick={() => {
+                reviewFormRef.current?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
+              Write a Review
+            </button>
           </motion.div>
         </div>
       </section>
@@ -169,7 +187,7 @@ const Reviews = () => {
       </section>
 
       {/* Review Form Section */}
-      <section className="review-form-section">
+      <section className="review-form-section" ref={reviewFormRef}>
         <div className="container">
           <motion.div 
             className="review-form-container"
@@ -181,7 +199,17 @@ const Reviews = () => {
             <h2>Share Your Experience</h2>
             <p>We'd love to hear about your experience with The Painter Guys Pros!</p>
             
-            <form className="review-form">
+            <form className="review-form"
+              onSubmit={e => {
+                e.preventDefault();
+                const customerName = e.target.name.value;
+                const comment = e.target.review.value;
+                // Use selected rating
+                const reviewData = { customerName, rating, comment };
+                console.log("Submitted review:", reviewData);
+                dispatch(submitReview(reviewData));
+              }}
+            >
               <div className="form-group">
                 <label htmlFor="name">Your Name *</label>
                 <input 
@@ -191,27 +219,6 @@ const Reviews = () => {
                   placeholder="Enter your full name"
                   required
                 />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="serviceType">Type of Service *</label>
-                <select id="serviceType" name="serviceType" required>
-                  <option value="">Select a service</option>
-                  <option value="interior-painting">Interior Painting</option>
-                  <option value="exterior-painting">Exterior Painting</option>
-                  <option value="commercial-painting">Commercial Painting</option>
-                  <option value="residential-painting">Residential Painting</option>
-                  <option value="cabinet-refinishing">Cabinet Refinishing</option>
-                  <option value="deck-fence">Deck & Fence Painting</option>
-                  <option value="power-washing">Power Washing</option>
-                  <option value="vinyl-aluminum">Vinyl & Aluminum Painting</option>
-                  <option value="textured-walls">Textured Walls</option>
-                  <option value="wallpaper-removal">Wallpaper Removal</option>
-                  <option value="woodwork-trim">Woodwork & Trim</option>
-                  <option value="stucco-repair">Stucco Repair</option>
-                  <option value="color-consultation">Color Consultation</option>
-                  <option value="other">Other</option>
-                </select>
               </div>
 
               <div className="form-group">
@@ -232,10 +239,14 @@ const Reviews = () => {
                     <FaStar
                       key={star}
                       className="star-input"
-                      style={{ color: "#e4e5e9" }}
+                      style={{ color: (hoverRating || rating) >= star ? "#FFD700" : "#e4e5e9", cursor: "pointer" }}
+                      onClick={() => setRating(star)}
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      data-testid={`star-${star}`}
                     />
                   ))}
-                  <span className="rating-text">Click to rate</span>
+                  <span className="rating-text">{rating ? `You rated ${rating}` : "Click to rate"}</span>
                 </div>
               </div>
 
@@ -243,6 +254,9 @@ const Reviews = () => {
                 Submit Review
               </button>
             </form>
+            {submitLoading && <div>Submitting review...</div>}
+            {submitError && <div className="error">Error: {submitError}</div>}
+            {submitSuccess && <div className="success">Review submitted successfully!</div>}
           </motion.div>
         </div>
       </section>
