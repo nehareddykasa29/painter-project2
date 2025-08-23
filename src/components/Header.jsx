@@ -105,7 +105,7 @@ const Header = () => {
       </div>
 
       {/* Main Header */}
-      <header className={`header ${isScrolled ? 'scrolled' : ''}`}> 
+      <header className={`header${isScrolled ? ' scrolled' : ''}${isAuthenticated ? ' header-authenticated' : ''}`}> 
         <div className="header-content">
           <Link to="/" className="logo">
             <div className="logo-icon">
@@ -119,10 +119,15 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="desktop-nav">
             <ul className="nav-links">
-              {navLinks.map((link) => (
-                <li key={link.path} className={link.dropdown ? 'has-dropdown' : ''}
-                    onMouseEnter={() => link.dropdown && setResDropdownOpen(true)}
-                    onMouseLeave={() => link.dropdown && setResDropdownOpen(false)}>
+              {navLinks
+                .filter(link =>
+                  !isAuthenticated ||
+                  (link.label !== 'Residential' && link.label !== 'Commercial' && link.label !== 'About Us')
+                )
+                .map((link) => (
+                  <li key={link.path} className={link.dropdown ? 'has-dropdown' : ''}
+                      onMouseEnter={() => link.dropdown && setResDropdownOpen(true)}
+                      onMouseLeave={() => link.dropdown && setResDropdownOpen(false)}>
                   {link.dropdown ? (
                     <>
                       <span className={location.pathname.startsWith('/interior-painting') || location.pathname.startsWith('/exterior-painting') ? 'active dropdown-trigger' : 'dropdown-trigger'}>
@@ -215,67 +220,71 @@ const Header = () => {
       {/* Mobile Navigation */}
       <nav className={`mobile-nav ${isMenuOpen ? 'open' : ''}`}>
         <ul className="mobile-nav-links">
-          {navLinks.map((link) => (
-            <li key={link.path}>
-              {link.dropdown ? (
-                <>
-                  <button 
-                    className="dropdown-toggle"
-                    onClick={toggleResDropdown}
-                  >
-                    {link.label}
-                    <FaChevronDown className={`dropdown-icon ${resDropdownOpen ? 'rotated' : ''}`} />
-                  </button>
-                  <div className={`dropdown-menu ${resDropdownOpen ? 'open' : ''}`}>
-                    {/* Exterior Services Section */}
-                    <div className="mobile-dropdown-section">
-                      <div className="mobile-dropdown-header">
-                        <FaPaintBrush className="dropdown-icon-small" />
-                        <h5>{residentialDropdown.exterior.title}</h5>
-                      </div>
-                      <ul className="mobile-dropdown-services">
-                        <li>
-                          <Link to={residentialDropdown.exterior.mainLink}>
-                            View All Exterior Services
-                          </Link>
-                        </li>
-                        {residentialDropdown.exterior.services.map((item) => (
-                          <li key={item.path}>
-                            <Link to={item.path}>{item.label}</Link>
+          {navLinks
+            .filter(link =>
+              !isAuthenticated ||
+              (link.label !== 'Residential' && link.label !== 'Commercial' && link.label !== 'About Us')
+            )
+            .map((link) => (
+              <li key={link.path}>
+                {link.dropdown ? (
+                  <>
+                    <button 
+                      className="dropdown-toggle"
+                      onClick={toggleResDropdown}
+                    >
+                      {link.label}
+                      <FaChevronDown className={`dropdown-icon ${resDropdownOpen ? 'rotated' : ''}`} />
+                    </button>
+                    <div className={`dropdown-menu ${resDropdownOpen ? 'open' : ''}`}>
+                      {/* Exterior Services Section */}
+                      <div className="mobile-dropdown-section">
+                        <div className="mobile-dropdown-header">
+                          <FaPaintBrush className="dropdown-icon-small" />
+                          <h5>{residentialDropdown.exterior.title}</h5>
+                        </div>
+                        <ul className="mobile-dropdown-services">
+                          <li>
+                            <Link to={residentialDropdown.exterior.mainLink}>
+                              View All Exterior Services
+                            </Link>
                           </li>
-                        ))}
-                      </ul>
-                    </div>
+                          {residentialDropdown.exterior.services.map((item) => (
+                            <li key={item.path}>
+                              <Link to={item.path}>{item.label}</Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
 
-                    {/* Interior Services Section */}
-                    <div className="mobile-dropdown-section">
-                      <div className="mobile-dropdown-header">
-                        <FaHome className="dropdown-icon-small" />
-                        <h5>{residentialDropdown.interior.title}</h5>
-                      </div>
-                      <ul className="mobile-dropdown-services">
-                        <li>
-                          <Link to={residentialDropdown.interior.mainLink}>
-                            View All Interior Services
-                          </Link>
-                        </li>
-                        {residentialDropdown.interior.services.map((item) => (
-                          <li key={item.path}>
-                            <Link to={item.path}>{item.label}</Link>
+                      {/* Interior Services Section */}
+                      <div className="mobile-dropdown-section">
+                        <div className="mobile-dropdown-header">
+                          <FaHome className="dropdown-icon-small" />
+                          <h5>{residentialDropdown.interior.title}</h5>
+                        </div>
+                        <ul className="mobile-dropdown-services">
+                          <li>
+                            <Link to={residentialDropdown.interior.mainLink}>
+                              View All Interior Services
+                            </Link>
                           </li>
-                        ))}
-                      </ul>
+                          {residentialDropdown.interior.services.map((item) => (
+                            <li key={item.path}>
+                              <Link to={item.path}>{item.label}</Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
-                  </div>
-                </>
-              ) : (
-                <Link to={link.path} className={location.pathname === link.path ? 'active' : ''}>
-                  {link.label}
-                </Link>
-              )}
-            </li>
-          ))}
-          
+                  </>
+                ) : (
+                  <Link to={link.path} className={location.pathname === link.path ? 'active' : ''}>
+                    {link.label}
+                  </Link>
+                )}
+              </li>
+            ))}
           {/* Admin Navigation Links for Mobile */}
           {isAuthenticated && adminNavLinks.map((link) => (
             <li key={link.path}>
@@ -299,4 +308,4 @@ const Header = () => {
   );
 };
 
-export default Header; 
+export default Header;
