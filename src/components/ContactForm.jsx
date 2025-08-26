@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaComments } from 'react-icons/fa';
 import './ContactForm.css';
 
 const ContactForm = ({ onSubmit, isLoading = false }) => {
@@ -116,7 +115,7 @@ const ContactForm = ({ onSubmit, isLoading = false }) => {
       <div className="form-row">
         <div className="form-group">
           <label htmlFor="name" className="form-label">
-            <FaUser /> Full Name *
+            Full Name *
           </label>
           <input
             type="text"
@@ -132,7 +131,7 @@ const ContactForm = ({ onSubmit, isLoading = false }) => {
 
         <div className="form-group">
           <label htmlFor="email" className="form-label">
-            <FaEnvelope /> Email Address *
+            Email Address *
           </label>
           <input
             type="email"
@@ -150,7 +149,7 @@ const ContactForm = ({ onSubmit, isLoading = false }) => {
       <div className="form-row">
         <div className="form-group">
           <label htmlFor="phone" className="form-label">
-            <FaPhone /> Phone Number *
+            Phone Number *
           </label>
           <input
             type="tel"
@@ -186,7 +185,7 @@ const ContactForm = ({ onSubmit, isLoading = false }) => {
 
       <div className="form-group">
         <label htmlFor="address" className="form-label">
-          <FaMapMarkerAlt /> Property Address
+          Property Address
         </label>
         <input
           type="text"
@@ -218,7 +217,7 @@ const ContactForm = ({ onSubmit, isLoading = false }) => {
 
       <div className="form-group">
         <label htmlFor="message" className="form-label">
-          <FaComments /> Message *
+          Message *
         </label>
         <textarea
           id="message"

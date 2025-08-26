@@ -1,53 +1,66 @@
 /* Contact Form */
 .contact-form {
-  max-width: 600px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: var(--spacing-lg);
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
+}
+
+/* Override any global input styling */
+.contact-form input,
+.contact-form select,
+.contact-form textarea {
+  border: 1px solid #d1d5db !important;
+  border-radius: 8px !important;
+}
+
+.contact-form input:focus,
+.contact-form select:focus,
+.contact-form textarea:focus {
+  border-color: #507DBC !important;
+  box-shadow: 0 0 0 3px rgba(80, 125, 188, 0.1) !important;
+  outline: none !important;
+}
+
+.contact-form input:hover,
+.contact-form select:hover,
+.contact-form textarea:hover {
+  border-color: #9ca3af !important;
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-group {
-  margin-bottom: var(--spacing-md);
+  margin-bottom: 1.5rem;
 }
 
 .form-label {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  margin-bottom: var(--spacing-xs);
+  display: block;
+  margin-bottom: 0.5rem;
   font-weight: 500;
-  color: var(--charcoal);
-}
-
-.form-label svg {
-  color: var(--primary-blue);
-  font-size: 0.875rem;
+  color: #2B3674;
+  font-size: 0.95rem;
 }
 
 .form-control {
   width: 100%;
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   font-size: 1rem;
-  font-family: var(--font-body);
-  border: 2px solid var(--medium-gray);
-  border-radius: var(--radius-md);
-  background-color: var(--white);
-  transition: all var(--transition-fast);
+  font-family: inherit;
+  border: 1px solid #d1d5db !important;
+  border-radius: 8px;
+  background-color: #ffffff;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
 .form-control:focus {
-  outline: none;
-  border-color: var(--primary-blue);
-  box-shadow: 0 0 0 3px rgba(80, 125, 188, 0.1);
+  outline: none !important;
+  border-color: #507DBC !important;
+  box-shadow: 0 0 0 3px rgba(80, 125, 188, 0.1) !important;
 }
 
 .form-control.error {
@@ -61,10 +74,10 @@
 .form-error {
   color: #dc3545;
   font-size: 0.875rem;
-  margin-top: var(--spacing-xs);
+  margin-top: 0.5rem;
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
+  gap: 0.5rem;
 }
 
 .form-error::before {
@@ -75,7 +88,7 @@
 textarea.form-control {
   min-height: 120px;
   resize: vertical;
-  font-family: var(--font-body);
+  font-family: inherit;
 }
 
 select.form-control {
@@ -91,23 +104,23 @@ select.form-control {
 /* Success State */
 .form-success {
   text-align: center;
-  padding: var(--spacing-xl);
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
+  padding: 3rem;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .success-icon {
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #28a745, #20c997);
+  background: linear-gradient(135deg, #507DBC, #365B8C);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2rem;
-  color: var(--white);
-  margin: 0 auto var(--spacing-md);
+  color: #ffffff;
+  margin: 0 auto 1.5rem;
   animation: successPulse 0.6s ease-out;
 }
 
@@ -126,14 +139,14 @@ select.form-control {
 }
 
 .form-success h3 {
-  color: var(--charcoal);
-  margin-bottom: var(--spacing-sm);
+  color: #2B3674;
+  margin-bottom: 1rem;
   font-size: 1.5rem;
 }
 
 .form-success p {
-  color: var(--dark-gray);
-  margin-bottom: var(--spacing-lg);
+  color: #666;
+  margin-bottom: 2rem;
   line-height: 1.6;
 }
 
@@ -143,10 +156,24 @@ select.form-control {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-xs);
-  margin-top: var(--spacing-lg);
+  gap: 0.5rem;
+  margin-top: 2rem;
   position: relative;
   overflow: hidden;
+  background: #507DBC;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.contact-form .btn:hover {
+  background: #365B8C;
+  transform: translateY(-2px);
 }
 
 .contact-form .btn:disabled {
@@ -165,34 +192,18 @@ select.form-control {
 
 /* Hover Effects */
 .form-control:hover {
-  border-color: var(--primary-blue-light);
-}
-
-.form-group:hover .form-label svg {
-  transform: scale(1.1);
-  transition: transform var(--transition-fast);
-}
-
-/* Focus States */
-.form-control:focus + .form-label,
-.form-control:focus ~ .form-label {
-  color: var(--primary-blue);
+  border-color: #9ca3af !important;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .contact-form {
-    padding: var(--spacing-md);
-    margin: var(--spacing-sm);
-  }
-  
   .form-row {
     grid-template-columns: 1fr;
     gap: 0;
   }
   
   .form-control {
-    padding: 14px 16px;
+    padding: 0.875rem 1rem;
     font-size: 16px; /* Prevents zoom on iOS */
   }
   
@@ -212,13 +223,8 @@ select.form-control {
 }
 
 @media (max-width: 480px) {
-  .contact-form {
-    padding: var(--spacing-sm);
-    border-radius: var(--radius-md);
-  }
-  
   .form-control {
-    padding: 12px 14px;
+    padding: 0.75rem 0.875rem;
   }
   
   .form-label {
@@ -256,23 +262,23 @@ select.form-control {
 .form-check {
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
-  margin-bottom: var(--spacing-sm);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .form-check-input {
   width: 18px;
   height: 18px;
-  border: 2px solid var(--medium-gray);
-  border-radius: var(--radius-sm);
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
   cursor: pointer;
   position: relative;
-  transition: all var(--transition-fast);
+  transition: all 0.2s ease;
 }
 
 .form-check-input:checked {
-  background-color: var(--primary-blue);
-  border-color: var(--primary-blue);
+  background-color: #507DBC;
+  border-color: #507DBC;
 }
 
 .form-check-input:checked::after {
@@ -281,14 +287,14 @@ select.form-control {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: var(--white);
+  color: #ffffff;
   font-size: 12px;
   font-weight: bold;
 }
 
 .form-check-label {
   cursor: pointer;
-  color: var(--charcoal);
+  color: #2B3674;
   font-size: 0.875rem;
 }
 

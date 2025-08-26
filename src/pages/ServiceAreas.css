@@ -8,41 +8,40 @@
 
 .service-areas-hero {
   text-align: center;
-  padding: 3rem 1rem 2rem 1rem;
-  background: linear-gradient(135deg, #f5f8fc 60%, #eaf1fa 100%);
+  padding: 5rem 1rem 4rem 1rem;
+  background: linear-gradient(135deg, rgba(64, 65, 65, 0.5) 60%, rgba(40, 40, 41, 0.5) 100%), url('/assets/search.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  min-height: 70vh;
 }
 
-.service-area-icon {
-  font-size: 2.5rem;
-  color: #507DBC;
-  margin-bottom: 1rem;
-}
+
 
 .service-areas-hero h1 {
-  font-size: 2.2rem;
-  color: #365B8C;
-  font-weight: 700;
-  margin-bottom: 1rem;
+  font-size: 2.8rem;
+  color: #ffffff;
+  font-weight: 500;
+  margin-bottom: 2.5rem;
+  line-height: 1.3;
 }
 
 .service-areas-intro {
   font-size: 1.15rem;
-  color: #333;
+  color: #ffffff;
   max-width: 700px;
-  margin: 0 auto;
+  margin: 0 auto 3rem auto;
   line-height: 1.7;
 }
 
-/* Search Section Styles */
-.search-section {
-  padding: 2rem 1rem;
-  background: #f8f9fa;
-}
-
-.search-container {
-  max-width: 600px;
+/* Hero Search Container Styles */
+.hero-search-container {
+  max-width: 800px;
+  width: 100%;
   margin: 0 auto;
   position: relative;
+  padding: 0 1rem;
 }
 
 .search-input-wrapper {
@@ -128,7 +127,7 @@
 .search-results h3 {
   margin: 0;
   padding: 1.5rem 1.5rem 1rem 1.5rem;
-  color: #365B8C;
+  color: #2B3674;
   font-size: 1.3rem;
   font-weight: 700;
   border-bottom: 1px solid #e0e0e0;
@@ -406,6 +405,122 @@
   gap: 0.5em;
 }
 
+/* Service Areas Catalog Styles */
+.service-areas-catalog {
+  padding: 3rem 1rem;
+  background: #f8f9fa;
+}
+
+.catalog-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.catalog-container h2 {
+  text-align: center;
+  font-size: 2.6rem;
+  color: #2B3674;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.catalog-intro {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto 3rem auto;
+  line-height: 1.6;
+}
+
+.counties-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.county-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.county-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.county-header {
+  background: linear-gradient(135deg, #507DBC 0%, #365B8C 100%);
+  color: #ffffff;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.county-icon {
+  font-size: 1.5rem;
+  color: #F4C542;
+}
+
+.county-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.cities-list {
+  padding: 1.5rem;
+}
+
+.cities-list h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  color: #2B3674;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.cities-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cities-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+  font-size: 1rem;
+  color: #333;
+}
+
+.city-bullet {
+  color: #F4C542;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.county-footer {
+  padding: 0 1.5rem 1.5rem 1.5rem;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+
+.city-count {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+}
+
 .service-areas-cta-section {
   text-align: center;
   margin-top: 2.5rem;
@@ -419,7 +534,7 @@
 }
 
 .service-areas-cta-section h3 {
-  color: #365B8C;
+  color: #2B3674;
   font-size: 1.3rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
@@ -446,33 +561,24 @@
 }
 
 @media (max-width: 700px) {
-  .service-areas-list {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+  .service-areas-hero {
+    padding: 3rem 1rem 2.5rem 1rem;
+    min-height: 60vh;
   }
+  
   .service-areas-hero h1 {
-    font-size: 1.3rem;
+    font-size: 2.2rem;
+    font-weight: 500;
   }
   
-  .interactive-map-section {
-    padding: 1rem 0.5rem;
+  .service-areas-intro {
+    font-size: 1rem;
+    margin-bottom: 2rem;
   }
   
-  .map-container {
-    padding: 1rem;
-  }
-  
-  .county-popup {
-    min-width: 250px;
-    max-width: 280px;
-    left: 50% !important;
-    top: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    margin-top: 0 !important;
-  }
-  
-  .search-section {
-    padding: 1rem 0.5rem;
+  .hero-search-container {
+    max-width: 100%;
+    padding: 0 0.5rem;
   }
   
   .search-input {
@@ -487,5 +593,24 @@
   
   .result-status {
     align-self: flex-end;
+  }
+  
+  .catalog-container h2 {
+    font-size: 2rem;
+    color: #2B3674;
+    font-weight: 500;
+  }
+  
+  .counties-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .county-card {
+    margin: 0 0.5rem;
+  }
+  
+  .service-areas-catalog {
+    padding: 2rem 0.5rem;
   }
 } 
