@@ -95,12 +95,12 @@ const Contact = () => {
       {/* Contact Content */}
       <section className="contact-content section">
         <div className="container">
-          <div className="contact-grid">
+          <div className="contact-form-wrapper">
             {/* Contact Form */}
             <motion.div
               className="contact-form-section"
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
               <div className="section-header">
@@ -108,70 +108,6 @@ const Contact = () => {
                 <p>Fill out the form below and we'll get back to you within 24 hours.</p>
               </div>
               <ContactForm onSubmit={handleSubmit} isLoading={isLoading} />
-            </motion.div>
-
-            {/* Contact Information */}
-            <motion.div
-              className="contact-info-section"
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-            >
-              <div className="section-header">
-                <h2>Get in Touch</h2>
-                <p>Multiple ways to reach our professional painting team.</p>
-              </div>
-
-              <div className="contact-cards">
-                {contactInfo.map((info, index) => (
-                  <motion.div
-                    key={index}
-                    className="contact-card"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
-                  >
-                    <div className="contact-card-icon">
-                      {info.icon}
-                    </div>
-                    <div className="contact-card-content">
-                      <h3>{info.title}</h3>
-                      {info.details.map((detail, detailIndex) => (
-                        <p key={detailIndex}>{detail}</p>
-                      ))}
-                      {info.action && (
-                        <a 
-                          href={info.action} 
-                          className="contact-link"
-                        >
-                          {info.action.startsWith('tel:') ? 'Call Now' :
-                           info.action.startsWith('mailto:') ? 'Send Email' :
-                           'View Details'}
-                        </a>
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Social Media */}
-              <div className="social-section">
-                <h3>Follow Us</h3>
-                <div className="social-links">
-                  {socialLinks.map((social, index) => (
-                    <motion.a
-                      key={index}
-                      href={social.url}
-                      className="social-link"
-                      aria-label={social.label}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {social.icon}
-                    </motion.a>
-                  ))}
-                </div>
-              </div>
             </motion.div>
           </div>
         </div>
@@ -228,7 +164,7 @@ const Contact = () => {
             </div>
             
             <div className="text-center">
-              <a href="/about#faq" className="btn btn-primary">
+              <a href="/faq" className="btn btn-primary">
                 View All FAQs
               </a>
             </div>
