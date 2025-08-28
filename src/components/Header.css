@@ -185,12 +185,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 20px;
-  min-height: 56px;
+  padding: 6px 20px;
+  min-height: 62px;
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 /* Logo */
@@ -254,31 +254,33 @@
 .desktop-nav {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 1rem;
   flex: 1;
-  justify-content: flex-end;
-  margin-left: 3rem;
-  padding-right: 2rem;
+  justify-content: center;
+  margin-left: 2rem;
+  padding-right: 1rem;
 }
 
 .nav-links {
   display: flex;
   list-style: none;
-  gap: 2.75rem;
+  gap: 1.75rem;
   margin: 0;
   padding: 0;
   align-items: center;
+  justify-content: space-evenly;
+  flex: 1;
 }
 
 .nav-links a {
   color: var(--charcoal);
   text-decoration: none;
   font-weight: 500;
-  padding: var(--spacing-xs) 0;
+  padding: 0.6rem 0.85rem;
   transition: all var(--transition-fast);
   position: relative;
   white-space: nowrap;
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 .nav-links a:hover {
@@ -292,6 +294,7 @@
   font-size: 1rem;
   transition: color var(--transition-normal);
   cursor: pointer;
+  padding: 0.6rem 0.85rem;
 }
 
 .dropdown-trigger:hover {
@@ -726,12 +729,17 @@
 /* Responsive Design */
 @media (max-width: 1024px) {
   .nav-links {
-    gap: var(--spacing-sm);
+    gap: 1.5rem;
   }
   
   .nav-links a {
-    padding: var(--spacing-xs);
-    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.95rem;
+  }
+  
+  .dropdown-trigger {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.95rem;
   }
   
   .logo-text h1 {

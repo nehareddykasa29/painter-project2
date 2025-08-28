@@ -369,6 +369,121 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Our Work Section */}
+      <section className="our-work-section">
+        <div className="our-work-container">
+          <div className="our-work-header">
+            <div className="our-work-title">
+              <h2>Our Work Speaks for Itself</h2>
+              <br></br>
+              <p>From bold interiors to flawless exteriors, discover how we bring color and quality together.</p>
+              <Link to="/gallery" className="btn-view-work">View Our Work</Link>
+            </div>
+          </div>
+          
+          <div className="our-work-grid">
+            <Link to="/gallery" className="work-card">
+              <img src={ourWork1} alt="Modern Living Room" />
+              <div className="work-card-content">
+                <h4>Modern<br />Living Room</h4>
+                <FaArrowRight className="arrow-icon" />
+              </div>
+            </Link>
+
+            <Link to="/gallery" className="work-card">
+              <img src={ourWork2} alt="Classic Green Room" />
+              <div className="work-card-content">
+                <h4>Classic<br />Green Room</h4>
+                <FaArrowRight className="arrow-icon" />
+              </div>
+            </Link>
+
+            <Link to="/gallery" className="work-card">
+              <img src={ourWork3} alt="Exterior Balcony" />
+              <div className="work-card-content">
+                <h4>Exterior<br />Balcony</h4>
+                <FaArrowRight className="arrow-icon" />
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Find Your Perfect Color Section */}
+      <section className="find-colors-section">
+        <div className="find-colors-container">
+          <div className="find-colors-content">
+            <h2>Find Your Perfect Color — With Expert Help</h2>
+            <p>We work exclusively with premium brands like Sherwin-Williams and Benjamin Moore to ensure long-lasting color and unmatched quality.</p>
+            
+            <div className="brand-buttons">
+              <a href="https://www.sherwin-williams.com/visualizer" target="_blank" rel="noopener noreferrer" className="brand-button" style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${swLogo})` }}>
+                Sherwin-Williams
+                <FaArrowRight className="arrow-icon" />
+              </a>
+              <a href="https://www.benjaminmoore.com/en-us/color-overview/find-your-color" target="_blank" rel="noopener noreferrer" className="brand-button" style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${bmLogo})` }}>
+                Benjamin Moore
+                <FaArrowRight className="arrow-icon" />
+              </a>
+            </div>
+
+            <Link to="/free-quote" className="btn-estimate">
+              Book Your Free Estimate
+            </Link>
+          </div>
+          
+          <div className="find-colors-image">
+            <img src={findColors1} alt="Color consultation and design" />
+          </div>
+        </div>
+      </section>
+
+      {/* Reviews Section */}
+      <section className="reviews-section">
+        <div className="reviews-container">
+          <div className="reviews-header">
+            <div className="reviews-title">
+              <h2>What Our Customers Says</h2>
+              <p>Don't just take our word for it — hear from homeowners and businesses who trusted us to transform their spaces.</p>
+            </div>
+          </div>
+          
+          <div className="reviews-wrapper">
+            <div className="reviews-slider">
+              <div className="reviews-track">
+                {reviews.map((review, idx) => (
+                  <motion.div
+                    key={idx}
+                    className="review-card"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: idx * 0.1 }}
+                  >
+                    <div className="review-content">
+                      <div className="review-rating">
+                        {[...Array(review.rating)].map((_, i) => (
+                          <FaStar key={i} />
+                        ))}
+                      </div>
+                      <p className="review-text">{review.text}</p>
+                      <div className="review-author">
+                        <h4>{review.name}</h4>
+                        <span>{review.project}</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+                <Link to="/reviews" className="review-link">
+                  <div className="review-arrow">
+                    <FaArrowRight />
+                  </div>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Book Your Slot Section */}
       <section className="book-slot-section">
         <div className="book-slot-container">
@@ -486,121 +601,6 @@ const Home = () => {
                 </button>
               </form>
           </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Our Work Section */}
-      <section className="our-work-section">
-        <div className="our-work-container">
-          <div className="our-work-header">
-            <div className="our-work-title">
-              <h2>Our Work</h2>
-              <h3>Speaks for Itself</h3>
-              <p>From bold interiors to flawless exteriors, discover how we bring color and quality together.</p>
-              <Link to="/gallery" className="btn-view-work">View Our Work</Link>
-            </div>
-          </div>
-          
-          <div className="our-work-grid">
-            <Link to="/gallery" className="work-card">
-              <img src={ourWork1} alt="Modern Living Room" />
-              <div className="work-card-content">
-                <h4>Modern<br />Living Room</h4>
-                <FaArrowRight className="arrow-icon" />
-              </div>
-            </Link>
-
-            <Link to="/gallery" className="work-card">
-              <img src={ourWork2} alt="Classic Green Room" />
-              <div className="work-card-content">
-                <h4>Classic<br />Green Room</h4>
-                <FaArrowRight className="arrow-icon" />
-              </div>
-            </Link>
-
-            <Link to="/gallery" className="work-card">
-              <img src={ourWork3} alt="Exterior Balcony" />
-              <div className="work-card-content">
-                <h4>Exterior<br />Balcony</h4>
-                <FaArrowRight className="arrow-icon" />
-              </div>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Reviews Section */}
-      <section className="reviews-section">
-        <div className="reviews-container">
-          <div className="reviews-header">
-            <div className="reviews-title">
-              <h2>What Our Customers Says</h2>
-              <p>Don't just take our word for it — hear from homeowners and businesses who trusted us to transform their spaces.</p>
-            </div>
-          </div>
-          
-          <div className="reviews-wrapper">
-            <div className="reviews-slider">
-              <div className="reviews-track">
-                {reviews.map((review, idx) => (
-                  <motion.div
-                    key={idx}
-                    className="review-card"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: idx * 0.1 }}
-                  >
-                    <div className="review-content">
-                      <div className="review-rating">
-                        {[...Array(review.rating)].map((_, i) => (
-                          <FaStar key={i} />
-                        ))}
-                      </div>
-                      <p className="review-text">{review.text}</p>
-                      <div className="review-author">
-                        <h4>{review.name}</h4>
-                        <span>{review.project}</span>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-                <Link to="/reviews" className="review-link">
-                  <div className="review-arrow">
-                    <FaArrowRight />
-                  </div>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Find Your Perfect Color Section */}
-      <section className="find-colors-section">
-        <div className="find-colors-container">
-          <div className="find-colors-content">
-            <h2>Find Your Perfect Color — With Expert Help</h2>
-            <p>We work exclusively with premium brands like Sherwin-Williams and Benjamin Moore to ensure long-lasting color and unmatched quality.</p>
-            
-            <div className="brand-buttons">
-              <a href="https://www.sherwin-williams.com/visualizer" target="_blank" rel="noopener noreferrer" className="brand-button" style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${swLogo})` }}>
-                Sherwin-Williams
-                <FaArrowRight className="arrow-icon" />
-              </a>
-              <a href="https://www.benjaminmoore.com/en-us/color-overview/find-your-color" target="_blank" rel="noopener noreferrer" className="brand-button" style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${bmLogo})` }}>
-                Benjamin Moore
-                <FaArrowRight className="arrow-icon" />
-              </a>
-            </div>
-
-            <Link to="/free-quote" className="btn-estimate">
-              Book Your Free Estimate
-            </Link>
-          </div>
-          
-          <div className="find-colors-image">
-            <img src={findColors1} alt="Color consultation and design" />
           </div>
         </div>
       </section>

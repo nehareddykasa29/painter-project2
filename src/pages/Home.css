@@ -1,7 +1,7 @@
 /* Hero Slideshow */
 .hero-slideshow {
   position: relative;
-  height: 100vh;
+  height: 90vh;
   min-height: 500px;
   max-height: 800px;
   overflow: hidden;
@@ -723,7 +723,7 @@
 
 @media (max-width: 768px) {
   .hero-slideshow {
-    height: 80vh;
+    height: 72vh;
     min-height: 500px;
   }
   
@@ -786,7 +786,7 @@
 
 @media (max-width: 480px) {
   .hero-slideshow {
-    height: 70vh;
+    height: 63vh;
     min-height: 400px;
   }
   
@@ -1388,15 +1388,15 @@
   margin: 0 auto;
   padding: 0 1rem;
   display: flex;
-  gap: 2.5rem;
+  flex-direction: column;
+  gap: 3rem;
   align-items: center;
-  min-height: 400px;
 }
 
 .our-work-header {
-  flex: 0 0 18%;
-  padding-left: 1.5rem;
-  margin-top: -2rem;
+  text-align: center;
+  padding: 0;
+  margin: 0;
 }
 
 .our-work-title h2 {
@@ -1418,7 +1418,9 @@
   color: #707EAE;
   margin-bottom: 1.75rem;
   line-height: 1.5;
-  max-width: 380px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .btn-view-work {
@@ -1438,11 +1440,12 @@
 }
 
 .our-work-grid {
-  flex: 1;
+  width: 100%;
+  max-width: 1200px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  padding: 0 0.3rem;
+  gap: 1.7rem;
+  padding: 0;
 }
 
 .work-card {
@@ -1452,7 +1455,7 @@
   aspect-ratio: 2/3;
   text-decoration: none;
   display: block;
-  height: 375px;
+  height: 130px;
   width: 100%;
 }
 
@@ -1525,6 +1528,11 @@
     padding: 3rem 0;
   }
 
+  .our-work-container {
+    gap: 2rem;
+    padding: 0 1.5rem;
+  }
+
   .our-work-title h2,
   .our-work-title h3 {
     font-size: 2rem;
@@ -1532,6 +1540,7 @@
 
   .our-work-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .work-card {
