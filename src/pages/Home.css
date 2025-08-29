@@ -1,7 +1,7 @@
 /* Hero Slideshow */
 .hero-slideshow {
   position: relative;
-  height: 90vh;
+  height: 85vh;
   min-height: 500px;
   max-height: 800px;
   overflow: hidden;
@@ -744,16 +744,36 @@
   }
   
   .slide-nav {
-    padding: var(--spacing-sm);
-    font-size: 1.25rem;
+    padding: 10px;
+    font-size: 1.1rem;
+    width: 36px;
+    height: 36px;
+    bottom: 20px;
   }
   
   .slide-nav.prev {
-    left: var(--spacing-sm);
+    left: auto;
+    right: calc(50% + 45px);
   }
   
   .slide-nav.next {
-    right: var(--spacing-sm);
+    right: auto;
+    left: calc(50% + 45px);
+  }
+  
+  .slide-indicators {
+    bottom: 20px;
+    gap: 8px;
+  }
+  
+  .indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+  }
+  
+  .indicator.active {
+    width: 26px;
   }
   
   .services-grid {
@@ -800,6 +820,37 @@
   
   .slide-text p {
     font-size: 0.875rem;
+  }
+  
+  .slide-nav {
+    padding: 8px;
+    font-size: 1rem;
+    width: 32px;
+    height: 32px;
+    bottom: 15px;
+  }
+  
+  .slide-nav.prev {
+    right: calc(50% + 40px);
+  }
+  
+  .slide-nav.next {
+    left: calc(50% + 40px);
+  }
+  
+  .slide-indicators {
+    bottom: 15px;
+    gap: 6px;
+  }
+  
+  .indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+  }
+  
+  .indicator.active {
+    width: 22px;
   }
   
   .service-card {
