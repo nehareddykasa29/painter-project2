@@ -114,6 +114,24 @@ const ViewQuotes = () => {
     return [];
   })();
 
+  // Helper to get slot label from slot number
+  const getSlotLabel = slotNum => {
+    if (slotNum === undefined || slotNum === null || slotNum === "") return "N/A";
+    const found = slotOptions.find(opt => Number(opt.value) === Number(slotNum));
+    return found ? found.label : slotNum;
+  };
+
+  // Helper to format date as DD/MM/YYYY
+  const formatDateDMY = dateStr => {
+    if (!dateStr) return "N/A";
+    const d = new Date(dateStr);
+    if (isNaN(d)) return "N/A";
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   return (
     <div className="view-quotes-page">
       <section className="hero-section">
@@ -130,134 +148,216 @@ const ViewQuotes = () => {
         </div>
       </section>
 
-      <section className="content-section">
-        <div className="container">
-          {quotesLoading && <p>Loading quotes...</p>}
-          {quotesError && <p style={{ color: 'red' }}>Error: {quotesError}</p>}
-          {!quotesLoading && !quotesError && (
-            <div className="quotes-list">
-              {quotes.length === 0 ? (
-                <p>No quotes found.</p>
-              ) : (
-                <ul className="quotes-list-ul">
-                  {quotes.map(q => (
+      <section className="content-section" style={{ minHeight: '70vh', background: '#f5f7fa' }}>
+        <div className="quotes-flex-container">
+          {/* Sidebar: Quotes List */}
+          <aside className="quotes-sidebar">
+            <h2 className="sidebar-title">Quotes</h2>
+            {quotesLoading && <p>Loading quotes...</p>}
+            {quotesError && <p style={{ color: 'red' }}>Error: {quotesError}</p>}
+            {!quotesLoading && !quotesError && (
+              <ul className="quotes-list-ul">
+                {quotes.length === 0 ? (
+                  <li className="no-quotes">No quotes found.</li>
+                ) : (
+                  quotes.map(q => (
                     <li
                       key={q._id}
                       className={`quotes-list-item${selectedQuote?._id === q._id ? ' selected' : ''}`}
                       onClick={() => setSelectedQuote(q)}
                     >
-                      <strong>{q.name}</strong> - {q.email}
+                      <div className="quote-list-card">
+                        <div className="quote-list-name">{q.name}</div>
+                        <div className="quote-list-email">{q.email}</div>
+                        <div className="quote-list-status">{q.status}</div>
+                      </div>
                     </li>
-                  ))}
-                </ul>
-              )}
-              {selectedQuote && (
-                <div className="quote-details-box">
-                  <h3>Quote Details</h3>
-                  <p><strong>Name:</strong> {selectedQuote.name}</p>
-                  <p><strong>Email:</strong> {selectedQuote.email}</p>
-                  <p><strong>Phone:</strong> {selectedQuote.phone}</p>
-                  <p><strong>Address:</strong> {selectedQuote.address}</p>
-                  <p><strong>Service Type:</strong> {selectedQuote.serviceType}</p>
-                  <p><strong>Project Type:</strong> {selectedQuote.projectType}</p>
-                  <p><strong>Rooms:</strong> {Array.isArray(selectedQuote.rooms) && selectedQuote.rooms.length > 0 ? selectedQuote.rooms.join(', ') : 'N/A'}</p>
-                  <p><strong>Timeframe:</strong> {selectedQuote.timeframe}</p>
-                  <p><strong>Budget:</strong> {selectedQuote.budget}</p>
-                  <p><strong>Description:</strong> {selectedQuote.description}</p>
-                  <p><strong>Status:</strong> {selectedQuote.status}</p>
-                  <p><strong>Appointment Date:</strong> {selectedQuote.appointmentDate ? new Date(selectedQuote.appointmentDate).toLocaleDateString() : 'N/A'}</p>
-                  <p><strong>Appointment Slot:</strong> {selectedQuote.appointmentSlot}</p>
-                  <p><strong>Created At:</strong> {selectedQuote.createdAt ? new Date(selectedQuote.createdAt).toLocaleString() : 'N/A'}</p>
-                  {/* Add more fields if needed */}
-                  {!editing ? (
-                    <button
-                      className="edit-btn"
-                      onClick={handleEditClick}
-                    >
-                      Edit
-                    </button>
-                  ) : (
-                    <form onSubmit={handleEditSubmit} className="edit-form">
-                      <div className="form-group">
-                        <label>Status:&nbsp;
-                          <select
-                            name="status"
-                            value={editForm.status}
-                            onChange={handleEditChange}
-                          >
-                            <option value="pending">Pending</option>
-                            <option value="quoted">Quoted</option>
-                          </select>
-                        </label>
-                      </div>
-                      <div className="form-group">
-                        <label>Estimated Cost:&nbsp;
-                          <input
-                            name="estimatedCost"
-                            value={editForm.estimatedCost}
-                            onChange={handleEditChange}
-                            type="number"
-                          />
-                        </label>
-                      </div>
-                      <div className="form-group">
-                        <label>Notes:&nbsp;
-                          <input
-                            name="notes"
-                            value={editForm.notes}
-                            onChange={handleEditChange}
-                            type="text"
-                          />
-                        </label>
-                      </div>
-                      <div className="form-group">
-                        <label>Appointment Date:&nbsp;
-                          <input
-                            name="appointmentDate"
-                            value={editForm.appointmentDate}
-                            onChange={handleEditChange}
-                            type="date"
-                            onClick={handleDateClick}
-                          />
-                        </label>
-                      </div>
-                      <div className="form-group">
-                        <label>Appointment Slot:&nbsp;
-                          <select
-                            name="appointmentSlot"
-                            value={editForm.appointmentSlot}
-                            onChange={handleEditChange}
-                          >
-                            <option value="">Select slot</option>
-                            {slotOptions
-                              .filter(opt => !unavailableSlots.includes(Number(opt.value)))
-                              .map(opt => (
-                                <option key={opt.value} value={opt.value}>
-                                  {opt.label}
-                                </option>
-                              ))}
-                          </select>
-                        </label>
-                      </div>
-                      <button
-                        type="submit"
-                        className="save-btn"
-                      >
-                        Save
-                      </button>
-                      <button
-                        type="button"
-                        className="cancel-btn"
-                        onClick={handleEditCancel}
-                      >
-                        Cancel
-                      </button>
-                    </form>
-                  )}
+                  ))
+                )}
+              </ul>
+
+            )}
+          </aside>
+          {/* Main: Quote Details */}
+          <main className="quotes-main">
+            {selectedQuote ? (
+              <motion.div
+                className="quote-details-card"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <h2 className="details-title">Quote Details</h2>
+                <div className="details-section">
+                  <div className="details-row">
+                    <span className="details-label">Name:</span>
+                    <span>{selectedQuote.name}</span>
+                  </div>
+                  <div className="details-row">
+                    <span className="details-label">Email:</span>
+                    <span>{selectedQuote.email}</span>
+                  </div>
+                  <div className="details-row">
+                    <span className="details-label">Phone:</span>
+                    <span>{selectedQuote.phone}</span>
+                  </div>
+                  <div className="details-row">
+                    <span className="details-label">Address:</span>
+                    <span>{selectedQuote.address}</span>
+                  </div>
+                  <div className="details-row">
+                    <span className="details-label">Service Type:</span>
+                    <span>{selectedQuote.serviceType}</span>
+                  </div>
+                  <div className="details-row">
+                    <span className="details-label">Project Type:</span>
+                    <span>{selectedQuote.projectType}</span>
+                  </div>
+                  <div className="details-row">
+                    <span className="details-label">Rooms:</span>
+                    <span>{Array.isArray(selectedQuote.rooms) && selectedQuote.rooms.length > 0 ? selectedQuote.rooms.join(', ') : 'N/A'}</span>
+                  </div>
+                  <div className="details-row">
+                    <span className="details-label">Timeframe:</span>
+                    <span>{selectedQuote.timeframe}</span>
+                  </div>
+                  <div className="details-row">
+                    <span className="details-label">Budget:</span>
+                    <span>{selectedQuote.budget}</span>
+                  </div>
+                  <div className="details-row">
+                    <span className="details-label">Description:</span>
+                    <span>{selectedQuote.description}</span>
+                  </div>
+                  <div className="details-row">
+                    <span className="details-label">Status:</span>
+                    <span>{selectedQuote.status}</span>
+                  </div>
+                  <div className="details-row">
+                    <span className="details-label">Appointment Date:</span>
+                    <span>{selectedQuote.appointmentDate ? formatDateDMY(selectedQuote.appointmentDate) : 'N/A'}</span>
+                  </div>
+                  <div className="details-row">
+                    <span className="details-label">Appointment Slot:</span>
+                    <span>
+                      {getSlotLabel(selectedQuote.appointmentSlot)}
+                    </span>
+                  </div>
+                  <div className="details-row">
+                    <span className="details-label">Created At:</span>
+                    <span>{selectedQuote.createdAt ? new Date(selectedQuote.createdAt).toLocaleString() : 'N/A'}</span>
+                  </div>
                 </div>
-              )}
-            </div>
-          )}
+                {/* Images array display */}
+                {Array.isArray(selectedQuote.images) && selectedQuote.images.length > 0 && (
+                  <div className="details-section" style={{ marginTop: '18px' }}>
+                    <span className="details-label" style={{ marginBottom: '8px' }}>Images:</span>
+                    <div className="images-grid">
+                      {selectedQuote.images.map((img, idx) => (
+                        <div key={idx} className="image-thumb-card">
+                          {img.path && img.path.startsWith('http') && (
+                            <img src={img.path} alt={img.filename} className="image-thumb" />
+                          )}
+                          <div className="image-filename">{img.filename}</div>
+                          <div className="image-mimetype">{img.mimetype}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {/* ...existing code for edit button/form... */}
+                {!editing ? (
+                  <button
+                    className="edit-btn"
+                    onClick={handleEditClick}
+                  >
+                    Edit
+                  </button>
+                ) : (
+                  <form onSubmit={handleEditSubmit} className="edit-form">
+                    <div className="form-group">
+                      <label>Status:&nbsp;
+                        <select
+                          name="status"
+                          value={editForm.status}
+                          onChange={handleEditChange}
+                        >
+                          <option value="pending">Pending</option>
+                          <option value="quoted">Quoted</option>
+                        </select>
+                      </label>
+                    </div>
+                    <div className="form-group">
+                      <label>Estimated Cost:&nbsp;
+                        <input
+                          name="estimatedCost"
+                          value={editForm.estimatedCost}
+                          onChange={handleEditChange}
+                          type="number"
+                        />
+                      </label>
+                    </div>
+                    <div className="form-group">
+                      <label>Notes:&nbsp;
+                        <input
+                          name="notes"
+                          value={editForm.notes}
+                          onChange={handleEditChange}
+                          type="text"
+                        />
+                      </label>
+                    </div>
+                    <div className="form-group">
+                      <label>Appointment Date:&nbsp;
+                        <input
+                          name="appointmentDate"
+                          value={editForm.appointmentDate}
+                          onChange={handleEditChange}
+                          type="date"
+                          onClick={handleDateClick}
+                        />
+                      </label>
+                    </div>
+                    <div className="form-group">
+                      <label>Appointment Slot:&nbsp;
+                        <select
+                          name="appointmentSlot"
+                          value={editForm.appointmentSlot}
+                          onChange={handleEditChange}
+                        >
+                          <option value="">Select slot</option>
+                          {slotOptions
+                            .filter(opt => !unavailableSlots.includes(Number(opt.value)))
+                            .map(opt => (
+                              <option key={opt.value} value={opt.value}>
+                                {opt.label}
+                              </option>
+                            ))}
+                        </select>
+                      </label>
+                    </div>
+                    <button
+                      type="submit"
+                      className="save-btn"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      className="cancel-btn"
+                      onClick={handleEditCancel}
+                    >
+                      Cancel
+                    </button>
+                  </form>
+                )}
+              </motion.div>
+            ) : (
+              <div className="blank-content">
+                <p>Select a quote from the left to view details.</p>
+              </div>
+            )}
+          </main>
         </div>
       </section>
     </div>

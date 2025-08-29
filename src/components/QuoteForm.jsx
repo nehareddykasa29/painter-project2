@@ -16,6 +16,8 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAvailability, submitQuote } from '../store/bookingSlice';
 import { BACKEND_URL } from '../store/backend';
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { app as firebaseApp } from "../firebase";
 import './QuoteForm.css';
 
 const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
@@ -45,6 +47,7 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
 
   const [files, setFiles] = useState([]);
   const [errors, setErrors] = useState({});
+  const [uploadingImages, setUploadingImages] = useState(false);
 
   // Update form data when initialData changes
   useEffect(() => {
@@ -133,6 +136,31 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
       return;
     }
 
+    setUploadingImages(true);
+
+    let imageUrls = [];
+    let images = [];
+    if (files.length > 0) {
+      const storage = getStorage(firebaseApp);
+      imageUrls = await Promise.all(
+        files.map(async (file) => {
+          const storageRef = ref(storage, `quote-images/${Date.now()}-${file.name}`);
+          await uploadBytes(storageRef, file);
+          const url = await getDownloadURL(storageRef);
+          return { url, file };
+        })
+      );
+      console.log("Uploaded image URLs:", imageUrls.map(i => i.url));
+      // Build images array for backend
+      images = imageUrls.map(({ url, file }) => ({
+        filename: file.name,
+        path: url,
+        mimetype: file.type
+      }));
+    }
+
+    setUploadingImages(false);
+
     // Find the slot index for the selected time
     const slotIndex = allPossibleSlots.findIndex(slot => slot === formData.appointmentSlot);
 
@@ -151,7 +179,8 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
       budget: formData.budget,
       description: formData.description,
       appointmentDate: appointmentDateStr,
-      appointmentSlot: slotIndex
+      appointmentSlot: slotIndex,
+      images // <-- add images array here
     };
 
     dispatch(submitQuote(quoteBody));
@@ -207,7 +236,8 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
       return isValidType && isValidSize;
     });
 
-    setFiles(prev => [...prev, ...validFiles].slice(0, 10)); // Max 10 files
+    // Limit to 5 images
+    setFiles(prev => [...prev, ...validFiles].slice(0, 5));
   };
 
   const removeFile = (index) => {
@@ -610,7 +640,7 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
       {/* File Upload */}
       <div className="form-section">
         <h3>Project Images (Optional)</h3>
-        <p className="form-help">Upload photos of the areas to be painted (max 10 files, 5MB each)</p>
+        <p className="form-help">Upload photos of the areas to be painted (max 5 files, 5MB each)</p>
         
         <div className="file-upload-area">
           <input
@@ -644,14 +674,19 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
             ))}
           </div>
         )}
+        {files.length === 5 && (
+          <div className="form-help" style={{ color: "#f44336" }}>
+            Maximum 5 images allowed.
+          </div>
+        )}
       </div>
 
       <button 
         type="submit" 
         className="btn btn-cta btn-large"
-        disabled={isLoading}
+        disabled={isLoading || uploadingImages}
       >
-        {isLoading ? (
+        {(isLoading || uploadingImages) ? (
           <>
             <div className="spinner"></div>
             Submitting...
