@@ -18,6 +18,7 @@ const ViewQuotes = () => {
     appointmentDate: '',
     appointmentSlot: ''
   });
+  const [showAppointmentInputs, setShowAppointmentInputs] = useState(false);
   // Track if fetchAvailability was triggered
   const [availabilityRequested, setAvailabilityRequested] = useState(false);
 
@@ -69,6 +70,7 @@ const ViewQuotes = () => {
       })).unwrap();
       alert('Quote updated successfully!');
       setEditing(false);
+      window.location.reload(); // Refresh the page after saving
       // No need to call dispatch(fetchQuotes()) here, useEffect above will handle it
     } catch (err) {
       alert('Error updating quote: ' + err);
@@ -307,35 +309,48 @@ const ViewQuotes = () => {
                         />
                       </label>
                     </div>
-                    <div className="form-group">
-                      <label>Appointment Date:&nbsp;
-                        <input
-                          name="appointmentDate"
-                          value={editForm.appointmentDate}
-                          onChange={handleEditChange}
-                          type="date"
-                          onClick={handleDateClick}
-                        />
-                      </label>
-                    </div>
-                    <div className="form-group">
-                      <label>Appointment Slot:&nbsp;
-                        <select
-                          name="appointmentSlot"
-                          value={editForm.appointmentSlot}
-                          onChange={handleEditChange}
-                        >
-                          <option value="">Select slot</option>
-                          {slotOptions
-                            .filter(opt => !unavailableSlots.includes(Number(opt.value)))
-                            .map(opt => (
-                              <option key={opt.value} value={opt.value}>
-                                {opt.label}
-                              </option>
-                            ))}
-                        </select>
-                      </label>
-                    </div>
+                    {/* Toggle button for appointment inputs */}
+                    <button
+                      type="button"
+                      className="toggle-appointment-btn"
+                      style={{ marginBottom: '10px' }}
+                      onClick={() => setShowAppointmentInputs(v => !v)}
+                    >
+                      {showAppointmentInputs ? 'Close' : 'Date and Slot'}
+                    </button>
+                    {showAppointmentInputs && (
+                      <>
+                        <div className="form-group">
+                          <label>Appointment Date:&nbsp;
+                            <input
+                              name="appointmentDate"
+                              value={editForm.appointmentDate}
+                              onChange={handleEditChange}
+                              type="date"
+                              onClick={handleDateClick}
+                            />
+                          </label>
+                        </div>
+                        <div className="form-group">
+                          <label>Appointment Slot:&nbsp;
+                            <select
+                              name="appointmentSlot"
+                              value={editForm.appointmentSlot}
+                              onChange={handleEditChange}
+                            >
+                              <option value="">Select slot</option>
+                              {slotOptions
+                                .filter(opt => !unavailableSlots.includes(Number(opt.value)))
+                                .map(opt => (
+                                  <option key={opt.value} value={opt.value}>
+                                    {opt.label}
+                                  </option>
+                                ))}
+                            </select>
+                          </label>
+                        </div>
+                      </>
+                    )}
                     <button
                       type="submit"
                       className="save-btn"

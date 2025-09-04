@@ -133,6 +133,7 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
     e.preventDefault();
 
     if (!validateForm()) {
+      alert('Please correct the highlighted errors in the form.');
       return;
     }
 
@@ -292,9 +293,28 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
     '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'
   ];
 
+  // Block slots that are already completed for today
   let availableSlots = [];
   if (selectedDateStr) {
+    // Remove blocked indexes from backend
     availableSlots = allPossibleSlots.filter((_, idx) => blockedIndexes.indexOf(idx) === -1);
+
+    // If selected date is today, filter out past slots
+    const today = new Date();
+    const isToday =
+      formData.appointmentDate &&
+      today.getFullYear() === formData.appointmentDate.getFullYear() &&
+      today.getMonth() === formData.appointmentDate.getMonth() &&
+      today.getDate() === formData.appointmentDate.getDate();
+
+    if (isToday) {
+      const nowMinutes = today.getHours() * 60 + today.getMinutes();
+      availableSlots = availableSlots.filter(slot => {
+        const [h, m] = slot.split(':').map(Number);
+        const slotMinutes = h * 60 + m;
+        return slotMinutes > nowMinutes;
+      });
+    }
   }
 
   const minDate = new Date();
@@ -578,6 +598,7 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
                 dateFormat="yyyy-MM-dd"
                 onFocus={handleAvailabilityFetch}
                 disabled={appointmentLoading}
+                filterDate={date => date.getDay() !== 0} // Block Sundays
               />
               {appointmentLoading && (
                 <div

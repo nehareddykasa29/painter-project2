@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './store/store';
+import { useNavigate } from 'react-router-dom';
 
 // Components
 import Header from './components/Header';
@@ -37,12 +38,27 @@ import ManageUsers from './pages/ManageUsers';
 import ViewQuotes from './pages/ViewQuotes';
 import "./styles/App.css";
 
+// Add this helper component
+function AuthRedirector() {
+  const token = useSelector(state => state.auth?.token);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (token) {
+      navigate('/view-quotes', { replace: true });
+    } else {
+      navigate('/', { replace: true });
+    }
+  }, [token, navigate]);
+  return null;
+}
+
 function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <Router>
           <div className="App">
+            <AuthRedirector />
             <ScrollToTop />
             <Header />
             
