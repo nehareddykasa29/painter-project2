@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Provider, useSelector } from 'react-redux';
@@ -42,12 +42,18 @@ import "./styles/App.css";
 function AuthRedirector() {
   const token = useSelector(state => state.auth?.token);
   const navigate = useNavigate();
+  const prevToken = useRef(token);
+
   useEffect(() => {
-    if (token) {
+    // Only redirect if token status changes
+    if (!prevToken.current && token) {
+      // Just logged in
       navigate('/view-quotes', { replace: true });
-    } else {
+    } else if (prevToken.current && !token) {
+      // Just logged out
       navigate('/', { replace: true });
     }
+    prevToken.current = token;
   }, [token, navigate]);
   return null;
 }
