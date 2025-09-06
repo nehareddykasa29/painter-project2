@@ -36,6 +36,7 @@ import WoodworkTrim from './pages/WoodworkTrim';
 import FAQ from './pages/FAQ';
 import ManageUsers from './pages/ManageUsers';
 import ViewQuotes from './pages/ViewQuotes';
+import MailQuoteUpdate from './pages/MailQuoteUpdate'; // Add this import
 import "./styles/App.css";
 
 // Add this helper component
@@ -98,6 +99,7 @@ function App() {
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/manage-users" element={<ManageUsers />} />
                 <Route path="/view-quotes" element={<ViewQuotes />} />
+                <Route path="/mailquoteupdate" element={<MailQuoteUpdate />} /> {/* Add this route */}
               </Routes>
             </motion.main>
 
