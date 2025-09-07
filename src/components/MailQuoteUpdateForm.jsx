@@ -12,14 +12,14 @@ function MailQuoteUpdateForm() {
   const { token } = useParams();
 
   const slots = [
-    '9:00 - 10:00',
-    '10:00 - 11:00',
-    '11:00 - 12:00',
-    '12:00 - 13:00',
-    '13:00 - 14:00',
-    '14:00 - 15:00',
-    '15:00 - 16:00',
-    '16:00 - 17:00'
+    '9:00',
+    '10:00',
+    '11:00',
+    '12:00',
+    '13:00',
+    '14:00',
+    '15:00',
+    '16:00'
   ];
 
   // Fetch availability when date input is clicked
@@ -51,6 +51,48 @@ function MailQuoteUpdateForm() {
     setDate(e.target.value);
     setSlot('');
     // Print available slots for the selected date
+    setTimeout(printAvailableSlots, 0);
+  };
+
+  // Helper to get today's date in YYYY-MM-DD format
+  const getToday = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
+  // Helper to get the next available slot index for today
+  const getNextAvailableSlotIdx = () => {
+    const now = new Date();
+    const currentHour = now.getHours();
+    // slots: ['9:00', ..., '16:00']
+    // Find the first slot whose hour is greater than current hour
+    for (let i = 0; i < slots.length; i++) {
+      const slotHour = parseInt(slots[i]);
+      if (slotHour > currentHour) {
+        return i;
+      }
+    }
+    // If all slots are in the past, return -1 (no slots available)
+    return -1;
+  };
+
+  // Prevent selecting Sundays and past days
+  const handleDateInput = (e) => {
+    const value = e.target.value;
+    const selected = new Date(value);
+    // 0 = Sunday
+    if (selected.getDay() === 0) {
+      setErrorMsg('Sundays are not available. Please select another day.');
+      setDate('');
+      setSlot('');
+      return;
+    }
+    setErrorMsg('');
+    setDate(value);
+    setSlot('');
     setTimeout(printAvailableSlots, 0);
   };
 
@@ -89,7 +131,8 @@ function MailQuoteUpdateForm() {
             <input
               type="date"
               value={date}
-              onChange={handleDateChange}
+              min={getToday()}
+              onChange={handleDateInput}
               onClick={handleDateInputClick}
               style={{ marginLeft: '1rem' }}
               required
@@ -104,22 +147,43 @@ function MailQuoteUpdateForm() {
               onChange={e => setSlot(e.target.value)}
               style={{ marginLeft: '1rem' }}
               required
+              disabled={!date}
             >
               <option value="">-- Select a slot --</option>
               {(() => {
-                // If availability for the selected date exists, filter slots
                 if (date && availability[date]) {
-                  // Only show slots whose index is NOT in availability[date]
-                  return slots.map((s, idx) =>
-                    !availability[date].includes(idx) ? (
-                      <option key={idx} value={s}>{s}</option>
-                    ) : null
-                  );
+                  let availableSlots = slots.map((s, idx) =>
+                    !availability[date].includes(idx) ? { label: s, idx } : null
+                  ).filter(Boolean);
+
+                  // If selected date is today, filter out past slots except the next available
+                  if (date === getToday()) {
+                    const nextIdx = getNextAvailableSlotIdx();
+                    availableSlots = availableSlots.filter(
+                      slotObj => slotObj.idx >= nextIdx
+                    );
+                  }
+
+                  return availableSlots.map(slotObj => (
+                    <option key={slotObj.idx} value={slots[slotObj.idx]}>
+                      {slots[slotObj.idx]}
+                    </option>
+                  ));
                 }
-                // If no availability loaded, show all slots
-                return slots.map((s, idx) => (
-                  <option key={idx} value={s}>{s}</option>
-                ));
+                // If no availability loaded or no date, show all slots only if date is selected
+                if (date) {
+                  let allSlots = slots.map((s, idx) => ({ label: s, idx }));
+                  if (date === getToday()) {
+                    const nextIdx = getNextAvailableSlotIdx();
+                    allSlots = allSlots.filter(slotObj => slotObj.idx >= nextIdx);
+                  }
+                  return allSlots.map(slotObj => (
+                    <option key={slotObj.idx} value={slotObj.label}>
+                      {slotObj.label}
+                    </option>
+                  ));
+                }
+                return null;
               })()}
             </select>
           </label>
