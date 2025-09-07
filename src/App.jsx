@@ -15,7 +15,6 @@ import AnnouncementBanner from './components/AnnouncementBanner';
 // Pages
 import Home from './pages/Home';
 import Contact from './pages/Contact';
-
 import Commercial from './pages/Commercial';
 import Reviews from './pages/Reviews';
 import About from './pages/About';
@@ -36,22 +35,20 @@ import WoodworkTrim from './pages/WoodworkTrim';
 import FAQ from './pages/FAQ';
 import ManageUsers from './pages/ManageUsers';
 import ViewQuotes from './pages/ViewQuotes';
-import MailQuoteUpdate from './pages/MailQuoteUpdate'; // Add this import
+import MailQuoteUpdate from './pages/MailQuoteUpdate';
+
 import "./styles/App.css";
 
-// Add this helper component
+// Helper component for auth redirects
 function AuthRedirector() {
   const token = useSelector(state => state.auth?.token);
   const navigate = useNavigate();
   const prevToken = useRef(token);
 
   useEffect(() => {
-    // Only redirect if token status changes
     if (!prevToken.current && token) {
-      // Just logged in
       navigate('/view-quotes', { replace: true });
     } else if (prevToken.current && !token) {
-      // Just logged out
       navigate('/', { replace: true });
     }
     prevToken.current = token;
@@ -76,9 +73,9 @@ function App() {
               transition={{ duration: 0.3 }}
             >
               <Routes>
+                {/* ... all your other routes ... */}
                 <Route path="/" element={<Home />} />
                 <Route path="/contact" element={<Contact />} />
-
                 <Route path="/commercial" element={<Commercial />} />
                 <Route path="/reviews" element={<Reviews />} />
                 <Route path="/about" element={<About />} />
@@ -99,13 +96,15 @@ function App() {
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/manage-users" element={<ManageUsers />} />
                 <Route path="/view-quotes" element={<ViewQuotes />} />
-                <Route path="/mailquoteupdate" element={<MailQuoteUpdate />} /> {/* Add this route */}
+
+                {/* --- UPDATED ROUTE --- */}
+                {/* This path now captures the unique token from the email link */}
+                <Route path="/mailquoteupdate/:token" element={<MailQuoteUpdate />} />
+
               </Routes>
             </motion.main>
-
-            {/* Announcement Banner above Footer */}
-            <AnnouncementBanner />
             
+            <AnnouncementBanner />
             <Footer />
           </div>
         </Router>
@@ -115,3 +114,4 @@ function App() {
 }
 
 export default App;
+
