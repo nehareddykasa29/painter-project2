@@ -20,6 +20,20 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { app as firebaseApp } from "../firebase";
 import './QuoteForm.css';
 
+// Add a small set of country codes for the dropdown
+const COUNTRY_CODES = [
+  { code: '+1', label: 'US/Canada (+1)', short: 'US/CA' },
+  { code: '+44', label: 'UK (+44)', short: 'UK' },
+  { code: '+91', label: 'India (+91)', short: 'IN' },
+  { code: '+61', label: 'Australia (+61)', short: 'AU' },
+  { code: '+81', label: 'Japan (+81)', short: 'JP' },
+  { code: '+49', label: 'Germany (+49)', short: 'DE' },
+  { code: '+33', label: 'France (+33)', short: 'FR' },
+  { code: '+971', label: 'UAE (+971)', short: 'UAE' },
+  { code: '+65', label: 'Singapore (+65)', short: 'SG' },
+  // ...add more as needed
+];
+
 const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
   const dispatch = useDispatch();
   const appointmentAvailability = useSelector(state => state.booking.availability);
@@ -43,6 +57,7 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
     description: initialData?.description || '',
     appointmentDate: initialData?.appointmentDate ? new Date(initialData.appointmentDate) : null,
     appointmentSlot: initialData?.appointmentSlot || '',
+    countryCode: initialData?.countryCode || '+1', // default to US/Canada
   });
 
   const [files, setFiles] = useState([]);
@@ -66,6 +81,7 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
         description: initialData.description || '',
         appointmentDate: initialData.appointmentDate ? new Date(initialData.appointmentDate) : null,
         appointmentSlot: initialData.appointmentSlot || '',
+        countryCode: initialData.countryCode || '+1',
       });
     }
   }, [initialData]);
@@ -94,7 +110,7 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
 
     if (!formData.phone.trim()) {
       newErrors.phone = 'Phone number is required';
-    } else if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(formData.phone)) {
+    } else if (!/^\d{7,15}$/.test(formData.phone.replace(/\D/g, ''))) {
       newErrors.phone = 'Phone number is invalid';
     }
 
@@ -168,11 +184,14 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
     // Format appointmentDate as "YYYY-MM-DD"
     const appointmentDateStr = formatDate(formData.appointmentDate);
 
+    // Prepend country code to phone number
+    const fullPhone = `${formData.countryCode}${formData.phone.replace(/^0+/, '')}`;
+
     // Build the JSON body
     const quoteBody = {
       name: formData.name,
       email: formData.email,
-      phone: formData.phone,
+      phone: fullPhone,
       address: formData.address,
       serviceType: formData.serviceType,
       projectType: formData.projectType,
@@ -417,15 +436,39 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
             <label htmlFor="phone" className="form-label">
               <FaPhone /> Phone Number *
             </label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className={`form-control ${errors.phone ? 'error' : ''}`}
-              placeholder="(123) 456-7890"
-            />
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              <select
+                name="countryCode"
+                value={formData.countryCode}
+                onChange={handleChange}
+                style={{
+                  width: '70px',
+                  minWidth: '40px',
+                  maxWidth: '60px',
+                  padding: '4px 6px',
+                  borderRadius: '4px',
+                  border: '1px solid #ccc',
+                  background: '#fafbfc',
+                  fontSize: '0.95em'
+                }}
+              >
+                {COUNTRY_CODES.map(opt => (
+                  <option key={opt.code} value={opt.code}>
+                    {opt.code} {opt.short}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                className={`form-control ${errors.phone ? 'error' : ''}`}
+                placeholder="e.g., 9876543210"
+                style={{ flex: 1, minWidth: '180px', fontSize: '1em' }} // Make input wider
+              />
+            </div>
             {errors.phone && <div className="form-error">{errors.phone}</div>}
           </div>
 
