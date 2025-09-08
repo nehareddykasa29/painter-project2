@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchQuotes, fetchAvailability, updateQuote } from '../store/bookingSlice';
+import { fetchQuotes, fetchAvailability, updateQuote, deleteQuote } from '../store/bookingSlice';
+import { BACKEND_URL } from '../store/backend';
 import './ViewQuotes.css';
 
 const ViewQuotes = () => {
@@ -10,7 +11,8 @@ const ViewQuotes = () => {
   const availability = useSelector(state => state.booking.availability);
   const token = useSelector(state => state.auth?.token);
   const [selectedQuote, setSelectedQuote] = useState(null);
-  const [editing, setEditing] = useState(false);
+  // Replace editing boolean with editingQuoteId
+  const [editingQuoteId, setEditingQuoteId] = useState(null);
   const [editForm, setEditForm] = useState({
     status: '',
     estimatedCost: '',
@@ -21,6 +23,7 @@ const ViewQuotes = () => {
   const [showAppointmentInputs, setShowAppointmentInputs] = useState(false);
   // Track if fetchAvailability was triggered
   const [availabilityRequested, setAvailabilityRequested] = useState(false);
+  const [lastUpdatedQuoteId, setLastUpdatedQuoteId] = useState(null);
 
   useEffect(() => {
     dispatch(fetchQuotes());
@@ -32,15 +35,26 @@ const ViewQuotes = () => {
     }
   }, [updateSuccess, dispatch]);
 
+  // Add this useEffect to update editForm when selectedQuote changes
+  useEffect(() => {
+    if (selectedQuote) {
+      setEditForm({
+        status: selectedQuote.status || '',
+        estimatedCost: selectedQuote.estimatedCost || '',
+        notes: selectedQuote.notes || '',
+        appointmentDate: selectedQuote.appointmentDate ? selectedQuote.appointmentDate.slice(0,10) : '',
+        appointmentSlot: selectedQuote.appointmentSlot || ''
+      });
+    }
+  }, [selectedQuote]);
+
+  // When a quote is selected, reset editing state
+  useEffect(() => {
+    setEditingQuoteId(null);
+  }, [selectedQuote]);
+
   const handleEditClick = () => {
-    setEditForm({
-      status: selectedQuote.status || '',
-      estimatedCost: selectedQuote.estimatedCost || '',
-      notes: selectedQuote.notes || '',
-      appointmentDate: selectedQuote.appointmentDate ? selectedQuote.appointmentDate.slice(0,10) : '',
-      appointmentSlot: selectedQuote.appointmentSlot || ''
-    });
-    setEditing(true);
+    setEditingQuoteId(selectedQuote?._id);
   };
 
   const handleEditChange = e => {
@@ -52,7 +66,7 @@ const ViewQuotes = () => {
   };
 
   const handleEditCancel = () => {
-    setEditing(false);
+    setEditingQuoteId(null);
   };
 
   const handleEditSubmit = async e => {
@@ -69,13 +83,27 @@ const ViewQuotes = () => {
         }
       })).unwrap();
       alert('Quote updated successfully!');
-      setEditing(false);
-      window.location.reload(); // Refresh the page after saving
-      // No need to call dispatch(fetchQuotes()) here, useEffect above will handle it
+      setEditingQuoteId(null);
+      setLastUpdatedQuoteId(selectedQuote._id); // Track last updated quote
+      // Optimistically update selectedQuote to reflect new status immediately
+      setSelectedQuote(prev => prev ? { ...prev, ...editForm, status: editForm.status } : prev);
+      dispatch(fetchQuotes()); // Refetch quotes
+      // Do not reload the page
     } catch (err) {
       alert('Error updating quote: ' + err);
     }
   };
+
+  // After quotes are refetched, keep the last updated quote open
+  useEffect(() => {
+    if (lastUpdatedQuoteId && quotes && quotes.length > 0) {
+      const found = quotes.find(q => q._id === lastUpdatedQuoteId);
+      if (found) {
+        setSelectedQuote(found);
+        setLastUpdatedQuoteId(null); // Reset after use
+      }
+    }
+  }, [quotes, lastUpdatedQuoteId]);
 
   const handleDateClick = async () => {
     setAvailabilityRequested(true);
@@ -134,6 +162,31 @@ const ViewQuotes = () => {
     return `${day}/${month}/${year}`;
   };
 
+  const handleDeleteQuote = useCallback(async () => {
+    if (!selectedQuote) return;
+    if (!window.confirm('Are you sure you want to delete this quote?')) return;
+    try {
+      const response = await fetch(
+        `${BACKEND_URL}/api/admin/quotes/${selectedQuote._id}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(errText || 'Failed to delete quote');
+      }
+      alert('Quote deleted successfully!');
+      setSelectedQuote(null);
+      dispatch(fetchQuotes());
+    } catch (err) {
+      alert('Error deleting quote: ' + err);
+    }
+  }, [dispatch, selectedQuote, token]);
+
   return (
     <div className="view-quotes-page">
       <section className="hero-section">
@@ -171,7 +224,8 @@ const ViewQuotes = () => {
                       <div className="quote-list-card">
                         <div className="quote-list-name">{q.name}</div>
                         <div className="quote-list-email">{q.email}</div>
-                        <div className="quote-list-status">{q.status}</div>
+                        <div className="quote-list-status">Status: {q.status}</div>
+                        {/* Removed estimated cost and notes from sidebar */}
                       </div>
                     </li>
                   ))
@@ -268,13 +322,25 @@ const ViewQuotes = () => {
                   </div>
                 )}
                 {/* ...existing code for edit button/form... */}
-                {!editing ? (
-                  <button
-                    className="edit-btn"
-                    onClick={handleEditClick}
-                  >
-                    Edit
-                  </button>
+                {editingQuoteId !== selectedQuote._id ? (
+                  <>
+                    <button
+                      className="edit-btn"
+                      onClick={handleEditClick}
+                    >
+                      Edit
+                    </button>
+                    {/* Show Delete button only if status is "completed" */}
+                    {selectedQuote.status === "completed" && (
+                      <button
+                        className="delete-btn"
+                        style={{ marginLeft: '10px', background: '#e74c3c', color: '#fff' }}
+                        onClick={handleDeleteQuote}
+                      >
+                        Delete
+                      </button>
+                    )}
+                  </>
                 ) : (
                   <form onSubmit={handleEditSubmit} className="edit-form">
                     <div className="form-group">
@@ -286,6 +352,7 @@ const ViewQuotes = () => {
                         >
                           <option value="pending">Pending</option>
                           <option value="quoted">Quoted</option>
+                          <option value="completed">Completed</option>
                         </select>
                       </label>
                     </div>
