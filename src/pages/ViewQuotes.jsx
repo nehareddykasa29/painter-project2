@@ -24,6 +24,7 @@ const ViewQuotes = () => {
   // Track if fetchAvailability was triggered
   const [availabilityRequested, setAvailabilityRequested] = useState(false);
   const [lastUpdatedQuoteId, setLastUpdatedQuoteId] = useState(null);
+  const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
     dispatch(fetchQuotes());
@@ -160,6 +161,35 @@ const ViewQuotes = () => {
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const year = d.getFullYear();
     return `${day}/${month}/${year}`;
+  };
+
+  // Helper to check if a date is Sunday
+  const isSunday = dateStr => {
+    if (!dateStr) return false;
+    const d = new Date(dateStr);
+    return d.getDay() === 0;
+  };
+
+  // Helper to get today's date in YYYY-MM-DD format
+  const todayStr = () => {
+    const d = new Date();
+    return d.toISOString().slice(0, 10);
+  };
+
+  // Helper to get the next available slot index for today
+  const getNextAvailableSlotIdx = () => {
+    const now = new Date();
+    const currentHour = now.getHours();
+    // slotOptions: [{ value: "0", label: "09:00 - 10:00" }, ...]
+    // Find the first slot whose start hour is greater than current hour
+    for (let i = 0; i < slotOptions.length; i++) {
+      const slotHour = 9 + i; // slot 0 = 9:00, slot 1 = 10:00, etc.
+      if (slotHour > currentHour) {
+        return i;
+      }
+    }
+    // If all slots are in the past, return a value greater than any slot index
+    return slotOptions.length;
   };
 
   const handleDeleteQuote = useCallback(async () => {
@@ -392,11 +422,31 @@ const ViewQuotes = () => {
                             <input
                               name="appointmentDate"
                               value={editForm.appointmentDate}
-                              onChange={handleEditChange}
+                              onChange={e => {
+                                const value = e.target.value;
+                                const selected = new Date(value);
+                                if (selected.getDay() === 0) {
+                                  setErrorMsg('Sundays are not available. Please select another day.');
+                                  setEditForm(prev => ({
+                                    ...prev,
+                                    appointmentDate: '',
+                                    appointmentSlot: ''
+                                  }));
+                                  return;
+                                }
+                                setErrorMsg('');
+                                handleEditChange(e);
+                                setEditForm(prev => ({
+                                  ...prev,
+                                  appointmentSlot: ''
+                                }));
+                              }}
                               type="date"
                               onClick={handleDateClick}
+                              min={todayStr()}
                             />
                           </label>
+                          {errorMsg && <div style={{ color: 'red', marginTop: '0.5rem' }}>{errorMsg}</div>}
                         </div>
                         <div className="form-group">
                           <label>Appointment Slot:&nbsp;
@@ -407,7 +457,15 @@ const ViewQuotes = () => {
                             >
                               <option value="">Select slot</option>
                               {slotOptions
+                                // Filter out unavailable slots
                                 .filter(opt => !unavailableSlots.includes(Number(opt.value)))
+                                // If today is selected, filter out past slots
+                                .filter(opt => {
+                                  if (editForm.appointmentDate === todayStr()) {
+                                    return Number(opt.value) >= getNextAvailableSlotIdx();
+                                  }
+                                  return true;
+                                })
                                 .map(opt => (
                                   <option key={opt.value} value={opt.value}>
                                     {opt.label}
