@@ -94,7 +94,7 @@ const Commercial = () => {
           </div>
           
           <div className="business-deserves-image">
-            <img src="/assets/your-bussiness-deserves-the-best.png" alt="Professional painters working on commercial building" />
+            <img src="/assets/deck-and-fence-finishing.png" alt="Professional painters working on commercial building" />
           </div>
         </div>
       </section>
