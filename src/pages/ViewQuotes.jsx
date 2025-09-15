@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchQuotes, fetchAvailability, updateQuote, deleteQuote } from '../store/bookingSlice';
 import { BACKEND_URL } from '../store/backend';
 import './ViewQuotes.css';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const ViewQuotes = () => {
   const dispatch = useDispatch();
@@ -25,6 +26,8 @@ const ViewQuotes = () => {
   const [availabilityRequested, setAvailabilityRequested] = useState(false);
   const [lastUpdatedQuoteId, setLastUpdatedQuoteId] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(fetchQuotes());
@@ -53,6 +56,23 @@ const ViewQuotes = () => {
   useEffect(() => {
     setEditingQuoteId(null);
   }, [selectedQuote]);
+
+  // Helper to get quoteId from URL query
+  const getQuoteIdFromQuery = () => {
+    const params = new URLSearchParams(location.search);
+    return params.get('quoteId');
+  };
+
+  // On mount, if quoteId in URL, select that quote after quotes are fetched
+  useEffect(() => {
+    if (quotes && quotes.length > 0) {
+      const quoteId = getQuoteIdFromQuery();
+      if (quoteId) {
+        const found = quotes.find(q => q._id === quoteId);
+        if (found) setSelectedQuote(found);
+      }
+    }
+  }, [quotes]);
 
   const handleEditClick = () => {
     setEditingQuoteId(selectedQuote?._id);
@@ -83,17 +103,16 @@ const ViewQuotes = () => {
           appointmentSlot: Number(editForm.appointmentSlot)
         }
       })).unwrap();
+
       alert('Quote updated successfully!');
-      setEditingQuoteId(null);
-      setLastUpdatedQuoteId(selectedQuote._id); // Track last updated quote
-      // Optimistically update selectedQuote to reflect new status immediately
-      setSelectedQuote(prev => prev ? { ...prev, ...editForm, status: editForm.status } : prev);
-      dispatch(fetchQuotes()); // Refetch quotes
-      // Do not reload the page
+      // Set quoteId in URL and reload page
+      navigate(`?quoteId=${selectedQuote._id}`);
+      window.location.reload();
     } catch (err) {
       alert('Error updating quote: ' + err);
     }
   };
+
 
   // After quotes are refetched, keep the last updated quote open
   useEffect(() => {
@@ -167,7 +186,7 @@ const ViewQuotes = () => {
   const isSunday = dateStr => {
     if (!dateStr) return false;
     const d = new Date(dateStr);
-    return d.getDay() === 0;
+    return d.getDay() === 0; 
   };
 
   // Helper to get today's date in YYYY-MM-DD format
@@ -259,7 +278,7 @@ const ViewQuotes = () => {
                       </div>
                     </li>
                   ))
-                )}
+               ) }
               </ul>
 
             )}
