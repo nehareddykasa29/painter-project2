@@ -262,6 +262,14 @@ const Reviews = () => {
                 }}>
                 Write Google Review
               </button>
+              <button type="submit" className="btn btn-primary submit-angi-btn" 
+              onClick={() => {
+                  window.open(
+                    "https://www.angi.com/companylist/us/wi/waukesha/the-painter-guys-llc-reviews-2049387.htm"
+                  );
+                }}>
+                Write Angi Review
+              </button>
             </form>
             {submitLoading && <div>Submitting review...</div>}
             {submitError && <div className="error">Error: {submitError}</div>}
