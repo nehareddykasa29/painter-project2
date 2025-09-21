@@ -16,7 +16,23 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAvailability, submitQuote } from '../store/bookingSlice';
 import { BACKEND_URL } from '../store/backend';
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { app as firebaseApp } from "../firebase";
 import './QuoteForm.css';
+
+// Add a small set of country codes for the dropdown
+const COUNTRY_CODES = [
+  { code: '+1', label: 'US/Canada (+1)', short: 'US/CA' },
+  { code: '+44', label: 'UK (+44)', short: 'UK' },
+  { code: '+91', label: 'India (+91)', short: 'IN' },
+  { code: '+61', label: 'Australia (+61)', short: 'AU' },
+  { code: '+81', label: 'Japan (+81)', short: 'JP' },
+  { code: '+49', label: 'Germany (+49)', short: 'DE' },
+  { code: '+33', label: 'France (+33)', short: 'FR' },
+  { code: '+971', label: 'UAE (+971)', short: 'UAE' },
+  { code: '+65', label: 'Singapore (+65)', short: 'SG' },
+  // ...add more as needed
+];
 
 const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
   const dispatch = useDispatch();
@@ -41,10 +57,12 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
     description: initialData?.description || '',
     appointmentDate: initialData?.appointmentDate ? new Date(initialData.appointmentDate) : null,
     appointmentSlot: initialData?.appointmentSlot || '',
+    countryCode: initialData?.countryCode || '+1', // default to US/Canada
   });
 
   const [files, setFiles] = useState([]);
   const [errors, setErrors] = useState({});
+  const [uploadingImages, setUploadingImages] = useState(false);
 
   // Update form data when initialData changes
   useEffect(() => {
@@ -63,6 +81,7 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
         description: initialData.description || '',
         appointmentDate: initialData.appointmentDate ? new Date(initialData.appointmentDate) : null,
         appointmentSlot: initialData.appointmentSlot || '',
+        countryCode: initialData.countryCode || '+1',
       });
     }
   }, [initialData]);
@@ -91,7 +110,7 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
 
     if (!formData.phone.trim()) {
       newErrors.phone = 'Phone number is required';
-    } else if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(formData.phone)) {
+    } else if (!/^\d{7,15}$/.test(formData.phone.replace(/\D/g, ''))) {
       newErrors.phone = 'Phone number is invalid';
     }
 
@@ -130,8 +149,34 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
     e.preventDefault();
 
     if (!validateForm()) {
+      alert('Please correct the highlighted errors in the form.');
       return;
     }
+
+    setUploadingImages(true);
+
+    let imageUrls = [];
+    let images = [];
+    if (files.length > 0) {
+      const storage = getStorage(firebaseApp);
+      imageUrls = await Promise.all(
+        files.map(async (file) => {
+          const storageRef = ref(storage, `quote-images/${Date.now()}-${file.name}`);
+          await uploadBytes(storageRef, file);
+          const url = await getDownloadURL(storageRef);
+          return { url, file };
+        })
+      );
+      console.log("Uploaded image URLs:", imageUrls.map(i => i.url));
+      // Build images array for backend
+      images = imageUrls.map(({ url, file }) => ({
+        filename: file.name,
+        path: url,
+        mimetype: file.type
+      }));
+    }
+
+    setUploadingImages(false);
 
     // Find the slot index for the selected time
     const slotIndex = allPossibleSlots.findIndex(slot => slot === formData.appointmentSlot);
@@ -139,11 +184,14 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
     // Format appointmentDate as "YYYY-MM-DD"
     const appointmentDateStr = formatDate(formData.appointmentDate);
 
+    // Prepend country code to phone number
+    const fullPhone = `${formData.countryCode}${formData.phone.replace(/^0+/, '')}`;
+
     // Build the JSON body
     const quoteBody = {
       name: formData.name,
       email: formData.email,
-      phone: formData.phone,
+      phone: fullPhone,
       address: formData.address,
       serviceType: formData.serviceType,
       projectType: formData.projectType,
@@ -151,7 +199,8 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
       budget: formData.budget,
       description: formData.description,
       appointmentDate: appointmentDateStr,
-      appointmentSlot: slotIndex
+      appointmentSlot: slotIndex,
+      images // <-- add images array here
     };
 
     dispatch(submitQuote(quoteBody));
@@ -207,7 +256,8 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
       return isValidType && isValidSize;
     });
 
-    setFiles(prev => [...prev, ...validFiles].slice(0, 10)); // Max 10 files
+    // Limit to 5 images
+    setFiles(prev => [...prev, ...validFiles].slice(0, 5));
   };
 
   const removeFile = (index) => {
@@ -262,9 +312,28 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
     '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'
   ];
 
+  // Block slots that are already completed for today
   let availableSlots = [];
   if (selectedDateStr) {
+    // Remove blocked indexes from backend
     availableSlots = allPossibleSlots.filter((_, idx) => blockedIndexes.indexOf(idx) === -1);
+
+    // If selected date is today, filter out past slots
+    const today = new Date();
+    const isToday =
+      formData.appointmentDate &&
+      today.getFullYear() === formData.appointmentDate.getFullYear() &&
+      today.getMonth() === formData.appointmentDate.getMonth() &&
+      today.getDate() === formData.appointmentDate.getDate();
+
+    if (isToday) {
+      const nowMinutes = today.getHours() * 60 + today.getMinutes();
+      availableSlots = availableSlots.filter(slot => {
+        const [h, m] = slot.split(':').map(Number);
+        const slotMinutes = h * 60 + m;
+        return slotMinutes > nowMinutes;
+      });
+    }
   }
 
   const minDate = new Date();
@@ -367,15 +436,39 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
             <label htmlFor="phone" className="form-label">
               <FaPhone /> Phone Number *
             </label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className={`form-control ${errors.phone ? 'error' : ''}`}
-              placeholder="(123) 456-7890"
-            />
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              <select
+                name="countryCode"
+                value={formData.countryCode}
+                onChange={handleChange}
+                style={{
+                  width: '70px',
+                  minWidth: '40px',
+                  maxWidth: '60px',
+                  padding: '4px 6px',
+                  borderRadius: '4px',
+                  border: '1px solid #ccc',
+                  background: '#fafbfc',
+                  fontSize: '0.95em'
+                }}
+              >
+                {COUNTRY_CODES.map(opt => (
+                  <option key={opt.code} value={opt.code}>
+                    {opt.code} {opt.short}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                className={`form-control ${errors.phone ? 'error' : ''}`}
+                placeholder="e.g., 9876543210"
+                style={{ flex: 1, minWidth: '180px', fontSize: '1em' }} // Make input wider
+              />
+            </div>
             {errors.phone && <div className="form-error">{errors.phone}</div>}
           </div>
 
@@ -548,6 +641,7 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
                 dateFormat="yyyy-MM-dd"
                 onFocus={handleAvailabilityFetch}
                 disabled={appointmentLoading}
+                filterDate={date => date.getDay() !== 0} // Block Sundays
               />
               {appointmentLoading && (
                 <div
@@ -610,7 +704,7 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
       {/* File Upload */}
       <div className="form-section">
         <h3>Project Images (Optional)</h3>
-        <p className="form-help">Upload photos of the areas to be painted (max 10 files, 5MB each)</p>
+        <p className="form-help">Upload photos of the areas to be painted (max 5 files, 5MB each)</p>
         
         <div className="file-upload-area">
           <input
@@ -644,14 +738,19 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
             ))}
           </div>
         )}
+        {files.length === 5 && (
+          <div className="form-help" style={{ color: "#f44336" }}>
+            Maximum 5 images allowed.
+          </div>
+        )}
       </div>
 
       <button 
         type="submit" 
         className="btn btn-cta btn-large"
-        disabled={isLoading}
+        disabled={isLoading || uploadingImages}
       >
-        {isLoading ? (
+        {(isLoading || uploadingImages) ? (
           <>
             <div className="spinner"></div>
             Submitting...

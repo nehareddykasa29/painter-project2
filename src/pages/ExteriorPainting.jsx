@@ -58,7 +58,7 @@ const ExteriorPainting = () => {
   const transformServices = [
     { image: "/assets/full-home-painting.png", title: "Full Home Painting" },
     { image: "/assets/deck-and-fence-finishing.png", title: "Deck & Fence Finishes" },
-    { image: "/assets/vinyl-and-aluminium-painting.png", title: "Vinyl & Aluminum Painting" },
+    // { image: "/assets/vinyl-and-aluminium-painting.png", title: "Vinyl & Aluminum Painting" },
     { image: "/assets/powerwash-and-surfaceprep.png", title: "Power Washing & Surface Prep" }
   ];
 

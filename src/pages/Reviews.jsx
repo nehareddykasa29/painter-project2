@@ -303,6 +303,23 @@ const Reviews = () => {
               <button type="submit" className="btn btn-primary submit-review-btn">
                 Submit Review
               </button>
+              <button type="submit" className="btn btn-primary submit-google-btn" 
+              onClick={() => {
+                  window.open(
+                    "https://www.google.com/search?sca_esv=6b419d715691fe69&hl=en-GB&gl=us&output=search&kgmid=%2Fg%2F11c1p395d0&q=The%20Painter%20Guys%20LLC&shndl=30&shem=lsptbl1%2Cptotplc&source=sh%2Fx%2Floc%2Fact%2Fm4%2F3",
+                    "_blank"
+                  );
+                }}>
+                Write Google Review
+              </button>
+              <button type="submit" className="btn btn-primary submit-angi-btn" 
+              onClick={() => {
+                  window.open(
+                    "https://www.angi.com/companylist/us/wi/waukesha/the-painter-guys-llc-reviews-2049387.htm"
+                  );
+                }}>
+                Write Angi Review
+              </button>
             </form>
             {submitLoading && <div>Submitting review...</div>}
             {submitError && <div className="error">Error: {submitError}</div>}
