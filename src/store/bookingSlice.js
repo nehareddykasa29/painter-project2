@@ -74,6 +74,26 @@ export const updateQuote = createAsyncThunk(
   }
 );
 
+// Thunk for deleting a quote (DELETE)
+export const deleteQuote = createAsyncThunk(
+  'booking/deleteQuote',
+  async (id, { getState, rejectWithValue }) => {
+    try {
+      const token = getState().auth?.token;
+      const response = await fetch(`${BACKEND_URL}/api/admin/quotes/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) throw new Error('Failed to delete quote');
+      return await response.json();
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 const bookingSlice = createSlice({
   name: 'booking',
   initialState: {
@@ -148,6 +168,21 @@ const bookingSlice = createSlice({
         state.updateSuccess = true;
       })
       .addCase(updateQuote.rejected, (state, action) => {
+        state.updateLoading = false;
+        state.updateError = action.payload;
+        state.updateSuccess = false;
+      })
+      // Delete quote
+      .addCase(deleteQuote.pending, state => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateSuccess = false;
+      })
+      .addCase(deleteQuote.fulfilled, (state, action) => {
+        state.updateLoading = false;
+        state.updateSuccess = true;
+      })
+      .addCase(deleteQuote.rejected, (state, action) => {
         state.updateLoading = false;
         state.updateError = action.payload;
         state.updateSuccess = false;

@@ -437,6 +437,10 @@ const Home = () => {
                 Benjamin Moore
                 <FaArrowRight className="arrow-icon" />
               </a>
+              <a href="https://www.behr.com/consumer" target="_blank" rel="noopener noreferrer" className="brand-button" style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${swLogo})` }}>
+                Behr
+                <FaArrowRight className="arrow-icon" />
+              </a>
             </div>
 
             <Link to="/free-quote" className="btn-estimate">

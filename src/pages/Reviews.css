@@ -426,6 +426,36 @@
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(244, 197, 66, 0.2);
 }
+.submit-google-btn {
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: var(--spacing-md);
+  background: linear-gradient(135deg, #ea857a 0%, #de7676 100%) !important;
+  border: none;
+  color: var(--primary-blue-dark) !important;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(244, 197, 66, 0.2);
+}
+
+.submit-angi-btn {
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: var(--spacing-md);
+  background: linear-gradient(135deg, #89ea7a 0%, #94de76 100%) !important;
+  border: none;
+  color: var(--primary-blue-dark) !important;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(244, 197, 66, 0.2);
+}
+
 
 .submit-review-btn:hover {
   transform: translateY(-2px);
