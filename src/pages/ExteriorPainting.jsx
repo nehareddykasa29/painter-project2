@@ -15,27 +15,39 @@ const features = [
 
 const reviews = [
   {
-    name: "Michael",
+    name: "Deborah Bednar-Miswald",
     project: "Exterior Painting",
-    text: "Excellent work. Did exterior paint for condo association and did interior work,also would recommend them to anyone.Very neat, will use them again.",
+    text: "Great job. Extremely happy with the work.",
+    rating: 5
+  },
+  {
+    name: "Chelsea",
+    project: "Exterior Painting",
+    text: "Would recommend for any paint job!",
+    rating: 5
+  },
+  {
+    name: "Jennifer D.",
+    project: "Exterior Painting",
+    text: "The Painter Guys delivered amazing quality work faster than we could have hoped for! Sami was very professional, personable, and easy to work with. Working with The Painter Guys was a positive experience and we're thankful we found them!",
     rating: 5
   },
   {
     name: "Kelly",
-    project: "Interior Painting",
-    text: "Sami and his crew were awesome! sami and christy were very responsive and answered all of our questions and concerns. the paint crew was respectable,efficient and showed pride in their work. The cost was reasonable and fair. The entire process was seamless and a pleasure. Thanks Painter guys!",
+    project: "Exterior Painting",
+    text: "Sami and his crew were awesome! Sami and Christy were very responsive and answered all of our questions and concerns. The paint crew was respectable, efficient, and showed pride in their work. The cost was reasonable and fair. The entire process was seamless and a pleasure. Thanks Painter Guys!",
     rating: 5
   },
   {
-    name: "Jennifer D",
+    name: "Donald S.",
     project: "Exterior Painting",
-    text: "The painter guys delivered amazing quality work faster than we could have hoped fori sami was very professional, personable and easy to work with. Working with painter guys was a postivie experience and we're thankful we found them!",
+    text: "The Painter Guys did an awesome job on our house and shed painting project. Sami was extremely knowledgeable, gave us all the info about what they were using, and what would give us the best results. His crew was very polite, and cleaned up after every shift. We would recommend them for any painting project.",
     rating: 5
   },
   {
-    name: "Donald S",
+    name: "Michael",
     project: "Exterior Painting",
-    text: "They did an awesome job on our house and shed painting project. Sami was extremely knowledgeable, gave us all info about what they were using, and would give us the best results. his crew was very polite and cleaned up ater every shift. We would recommend them for any painting project.",
+    text: "Excellent work. Did exterior paint for condo association and did interior work, also would recommend them to anyone. Very neat, will use them again.",
     rating: 5
   }
 ];

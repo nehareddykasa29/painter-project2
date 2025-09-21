@@ -28,14 +28,14 @@
   font-weight: 500;
   margin-bottom: 1.4rem;
   line-height: 1.1;
-  color: rgb(255, 255, 255) !important;
+  color: #ffffff !important;
   background: none !important;
   background-image: none !important;
   background-color: transparent !important;
   background-clip: border-box !important;
   -webkit-background-clip: border-box !important;
-  -webkit-text-fill-color: rgb(255, 255, 255) !important;
-  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.8);
+  -webkit-text-fill-color: #ffffff !important;
+  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.8) !important;
   filter: brightness(1) contrast(1) !important;
   opacity: 1 !important;
   mix-blend-mode: normal !important;
@@ -46,14 +46,14 @@
   margin-bottom: 2rem;
   opacity: 1;
   line-height: 1.6;
-  color: rgb(255, 255, 255) !important;
+  color: #ffffff !important;
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8) !important;
   background: none !important;
   background-color: transparent !important;
-  -webkit-text-fill-color: rgb(255, 255, 255) !important;
+  -webkit-text-fill-color: #ffffff !important;
   filter: brightness(1) contrast(1) !important;
   mix-blend-mode: normal !important;
 }
@@ -115,15 +115,15 @@
 
 .trust-title {
   font-size: 2.5rem;
-  font-weight: 700;
-  color: #1a1a1a;
+  font-weight: 500;
+  color: #2B3674;
   margin-bottom: 16px;
   line-height: 1.2;
 }
 
 .trust-subtitle {
   font-size: 1.1rem;
-  color: #666666;
+  color: #2B3674;
   max-width: 600px;
   margin: 0 auto 50px auto;
   line-height: 1.6;
@@ -194,8 +194,8 @@
 
 .card-title {
   font-size: 1.1rem;
-  font-weight: 600;
-  color: #1a1a1a;
+  font-weight: 500;
+  color: #2B3674;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -233,15 +233,15 @@
 
 .transform-header h2 {
   font-size: 2.5rem;
-  font-weight: 700;
-  color: #1a1a1a;
+  font-weight: 500;
+  color: #2B3674;
   margin-bottom: 20px;
   line-height: 1.2;
 }
 
 .transform-header p {
   font-size: 1.1rem;
-  color: #666666;
+  color: #2B3674;
   max-width: 600px;
   margin: 0 auto;
   line-height: 1.6;
@@ -364,7 +364,7 @@
 
 .review-author span {
   font-size: 0.9rem;
-  color: #707EAE;
+  color: #2B3674;
 }
 
 .review-link {
@@ -410,15 +410,15 @@
 
 .reviews-title h2 {
   font-size: 2.5rem;
-  font-weight: 700;
-  color: #1a1a1a;
+  font-weight: 500;
+  color: #2B3674;
   margin-bottom: 1rem;
   line-height: 1.2;
 }
 
 .reviews-title p {
   font-size: 1.1rem;
-  color: #666666;
+  color: #2B3674;
   max-width: 600px;
   margin: 0 auto;
   line-height: 1.6;
@@ -476,7 +476,12 @@
   
   .hero-text-centered h1 {
     font-size: 2.5rem;
-    font-weight: 400;
+    font-weight: 500;
+    color: #ffffff !important;
+    text-shadow: 0 3px 10px rgba(0, 0, 0, 0.8) !important;
+    filter: brightness(1) contrast(1) !important;
+    opacity: 1 !important;
+    -webkit-text-fill-color: #ffffff !important;
   }
   
   .hero-text-centered p {
@@ -592,7 +597,12 @@
 @media (max-width: 480px) {
   .hero-text-centered h1 {
     font-size: 2rem;
-    font-weight: 400;
+    font-weight: 500;
+    color: #ffffff !important;
+    text-shadow: 0 3px 10px rgba(0, 0, 0, 0.8) !important;
+    filter: brightness(1) contrast(1) !important;
+    opacity: 1 !important;
+    -webkit-text-fill-color: #ffffff !important;
   }
 
   .trust-section {

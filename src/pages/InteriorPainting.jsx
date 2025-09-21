@@ -31,27 +31,39 @@ const InteriorPainting = () => {
 
   const reviews = [
     {
-      name: "Michael",
-      project: "Exterior Painting",
-      text: "Excellent work. Did exterior paint for condo association and did interior work,also would recommend them to anyone.Very neat, will use them again.",
+      name: "Deborah Bednar-Miswald",
+      project: "Interior Painting",
+      text: "Great job. Extremely happy with the work.",
+      rating: 5
+    },
+    {
+      name: "Chelsea",
+      project: "Interior Painting",
+      text: "Would recommend for any paint job!",
+      rating: 5
+    },
+    {
+      name: "Jennifer D.",
+      project: "Interior Painting",
+      text: "The Painter Guys delivered amazing quality work faster than we could have hoped for! Sami was very professional, personable, and easy to work with. Working with The Painter Guys was a positive experience and we're thankful we found them!",
       rating: 5
     },
     {
       name: "Kelly",
       project: "Interior Painting",
-      text: "Sami and his crew were awesome! sami and christy were very responsive and answered all of our questions and concerns. the paint crew was respectable,efficient and showed pride in their work. The cost was reasonable and fair. The entire process was seamless and a pleasure. Thanks Painter guys!",
+      text: "Sami and his crew were awesome! Sami and Christy were very responsive and answered all of our questions and concerns. The paint crew was respectable, efficient, and showed pride in their work. The cost was reasonable and fair. The entire process was seamless and a pleasure. Thanks Painter Guys!",
       rating: 5
     },
     {
-      name: "Jennifer D",
-      project: "Exterior Painting",
-      text: "The painter guys delivered amazing quality work faster than we could have hoped fori sami was very professional, personable and easy to work with. Working with painter guys was a postivie experience and we're thankful we found them!",
+      name: "Donald S.",
+      project: "Interior Painting",
+      text: "The Painter Guys did an awesome job on our house and shed painting project. Sami was extremely knowledgeable, gave us all the info about what they were using, and what would give us the best results. His crew was very polite, and cleaned up after every shift. We would recommend them for any painting project.",
       rating: 5
     },
     {
-      name: "Donald S",
-      project: "Exterior Painting",
-      text: "They did an awesome job on our house and shed painting project. Sami was extremely knowledgeable, gave us all info about what they were using, and would give us the best results. his crew was very polite and cleaned up ater every shift. We would recommend them for any painting project.",
+      name: "Michael",
+      project: "Interior Painting",
+      text: "Excellent work. Did exterior paint for condo association and did interior work, also would recommend them to anyone. Very neat, will use them again.",
       rating: 5
     }
   ];
@@ -84,22 +96,24 @@ const InteriorPainting = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 style={{ 
-                color: '#ffffff !important',
-                textShadow: '0 2px 8px rgba(0,0,0,0.8)',
+              <h1 style={{
+                color: '#ffffff',
+                textShadow: '0 3px 10px rgba(0, 0, 0, 0.8)',
                 fontWeight: '500',
                 fontSize: '3.2rem',
                 filter: 'none',
                 opacity: '1',
-                background: 'transparent'
+                background: 'transparent',
+                WebkitTextFillColor: '#ffffff'
               }}>
                 Interior Painting That Transforms Your Space
               </h1>
-              <p style={{ 
-                color: '#ffffff !important',
-                textShadow: '0 1px 4px rgba(0,0,0,0.7)',
+              <p style={{
+                color: '#ffffff',
+                textShadow: '0 2px 6px rgba(0, 0, 0, 0.8)',
                 opacity: '1',
-                background: 'transparent'
+                background: 'transparent',
+                WebkitTextFillColor: '#ffffff'
               }}>
                 From cozy bedrooms to bold feature walls — we bring life and elegance to every corner of your home.
               </p>

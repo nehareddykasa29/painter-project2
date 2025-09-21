@@ -30,12 +30,12 @@
 .about-hero-content {
   position: relative;
   z-index: 2;
-  max-width: 1200px;
+  max-width: 900px;
   padding: 0 var(--spacing-lg);
 }
 
 .about-hero-text h1 {
-  font-size: 3.5rem;
+  font-size: 2.8rem;
   font-weight: 500;
   margin-bottom: var(--spacing-lg);
   line-height: 1.2;
@@ -43,11 +43,11 @@
 }
 
 .about-hero-text p {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   margin-bottom: var(--spacing-xl);
   opacity: 0.95;
   line-height: 1.6;
-  max-width: 1000px;
+  max-width: 800px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -56,11 +56,11 @@
   display: inline-block;
   background: var(--cta-yellow);
   color: var(--primary-blue-dark);
-  padding: var(--spacing-sm) var(--spacing-lg);
+  padding: var(--spacing-xs) var(--spacing-md);
   border-radius: var(--radius-md);
   text-decoration: none;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.9rem;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -90,14 +90,14 @@
 
 .our-journey-header h2 {
   font-size: 2.5rem;
-  color: var(--primary-blue-dark);
+  color: #1a365d;
   margin-bottom: var(--spacing-md);
   font-weight: 600;
 }
 
 .our-journey-header p {
   font-size: 1.2rem;
-  color: var(--primary-blue-dark);
+  color: #1a365d;
   line-height: 1.6;
   opacity: 0.9;
 }
@@ -175,13 +175,13 @@
 .timeline-year {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--primary-blue-dark);
+  color: #1a365d;
   margin-bottom: 0.25rem;
 }
 
 .timeline-description {
   font-size: 1rem;
-  color: var(--primary-blue-dark);
+  color: #1a365d;
   opacity: 0.8;
   line-height: 1.4;
 }
@@ -199,7 +199,39 @@
   object-fit: cover;
 }
 
+.journey-stats-section {
+  background: #b1b1b3;
+  padding: var(--spacing-md) 0;
+}
 
+.journey-stats-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-lg);
+}
+
+.stat-item {
+  text-align: center;
+  padding: var(--spacing-md);
+}
+
+.stat-number {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #1a365d;
+  margin-bottom: var(--spacing-xs);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 1.1rem;
+  color: #6c757d;
+  font-weight: 500;
+  line-height: 1.3;
+}
 
 .principles-section {
   background: var(--white);
@@ -234,9 +266,9 @@
 }
 
 .principles-content h2 {
-  font-size: 2.5rem;
-  color: var(--primary-blue-dark);
-  margin-bottom: var(--spacing-lg);
+  font-size: 2rem;
+  color: #1a365d;
+  margin-bottom: var(--spacing-md);
   font-weight: 600;
   line-height: 1.2;
 }
@@ -244,7 +276,7 @@
 .principles-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-md);
+  gap: var(--spacing-sm);
 }
 
 .principle-item {
@@ -268,9 +300,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--primary-blue-light);
-  border-radius: var(--radius-md);
-  padding: var(--spacing-sm);
 }
 
 .principle-icon img {
@@ -283,17 +312,96 @@
 .principle-content h3 {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--primary-blue-dark);
+  color: #1a365d;
   margin-bottom: var(--spacing-xs);
   line-height: 1.3;
 }
 
 .principle-content p {
   font-size: 1rem;
-  color: var(--primary-blue-dark);
+  color: #1a365d;
   opacity: 0.8;
   line-height: 1.5;
   margin: 0;
+}
+
+.vision-section {
+  background: #fdf2e9;
+  padding: 0;
+}
+
+.vision-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  display: flex;
+  gap: var(--spacing-xl);
+  align-items: center;
+  height: 400px;
+}
+
+.vision-image {
+  flex: 1;
+  max-width: 500px;
+}
+
+.vision-img {
+  width: 100%;
+  height: 400px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+}
+
+.vision-content {
+  flex: 1;
+  max-width: 500px;
+}
+
+.vision-content h2 {
+  font-size: 2.5rem;
+  color: #1a365d;
+  margin-bottom: var(--spacing-md);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.vision-content p {
+  font-size: 1.2rem;
+  color: #1a365d;
+  opacity: 0.8;
+  line-height: 1.6;
+  margin-bottom: var(--spacing-lg);
+}
+
+.vision-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: var(--cta-yellow);
+  color: var(--primary-blue-dark);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.vision-cta:hover {
+  background: #f0b400;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.cta-arrow {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.vision-cta:hover .cta-arrow {
+  transform: translateX(4px);
 }
 
 .hero-section {
@@ -368,13 +476,13 @@
 .about-story-text h2 {
   font-size: 2rem;
   margin-bottom: var(--spacing-md);
-  color: var(--primary-blue);
+  color: #1a365d;
 }
 
 .about-story-text p {
   font-size: 1.15rem;
   margin-bottom: var(--spacing-md);
-  color: var(--primary-blue-dark);
+  color: #1a365d;
 }
 
 .about-story-img {
@@ -403,6 +511,19 @@
   
   .our-journey-image {
     max-width: 100%;
+  }
+  
+  .journey-stats-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+  }
+  
+  .stat-number {
+    font-size: 2.5rem;
+  }
+  
+  .stat-label {
+    font-size: 1rem;
   }
   
   .about-story-container {
@@ -434,6 +555,22 @@
     grid-template-columns: 1fr;
     gap: var(--spacing-md);
   }
+  
+  .vision-container {
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    height: auto;
+    padding: var(--spacing-lg) var(--spacing-lg);
+  }
+  
+  .vision-image {
+    max-width: 100%;
+  }
+  
+  .vision-content {
+    max-width: 100%;
+    text-align: center;
+  }
 }
 
 @media (max-width: 768px) {
@@ -463,11 +600,11 @@
   }
   
   .about-hero-text h1 {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
   }
   
   .about-hero-text p {
-    font-size: 1.125rem;
+    font-size: 1rem;
   }
   
   .about-hero-cta {
@@ -488,7 +625,7 @@
   }
   
   .principles-content h2 {
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
   
   .principle-item {
@@ -507,6 +644,32 @@
   .principle-content p {
     font-size: 0.95rem;
   }
+  
+  .journey-stats-container {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+  
+  .stat-number {
+    font-size: 2rem;
+  }
+  
+  .stat-label {
+    font-size: 0.95rem;
+  }
+  
+  .vision-content h2 {
+    font-size: 2rem;
+  }
+  
+  .vision-content p {
+    font-size: 1.1rem;
+  }
+  
+  .vision-cta {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: 0.95rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -516,14 +679,27 @@
   }
   
   .about-hero-text h1 {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
   
   .about-hero-text p {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
   
   .about-hero-cta {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.9rem;
+  }
+  
+  .vision-content h2 {
+    font-size: 1.75rem;
+  }
+  
+  .vision-content p {
+    font-size: 1rem;
+  }
+  
+  .vision-cta {
     padding: var(--spacing-xs) var(--spacing-sm);
     font-size: 0.9rem;
   }
