@@ -149,20 +149,6 @@ const Gallery = ({ images = [], showFilters = true, limit = null, isAuthenticate
                     </button>
                   </div>
                 )}
-                <div className="gallery-overlay">
-                  <div className="gallery-overlay-content">
-                    <h3>{item.caption}</h3>
-                    <p>{item.serviceType}</p>
-                    <div className="gallery-tags">
-                      {isAuthenticated && (
-                        <span className="tag">{new Date(item.createdAt).toLocaleDateString()}</span>
-                      )}
-                    </div>
-                    <button className="expand-btn">
-                      <FaExpand />
-                    </button>
-                  </div>
-                </div>
               </div>
             </motion.div>
           ))}
@@ -184,13 +170,15 @@ const Gallery = ({ images = [], showFilters = true, limit = null, isAuthenticate
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
             onClick={closeLightbox}
           >
             <motion.div
               className="lightbox-content"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
               onClick={(e) => e.stopPropagation()}
             >
               <button className="lightbox-close" onClick={closeLightbox}>
@@ -199,7 +187,7 @@ const Gallery = ({ images = [], showFilters = true, limit = null, isAuthenticate
 
               <div className="lightbox-image-container">
                 <img
-                  src={selectedImage.imageUrl} // <-- imageUrl is used here for the lightbox image
+                  src={selectedImage.imageUrl}
                   alt={selectedImage.caption}
                   className="lightbox-image"
                 />
@@ -213,18 +201,6 @@ const Gallery = ({ images = [], showFilters = true, limit = null, isAuthenticate
                     </button>
                   </>
                 )}
-              </div>
-
-              <div className="lightbox-info">
-                <h3>{selectedImage.caption}</h3>
-                <p>{selectedImage.serviceType}</p>
-                <div className="project-details">
-                  {isAuthenticated && (
-                    <span className="detail-item">
-                      <strong>Created:</strong> {new Date(selectedImage.createdAt).toLocaleDateString()}
-                    </span>
-                  )}
-                </div>
               </div>
 
               <div className="lightbox-counter">

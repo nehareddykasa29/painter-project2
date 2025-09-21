@@ -39,10 +39,10 @@ const process = [
 ];
 
 const testimonial = {
-  name: 'David Martinez',
-  company: 'TechCorp Solutions',
+  name: 'Donald S.',
+  company: 'Commercial Client',
   rating: 5,
-  text: 'The Painter Guys Pros transformed our entire office space over the weekend. Professional, efficient, and the results exceeded our expectations. Highly recommend for any commercial project.'
+  text: 'The Painter Guys did an awesome job on our house and shed painting project. Sami was extremely knowledgeable, gave us all the info about what they were using, and what would give us the best results. His crew was very polite, and cleaned up after every shift. We would recommend them for any painting project.'
 };
 
 const Commercial = () => {

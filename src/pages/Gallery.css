@@ -266,18 +266,26 @@
 
 .lightbox-close {
   position: absolute;
-  top: 2.5rem;
-  right: 2.5rem;
-  font-size: 2.5rem;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-size: 1.5rem;
   color: var(--white);
-  background: none;
+  background: rgba(0, 0, 0, 0.7);
   border: none;
   cursor: pointer;
   z-index: 1100;
-  transition: color 0.15s;
+  transition: all 0.2s ease;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .lightbox-close:hover {
   color: var(--cta-yellow);
+  background: rgba(0, 0, 0, 0.9);
+  transform: scale(1.05);
 }
 
 @media (max-width: 768px) {
@@ -326,6 +334,8 @@
   .lightbox-close {
     top: 1rem;
     right: 1rem;
-    font-size: 2rem;
+    font-size: 1.2rem;
+    width: 36px;
+    height: 36px;
   }
 } 
