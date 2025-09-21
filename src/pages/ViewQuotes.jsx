@@ -114,152 +114,90 @@ const ViewQuotes = () => {
     return [];
   })();
 
+  // Helper function to format service type
+  const formatServiceType = (serviceType, projectType) => {
+    if (serviceType && projectType) {
+      return `${serviceType} - ${projectType}`;
+    }
+    return serviceType || projectType || 'N/A';
+  };
+
+  // Helper function to format appointment date
+  const formatAppointmentDate = (date) => {
+    if (!date) return 'N/A';
+    const appointmentDate = new Date(date);
+    return appointmentDate.toLocaleDateString('en-GB');
+  };
+
+  // Helper function to get status display
+  const getStatusDisplay = (status) => {
+    return status === 'completed' ? 'Completed' : 'Pending';
+  };
+
   return (
     <div className="view-quotes-page">
-      <section className="hero-section">
-        <div className="container">
-          <motion.div 
-            className="hero-content"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <h1>View Quotes</h1>
-            <p>Quote management dashboard</p>
-          </motion.div>
-        </div>
-      </section>
-
-      <section className="content-section">
-        <div className="container">
-          {quotesLoading && <p>Loading quotes...</p>}
-          {quotesError && <p style={{ color: 'red' }}>Error: {quotesError}</p>}
-          {!quotesLoading && !quotesError && (
-            <div className="quotes-list">
-              {quotes.length === 0 ? (
-                <p>No quotes found.</p>
-              ) : (
-                <ul className="quotes-list-ul">
+      <div className="quotes-container">
+        <h1 className="quotes-title">Quotes</h1>
+        
+        {quotesLoading && <p>Loading quotes...</p>}
+        {quotesError && <p style={{ color: 'red' }}>Error: {quotesError}</p>}
+        
+        {!quotesLoading && !quotesError && (
+          <div className="quotes-table-container">
+            {quotes.length === 0 ? (
+              <p>No quotes found.</p>
+            ) : (
+              <table className="quotes-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Service / project Type</th>
+                    <th>Budget</th>
+                    <th>Appointment Date</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
                   {quotes.map(q => (
-                    <li
-                      key={q._id}
-                      className={`quotes-list-item${selectedQuote?._id === q._id ? ' selected' : ''}`}
-                      onClick={() => setSelectedQuote(q)}
-                    >
-                      <strong>{q.name}</strong> - {q.email}
-                    </li>
+                    <tr key={q._id} className="quote-row">
+                      <td className="name-cell">{q.name}</td>
+                      <td className="service-cell">{formatServiceType(q.serviceType, q.projectType)}</td>
+                      <td className="budget-cell">{q.budget || 'N/A'}</td>
+                      <td className="date-cell">{formatAppointmentDate(q.appointmentDate)}</td>
+                      <td className="status-cell">
+                        <span className={`status-badge ${q.status === 'completed' ? 'completed' : 'pending'}`}>
+                          {getStatusDisplay(q.status)}
+                        </span>
+                      </td>
+                      <td className="action-cell">
+                        <button 
+                          className="view-more-btn"
+                          onClick={() => setSelectedQuote(q)}
+                        >
+                          View More
+                        </button>
+                      </td>
+                    </tr>
                   ))}
-                </ul>
-              )}
-              {selectedQuote && (
-                <div className="quote-details-box">
-                  <h3>Quote Details</h3>
-                  <p><strong>Name:</strong> {selectedQuote.name}</p>
-                  <p><strong>Email:</strong> {selectedQuote.email}</p>
-                  <p><strong>Phone:</strong> {selectedQuote.phone}</p>
-                  <p><strong>Address:</strong> {selectedQuote.address}</p>
-                  <p><strong>Service Type:</strong> {selectedQuote.serviceType}</p>
-                  <p><strong>Project Type:</strong> {selectedQuote.projectType}</p>
-                  <p><strong>Rooms:</strong> {Array.isArray(selectedQuote.rooms) && selectedQuote.rooms.length > 0 ? selectedQuote.rooms.join(', ') : 'N/A'}</p>
-                  <p><strong>Timeframe:</strong> {selectedQuote.timeframe}</p>
-                  <p><strong>Budget:</strong> {selectedQuote.budget}</p>
-                  <p><strong>Description:</strong> {selectedQuote.description}</p>
-                  <p><strong>Status:</strong> {selectedQuote.status}</p>
-                  <p><strong>Appointment Date:</strong> {selectedQuote.appointmentDate ? new Date(selectedQuote.appointmentDate).toLocaleDateString() : 'N/A'}</p>
-                  <p><strong>Appointment Slot:</strong> {selectedQuote.appointmentSlot}</p>
-                  <p><strong>Created At:</strong> {selectedQuote.createdAt ? new Date(selectedQuote.createdAt).toLocaleString() : 'N/A'}</p>
-                  {/* Add more fields if needed */}
-                  {!editing ? (
-                    <button
-                      className="edit-btn"
-                      onClick={handleEditClick}
-                    >
-                      Edit
-                    </button>
-                  ) : (
-                    <form onSubmit={handleEditSubmit} className="edit-form">
-                      <div className="form-group">
-                        <label>Status:&nbsp;
-                          <select
-                            name="status"
-                            value={editForm.status}
-                            onChange={handleEditChange}
-                          >
-                            <option value="pending">Pending</option>
-                            <option value="quoted">Quoted</option>
-                          </select>
-                        </label>
-                      </div>
-                      <div className="form-group">
-                        <label>Estimated Cost:&nbsp;
-                          <input
-                            name="estimatedCost"
-                            value={editForm.estimatedCost}
-                            onChange={handleEditChange}
-                            type="number"
-                          />
-                        </label>
-                      </div>
-                      <div className="form-group">
-                        <label>Notes:&nbsp;
-                          <input
-                            name="notes"
-                            value={editForm.notes}
-                            onChange={handleEditChange}
-                            type="text"
-                          />
-                        </label>
-                      </div>
-                      <div className="form-group">
-                        <label>Appointment Date:&nbsp;
-                          <input
-                            name="appointmentDate"
-                            value={editForm.appointmentDate}
-                            onChange={handleEditChange}
-                            type="date"
-                            onClick={handleDateClick}
-                          />
-                        </label>
-                      </div>
-                      <div className="form-group">
-                        <label>Appointment Slot:&nbsp;
-                          <select
-                            name="appointmentSlot"
-                            value={editForm.appointmentSlot}
-                            onChange={handleEditChange}
-                          >
-                            <option value="">Select slot</option>
-                            {slotOptions
-                              .filter(opt => !unavailableSlots.includes(Number(opt.value)))
-                              .map(opt => (
-                                <option key={opt.value} value={opt.value}>
-                                  {opt.label}
-                                </option>
-                              ))}
-                          </select>
-                        </label>
-                      </div>
-                      <button
-                        type="submit"
-                        className="save-btn"
-                      >
-                        Save
-                      </button>
-                      <button
-                        type="button"
-                        className="cancel-btn"
-                        onClick={handleEditCancel}
-                      >
-                        Cancel
-                      </button>
-                    </form>
-                  )}
-                </div>
-              )}
+                </tbody>
+              </table>
+            )}
+            
+            {/* Pagination */}
+            <div className="pagination-container">
+              <div className="pagination">
+                <button className="pagination-btn prev-btn">‹</button>
+                <button className="pagination-btn page-btn active">1</button>
+                <button className="pagination-btn page-btn">2</button>
+                <button className="pagination-btn page-btn">3</button>
+                <button className="pagination-btn page-btn">4</button>
+                <button className="pagination-btn next-btn">›</button>
+              </div>
             </div>
-          )}
-        </div>
-      </section>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,124 +1,176 @@
 .view-quotes-page {
   min-height: 100vh;
+  background: #ffffff;
+  padding: 40px 20px;
 }
 
-.hero-section {
-  background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-light));
-  color: var(--white);
-  padding: var(--spacing-xl) 0;
+.quotes-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.quotes-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1a365d;
+  margin-bottom: 30px;
+  margin-left: 0;
+}
+
+.quotes-table-container {
+  background: #ffffff;
+}
+
+.quotes-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+.quotes-table thead {
+  background: #f8f9fa;
+}
+
+.quotes-table th {
+  padding: 16px 20px;
+  text-align: left;
+  font-weight: 600;
+  color: #6c757d;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.quotes-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f3f4;
+  vertical-align: middle;
+}
+
+.quote-row {
+  transition: background-color 0.2s ease;
+}
+
+.quote-row:hover {
+  background-color: #f8f9fa;
+}
+
+.name-cell {
+  font-weight: 500;
+  color: #2d3748;
+}
+
+.service-cell {
+  color: #4a5568;
+}
+
+.budget-cell {
+  color: #4a5568;
+}
+
+.date-cell {
+  color: #4a5568;
+}
+
+.status-cell {
   text-align: center;
 }
 
-.hero-content h1 {
-  font-size: 3rem;
-  margin-bottom: var(--spacing-md);
-  font-weight: 700;
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: capitalize;
 }
 
-.hero-content p {
-  font-size: 1.25rem;
-  margin-bottom: var(--spacing-lg);
-  opacity: 0.9;
+.status-badge.pending {
+  background-color: #fed7d7;
+  color: #c53030;
 }
 
-.content-section {
-  background: var(--white);
-  padding: var(--spacing-xl) 0;
-  min-height: 60vh;
+.status-badge.completed {
+  background-color: #c6f6d5;
+  color: #2f855a;
+}
+
+.action-cell {
+  text-align: center;
+}
+
+.view-more-btn {
+  background-color: #fbbf24;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.view-more-btn:hover {
+  background-color: #f59e0b;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+  padding: 20px 0;
+}
+
+.pagination {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
 }
 
-.blank-content {
-  text-align: center;
-  color: var(--text-muted);
-}
-
-.blank-content p {
-  font-size: 1.2rem;
-  opacity: 0.7;
-}
-
-.quotes-list-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.quotes-list-item {
-  cursor: pointer;
-  padding: 8px;
-  transition: background 0.2s;
-}
-
-.quotes-list-item.selected {
-  background: #f0f0f0;
-  font-weight: bold;
-}
-
-.quote-details-box {
-  margin-top: 24px;
-  padding: 16px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #fafafa;
-}
-
-.edit-btn,
-.save-btn,
-.cancel-btn {
-  margin-top: 16px;
-  padding: 8px 20px;
-  border: none;
+.pagination-btn {
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #4a5568;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.pagination-btn:hover {
+  background: #f7fafc;
+  border-color: #cbd5e0;
+}
+
+.pagination-btn.active {
+  background: #1a365d;
+  color: #ffffff;
+  border-color: #1a365d;
+}
+
+.pagination-btn.prev-btn,
+.pagination-btn.next-btn {
+  font-size: 1.2rem;
   font-weight: bold;
-}
-
-.edit-btn {
-  background: #1976d2;
-  color: white;
-}
-
-.save-btn {
-  background: #388e3c;
-  color: white;
-  margin-right: 10px;
-}
-
-.cancel-btn {
-  background: #aaa;
-  color: white;
-}
-
-.edit-form .form-group {
-  margin-bottom: 10px;
-}
-
-.edit-form label {
-  font-weight: 500;
-}
-
-.edit-form input[type="text"],
-.edit-form input[type="number"],
-.edit-form input[type="date"] {
-  padding: 4px 8px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  margin-left: 4px;
 }
 
 @media (max-width: 768px) {
-  .hero-content h1 {
-    font-size: 2.5rem;
+  .quotes-title {
+    font-size: 2rem;
   }
   
-  .hero-content p {
-    font-size: 1.125rem;
+  .quotes-table th,
+  .quotes-table td {
+    padding: 12px 16px;
+    font-size: 0.85rem;
   }
   
-  .blank-content p {
-    font-size: 1.1rem;
+  .quotes-table {
+    font-size: 0.8rem;
+  }
+  
+  .view-more-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
   }
 }
