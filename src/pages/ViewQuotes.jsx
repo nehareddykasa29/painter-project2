@@ -28,6 +28,8 @@ const ViewQuotes = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const location = useLocation();
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 6;
 
   useEffect(() => {
     dispatch(fetchQuotes());
@@ -72,6 +74,13 @@ const ViewQuotes = () => {
         if (found) setSelectedQuote(found);
       }
     }
+  }, [quotes]);
+
+  // Keep pagination in range when quotes change
+  useEffect(() => {
+    if (!quotes) return;
+    const totalPages = Math.max(1, Math.ceil(quotes.length / pageSize));
+    setCurrentPage(prev => Math.min(prev, totalPages));
   }, [quotes]);
 
   const handleEditClick = () => {
@@ -236,289 +245,321 @@ const ViewQuotes = () => {
     }
   }, [dispatch, selectedQuote, token]);
 
+  // Helpers for UI rendering
+  const statusBadgeClass = (status) => {
+    const s = String(status || '').toLowerCase();
+    if (s === 'completed') return 'status-badge completed';
+    if (s === 'pending') return 'status-badge pending';
+    return 'status-badge';
+  };
+
+  const totalPages = Math.max(1, Math.ceil((quotes?.length || 0) / pageSize));
+  const pageStart = (currentPage - 1) * pageSize;
+  const paginatedQuotes = (quotes || []).slice(pageStart, pageStart + pageSize);
+
+  const openModal = (q) => {
+    setSelectedQuote(q);
+    setEditingQuoteId(null);
+  };
+
+  const closeModal = () => {
+    setSelectedQuote(null);
+    setEditingQuoteId(null);
+  };
+
   return (
     <div className="view-quotes-page">
-      <section className="hero-section">
-        <div className="container">
-          <motion.div 
-            className="hero-content"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <h1>View Quotes</h1>
-            <p>Quote management dashboard</p>
-          </motion.div>
-        </div>
-      </section>
+      <div className="quotes-container">
+        <h1 className="quotes-title">Quotes</h1>
 
-      <section className="content-section" style={{ minHeight: '70vh', background: '#f5f7fa' }}>
-        <div className="quotes-flex-container">
-          {/* Sidebar: Quotes List */}
-          <aside className="quotes-sidebar">
-            <h2 className="sidebar-title">Quotes</h2>
-            {quotesLoading && <p>Loading quotes...</p>}
-            {quotesError && <p style={{ color: 'red' }}>Error: {quotesError}</p>}
-            {!quotesLoading && !quotesError && (
-              <ul className="quotes-list-ul">
-                {quotes.length === 0 ? (
-                  <li className="no-quotes">No quotes found.</li>
+        <div className="quotes-table-container">
+          {quotesLoading && <p>Loading quotes...</p>}
+          {quotesError && <p style={{ color: 'red' }}>Error: {quotesError}</p>}
+          {!quotesLoading && !quotesError && (
+            <table className="quotes-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Service / project Type</th>
+                  <th>Budget</th>
+                  <th>Appointment Date</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedQuotes.length === 0 ? (
+                  <tr>
+                    <td colSpan={6}>No quotes found.</td>
+                  </tr>
                 ) : (
-                  quotes.map(q => (
-                    <li
-                      key={q._id}
-                      className={`quotes-list-item${selectedQuote?._id === q._id ? ' selected' : ''}`}
-                      onClick={() => setSelectedQuote(q)}
-                    >
-                      <div className="quote-list-card">
-                        <div className="quote-list-name">{q.name}</div>
-                        <div className="quote-list-email">{q.email}</div>
-                        <div className="quote-list-status">Status: {q.status}</div>
-                        {/* Removed estimated cost and notes from sidebar */}
-                      </div>
-                    </li>
+                  paginatedQuotes.map((q) => (
+                    <tr key={q._id} className="quote-row">
+                      <td className="name-cell">{q.name}</td>
+                      <td className="service-cell">{[q.serviceType, q.projectType].filter(Boolean).join(' - ')}</td>
+                      <td className="budget-cell">{q.budget || 'N/A'}</td>
+                      <td className="date-cell">{q.appointmentDate ? formatDateDMY(q.appointmentDate) : 'N/A'}</td>
+                      <td className="status-cell">
+                        <span className={statusBadgeClass(q.status)}>{String(q.status || '').charAt(0).toUpperCase() + String(q.status || '').slice(1)}</span>
+                      </td>
+                      <td className="action-cell">
+                        <button className="view-more-btn" onClick={() => openModal(q)}>View More</button>
+                      </td>
+                    </tr>
                   ))
-               ) }
-              </ul>
+                )}
+              </tbody>
+            </table>
+          )}
+        </div>
 
-            )}
-          </aside>
-          {/* Main: Quote Details */}
-          <main className="quotes-main">
-            {selectedQuote ? (
-              <motion.div
-                className="quote-details-card"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
+        {/* Pagination */}
+        {(!quotesLoading && !quotesError && (quotes?.length || 0) > pageSize) && (
+          <div className="pagination-container">
+            <div className="pagination">
+              <button
+                className="pagination-btn prev-btn"
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
               >
-                <h2 className="details-title">Quote Details</h2>
-                <div className="details-section">
-                  <div className="details-row">
-                    <span className="details-label">Name:</span>
-                    <span>{selectedQuote.name}</span>
-                  </div>
-                  <div className="details-row">
-                    <span className="details-label">Email:</span>
-                    <span>{selectedQuote.email}</span>
-                  </div>
-                  <div className="details-row">
-                    <span className="details-label">Phone:</span>
-                    <span>{selectedQuote.phone}</span>
-                  </div>
-                  <div className="details-row">
-                    <span className="details-label">Address:</span>
-                    <span>{selectedQuote.address}</span>
-                  </div>
-                  <div className="details-row">
-                    <span className="details-label">Service Type:</span>
-                    <span>{selectedQuote.serviceType}</span>
-                  </div>
-                  <div className="details-row">
-                    <span className="details-label">Project Type:</span>
-                    <span>{selectedQuote.projectType}</span>
-                  </div>
-                  <div className="details-row">
-                    <span className="details-label">Rooms:</span>
-                    <span>{Array.isArray(selectedQuote.rooms) && selectedQuote.rooms.length > 0 ? selectedQuote.rooms.join(', ') : 'N/A'}</span>
-                  </div>
-                  <div className="details-row">
-                    <span className="details-label">Timeframe:</span>
-                    <span>{selectedQuote.timeframe}</span>
-                  </div>
-                  <div className="details-row">
-                    <span className="details-label">Budget:</span>
-                    <span>{selectedQuote.budget}</span>
-                  </div>
-                  <div className="details-row">
-                    <span className="details-label">Description:</span>
-                    <span>{selectedQuote.description}</span>
-                  </div>
-                  <div className="details-row">
-                    <span className="details-label">Status:</span>
-                    <span>{selectedQuote.status}</span>
-                  </div>
-                  <div className="details-row">
-                    <span className="details-label">Appointment Date:</span>
-                    <span>{selectedQuote.appointmentDate ? formatDateDMY(selectedQuote.appointmentDate) : 'N/A'}</span>
-                  </div>
-                  <div className="details-row">
-                    <span className="details-label">Appointment Slot:</span>
-                    <span>
-                      {getSlotLabel(selectedQuote.appointmentSlot)}
-                    </span>
-                  </div>
-                  <div className="details-row">
-                    <span className="details-label">Created At:</span>
-                    <span>{selectedQuote.createdAt ? new Date(selectedQuote.createdAt).toLocaleString() : 'N/A'}</span>
+                ‹
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+                <button
+                  key={n}
+                  className={`pagination-btn ${currentPage === n ? 'active' : ''}`}
+                  onClick={() => setCurrentPage(n)}
+                >
+                  {n}
+                </button>
+              ))}
+              <button
+                className="pagination-btn next-btn"
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+              >
+                ›
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Quote Details Modal */}
+      {selectedQuote && (
+        <div className="quote-modal-overlay" onClick={closeModal}>
+          <div className="quote-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="quote-modal-header">
+              <h3 className="quote-modal-title">Quote Details</h3>
+              <button className="quote-modal-close" onClick={closeModal}>×</button>
+            </div>
+
+            <form id="quote-edit-form" onSubmit={handleEditSubmit}>
+              <div className="quote-modal-content">
+                {/* Name */}
+                <div className="quote-detail-row">
+                  <div className="quote-detail-label">Name</div>
+                  <div className="quote-detail-value">{selectedQuote.name}</div>
+                </div>
+
+                {/* Email */}
+                <div className="quote-detail-row">
+                  <div className="quote-detail-label">Email</div>
+                  <div className="quote-detail-value">{selectedQuote.email}</div>
+                </div>
+
+                {/* Phone */}
+                <div className="quote-detail-row">
+                  <div className="quote-detail-label">Phone</div>
+                  <div className="quote-detail-value">{selectedQuote.phone || 'N/A'}</div>
+                </div>
+
+                {/* Address */}
+                <div className="quote-detail-row">
+                  <div className="quote-detail-label">Address</div>
+                  <div className="quote-detail-value">{selectedQuote.address || 'N/A'}</div>
+                </div>
+
+                {/* Service/Project Type */}
+                <div className="quote-detail-row">
+                  <div className="quote-detail-label">Service / Project Type</div>
+                  <div className="quote-detail-value">{[selectedQuote.serviceType, selectedQuote.projectType].filter(Boolean).join(' - ') || 'N/A'}</div>
+                </div>
+
+                {/* Rooms */}
+                <div className="quote-detail-row">
+                  <div className="quote-detail-label">Rooms</div>
+                  <div className="quote-detail-value">{Array.isArray(selectedQuote.rooms) && selectedQuote.rooms.length > 0 ? selectedQuote.rooms.join(', ') : 'N/A'}</div>
+                </div>
+
+                {/* Timeframe */}
+                <div className="quote-detail-row">
+                  <div className="quote-detail-label">Timeframe</div>
+                  <div className="quote-detail-value">{selectedQuote.timeframe || 'N/A'}</div>
+                </div>
+
+                {/* Budget (Estimated Cost for editing) */}
+                <div className="quote-detail-row">
+                  <div className="quote-detail-label">Budget</div>
+                  <div className="quote-detail-value">
+                    {editingQuoteId === selectedQuote._id ? (
+                      <input
+                        name="estimatedCost"
+                        value={editForm.estimatedCost}
+                        onChange={handleEditChange}
+                        type="number"
+                        style={{ width: '100%', background: 'transparent', border: 'none', outline: 'none' }}
+                      />
+                    ) : (
+                      selectedQuote.budget || 'N/A'
+                    )}
                   </div>
                 </div>
-                {/* Images array display */}
-                {Array.isArray(selectedQuote.images) && selectedQuote.images.length > 0 && (
-                  <div className="details-section" style={{ marginTop: '18px' }}>
-                    <span className="details-label" style={{ marginBottom: '8px' }}>Images:</span>
-                    <div className="images-grid">
-                      {selectedQuote.images.map((img, idx) => (
-                        <div key={idx} className="image-thumb-card">
-                          {img.path && img.path.startsWith('http') && (
-                            <img src={img.path} alt={img.filename} className="image-thumb" />
-                          )}
-                          <div className="image-filename">{img.filename}</div>
-                          <div className="image-mimetype">{img.mimetype}</div>
-                        </div>
-                      ))}
-                    </div>
+
+                {/* Status */}
+                <div className="quote-detail-row">
+                  <div className="quote-detail-label">Status</div>
+                  <div className="quote-detail-value">
+                    {editingQuoteId === selectedQuote._id ? (
+                      <select name="status" value={editForm.status} onChange={handleEditChange} style={{ width: '100%', background: 'transparent', border: 'none', outline: 'none' }}>
+                        <option value="pending">Pending</option>
+                        <option value="quoted">Quoted</option>
+                        <option value="completed">Completed</option>
+                      </select>
+                    ) : (
+                      String(selectedQuote.status || 'N/A').charAt(0).toUpperCase() + String(selectedQuote.status || 'N/A').slice(1)
+                    )}
                   </div>
-                )}
-                {/* ...existing code for edit button/form... */}
-                {editingQuoteId !== selectedQuote._id ? (
-                  <>
-                    <button
-                      className="edit-btn"
-                      onClick={handleEditClick}
-                    >
-                      Edit
-                    </button>
-                    {/* Show Delete button only if status is "completed" */}
-                    {selectedQuote.status === "completed" && (
-                      <button
-                        className="delete-btn"
-                        style={{ marginLeft: '10px', background: '#e74c3c', color: '#fff' }}
-                        onClick={handleDeleteQuote}
+                </div>
+
+                {/* Appointment Date */}
+                <div className="quote-detail-row">
+                  <div className="quote-detail-label">Appointment Date</div>
+                  <div className="quote-detail-value">
+                    {editingQuoteId === selectedQuote._id ? (
+                      <input
+                        name="appointmentDate"
+                        value={editForm.appointmentDate}
+                        onChange={e => {
+                          const value = e.target.value;
+                          const selected = new Date(value);
+                          if (selected.getDay() === 0) {
+                            setErrorMsg('Sundays are not available. Please select another day.');
+                            setEditForm(prev => ({ ...prev, appointmentDate: '', appointmentSlot: '' }));
+                            return;
+                          }
+                          setErrorMsg('');
+                          handleEditChange(e);
+                          setEditForm(prev => ({ ...prev, appointmentSlot: '' }));
+                        }}
+                        type="date"
+                        onClick={handleDateClick}
+                        min={todayStr()}
+                        style={{ width: '100%', background: 'transparent', border: 'none', outline: 'none' }}
+                      />
+                    ) : (
+                      selectedQuote.appointmentDate ? formatDateDMY(selectedQuote.appointmentDate) : 'N/A'
+                    )}
+                  </div>
+                  {errorMsg && editingQuoteId === selectedQuote._id && (
+                    <div style={{ gridColumn: '1 / -1', color: 'red' }}>{errorMsg}</div>
+                  )}
+                </div>
+
+                {/* Appointment Slot */}
+                <div className="quote-detail-row">
+                  <div className="quote-detail-label">Appointment Slot</div>
+                  <div className="quote-detail-value">
+                    {editingQuoteId === selectedQuote._id ? (
+                      <select
+                        name="appointmentSlot"
+                        value={editForm.appointmentSlot}
+                        onChange={handleEditChange}
+                        style={{ width: '100%', background: 'transparent', border: 'none', outline: 'none' }}
                       >
-                        Delete
-                      </button>
+                        <option value="">Select slot</option>
+                        {slotOptions
+                          .filter(opt => !unavailableSlots.includes(Number(opt.value)))
+                          .filter(opt => {
+                            if (editForm.appointmentDate === todayStr()) {
+                              return Number(opt.value) >= getNextAvailableSlotIdx();
+                            }
+                            return true;
+                          })
+                          .map(opt => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                          ))}
+                      </select>
+                    ) : (
+                      getSlotLabel(selectedQuote.appointmentSlot)
                     )}
-                  </>
-                ) : (
-                  <form onSubmit={handleEditSubmit} className="edit-form">
-                    <div className="form-group">
-                      <label>Status:&nbsp;
-                        <select
-                          name="status"
-                          value={editForm.status}
-                          onChange={handleEditChange}
-                        >
-                          <option value="pending">Pending</option>
-                          <option value="quoted">Quoted</option>
-                          <option value="completed">Completed</option>
-                        </select>
-                      </label>
-                    </div>
-                    <div className="form-group">
-                      <label>Estimated Cost:&nbsp;
-                        <input
-                          name="estimatedCost"
-                          value={editForm.estimatedCost}
-                          onChange={handleEditChange}
-                          type="number"
-                        />
-                      </label>
-                    </div>
-                    <div className="form-group">
-                      <label>Notes:&nbsp;
-                        <input
-                          name="notes"
-                          value={editForm.notes}
-                          onChange={handleEditChange}
-                          type="text"
-                        />
-                      </label>
-                    </div>
-                    {/* Toggle button for appointment inputs */}
-                    <button
-                      type="button"
-                      className="toggle-appointment-btn"
-                      style={{ marginBottom: '10px' }}
-                      onClick={() => setShowAppointmentInputs(v => !v)}
-                    >
-                      {showAppointmentInputs ? 'Close' : 'Date and Slot'}
-                    </button>
-                    {showAppointmentInputs && (
-                      <>
-                        <div className="form-group">
-                          <label>Appointment Date:&nbsp;
-                            <input
-                              name="appointmentDate"
-                              value={editForm.appointmentDate}
-                              onChange={e => {
-                                const value = e.target.value;
-                                const selected = new Date(value);
-                                if (selected.getDay() === 0) {
-                                  setErrorMsg('Sundays are not available. Please select another day.');
-                                  setEditForm(prev => ({
-                                    ...prev,
-                                    appointmentDate: '',
-                                    appointmentSlot: ''
-                                  }));
-                                  return;
-                                }
-                                setErrorMsg('');
-                                handleEditChange(e);
-                                setEditForm(prev => ({
-                                  ...prev,
-                                  appointmentSlot: ''
-                                }));
-                              }}
-                              type="date"
-                              onClick={handleDateClick}
-                              min={todayStr()}
-                            />
-                          </label>
-                          {errorMsg && <div style={{ color: 'red', marginTop: '0.5rem' }}>{errorMsg}</div>}
-                        </div>
-                        <div className="form-group">
-                          <label>Appointment Slot:&nbsp;
-                            <select
-                              name="appointmentSlot"
-                              value={editForm.appointmentSlot}
-                              onChange={handleEditChange}
-                            >
-                              <option value="">Select slot</option>
-                              {slotOptions
-                                // Filter out unavailable slots
-                                .filter(opt => !unavailableSlots.includes(Number(opt.value)))
-                                // If today is selected, filter out past slots
-                                .filter(opt => {
-                                  if (editForm.appointmentDate === todayStr()) {
-                                    return Number(opt.value) >= getNextAvailableSlotIdx();
-                                  }
-                                  return true;
-                                })
-                                .map(opt => (
-                                  <option key={opt.value} value={opt.value}>
-                                    {opt.label}
-                                  </option>
-                                ))}
-                            </select>
-                          </label>
-                        </div>
-                      </>
-                    )}
-                    <button
-                      type="submit"
-                      className="save-btn"
-                    >
-                      Save
-                    </button>
-                    <button
-                      type="button"
-                      className="cancel-btn"
-                      onClick={handleEditCancel}
-                    >
-                      Cancel
-                    </button>
-                  </form>
-                )}
-              </motion.div>
-            ) : (
-              <div className="blank-content">
-                <p>Select a quote from the left to view details.</p>
+                  </div>
+                </div>
+
+                {/* Created At */}
+                <div className="quote-detail-row">
+                  <div className="quote-detail-label">Created At</div>
+                  <div className="quote-detail-value">{selectedQuote.createdAt ? new Date(selectedQuote.createdAt).toLocaleString() : 'N/A'}</div>
+                </div>
               </div>
-            )}
-          </main>
+              {/* Uploaded Images Section */}
+              <div className="quote-images-section">
+                <div className="quote-images-header">Uploaded Images</div>
+                {Array.isArray(selectedQuote.images) && selectedQuote.images.length > 0 ? (
+                  <div className="quote-images-grid">
+                    {selectedQuote.images.map((img, idx) => {
+                      const imgUrl = img?.path || img?.url;
+                      if (!imgUrl) return null;
+                      return (
+                        <a
+                          key={idx}
+                          className="quote-image-item"
+                          href={imgUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          title={img?.filename || `Image ${idx + 1}`}
+                        >
+                          <img src={imgUrl} alt={img?.filename || `Quote image ${idx + 1}`} />
+                        </a>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="quote-images-empty">No images uploaded</div>
+                )}
+              </div>
+            </form>
+
+            <div className="quote-modal-actions">
+              <button
+                type="button"
+                className="modal-btn modal-btn-primary"
+                onClick={handleEditClick}
+                disabled={editingQuoteId === selectedQuote._id}
+              >
+                Edit
+              </button>
+              <button
+                type="submit"
+                form="quote-edit-form"
+                className="modal-btn modal-btn-primary"
+                disabled={editingQuoteId !== selectedQuote._id}
+              >
+                Save
+              </button>
+              {String(selectedQuote.status).toLowerCase() === 'completed' && (
+                <button
+                  type="button"
+                  className="modal-btn modal-btn-danger"
+                  onClick={handleDeleteQuote}
+                >
+                  Delete
+                </button>
+              )}
+            </div>
+          </div>
         </div>
-      </section>
+      )}
     </div>
   );
 };
