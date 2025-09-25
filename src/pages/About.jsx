@@ -8,6 +8,7 @@ import qualityCraftsmanshipIcon from '../../public/assets/quality-craftmenship.p
 import customerFirstIcon from '../../public/assets/customer-first.png';
 import integrityTransparencyIcon from '../../public/assets/integrity-and-transparency.png';
 import sustainablePracticesIcon from '../../public/assets/sustainable-practices.png';
+import visionImage from '../../public/assets/vision.png';
 import './About.css';
 
 const About = () => {
@@ -125,7 +126,26 @@ const About = () => {
         </div>
       </section>
 
-
+      <section className="journey-stats-section">
+        <div className="journey-stats-container">
+          <div className="stat-item">
+            <div className="stat-number">15+</div>
+            <div className="stat-label">Years Experience</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-number">1,200+</div>
+            <div className="stat-label">Projects Completed</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-number">98%</div>
+            <div className="stat-label">Customer Satisfaction</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-number">2</div>
+            <div className="stat-label">Year Warranty</div>
+          </div>
+        </div>
+      </section>
 
       <section className="principles-section">
         <div className="principles-container">
@@ -193,6 +213,41 @@ const About = () => {
                 </div>
               </div>
             </div>
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="vision-section">
+        <div className="vision-container">
+          <motion.div
+            className="vision-image"
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
+            <img 
+              src={visionImage} 
+              alt="Professional painter working on window frame" 
+              className="vision-img"
+            />
+          </motion.div>
+          
+          <motion.div
+            className="vision-content"
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
+            <h2>Let's Bring Your Vision to Life</h2>
+            <p>
+              From bold color changes to subtle refreshes, we're here to make your project stress-free and stunning.
+            </p>
+            <Link to="/free-quote" className="vision-cta">
+              Book Your Free Estimate
+              <span className="cta-arrow">→</span>
+            </Link>
           </motion.div>
         </div>
       </section>

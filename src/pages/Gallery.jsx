@@ -96,15 +96,17 @@ const Gallery = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
             onClick={() => setLightboxIdx(null)}
           >
             <motion.img
               className="lightbox-img"
               src={activeImages[lightboxIdx]?.url}
               alt={`Large view of ${activeImages[lightboxIdx]?.alt || 'project'}`}
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
               onClick={e => e.stopPropagation()}
             />
             <button className="lightbox-close" onClick={() => setLightboxIdx(null)} aria-label="Close image">×</button>
