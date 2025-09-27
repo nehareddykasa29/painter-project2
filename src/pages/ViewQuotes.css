@@ -17,6 +17,59 @@
   margin-left: 0;
 }
 
+/* Filters bar */
+.filters-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-label {
+  font-size: 0.85rem;
+  color: #4a5568;
+}
+
+.search-input,
+.filter-select {
+  height: 36px;
+  padding: 6px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: #fff;
+  color: #2d3748;
+  min-width: 220px;
+}
+
+.search-input:focus,
+.filter-select:focus {
+  outline: none;
+  border-color: #cbd5e0;
+  box-shadow: 0 0 0 2px rgba(26, 54, 93, 0.08);
+}
+
+.clear-filters {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #4a5568;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.clear-filters:hover {
+  background: #f7fafc;
+  border-color: #cbd5e0;
+}
+
 .quotes-table-container {
   background: #ffffff;
   position: relative;
@@ -190,6 +243,16 @@
   align-items: center;
 }
 
+/* Editing banner */
+.editing-banner {
+  background: #fffbea;
+  color: #744210;
+  border-top: 1px solid #f6e05e;
+  border-bottom: 1px solid #f6e05e;
+  padding: 10px 24px;
+  font-size: 0.9rem;
+}
+
 .quote-modal-title {
   font-size: 1.5rem;
   font-weight: 600;
@@ -224,6 +287,28 @@
   gap: 16px;
 }
 
+/* Editing state styles */
+.editing-active .quote-modal-header {
+  background: #f0f7ff;
+  border-bottom-color: #bee3f8;
+}
+
+.editing-active .quote-detail-value {
+  background-color: #f0fff4; /* subtle green to suggest editable */
+  border-color: #c6f6d5;
+}
+
+.editable-tag {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 0.7rem;
+  background: #edf2f7;
+  color: #4a5568;
+  padding: 2px 6px;
+  border-radius: 4px;
+  vertical-align: middle;
+}
+
 .quote-detail-row {
   display: flex;
   flex-direction: column;
@@ -254,6 +339,8 @@
   border-top: 1px solid #e9ecef;
   display: flex;
   justify-content: center;
+  gap: 10px; /* spacing between buttons */
+  flex-wrap: wrap; /* wrap nicely on small screens */
 }
 
 .modal-btn {
@@ -315,6 +402,16 @@
   .quotes-title {
     font-size: 2rem;
     margin-bottom: 20px;
+  }
+
+  .filters-bar {
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .search-input,
+  .filter-select {
+    min-width: 180px;
   }
   
   .quotes-table-container {
@@ -392,6 +489,10 @@
   .quote-modal-actions {
     padding: 16px;
   }
+
+  .editing-banner {
+    padding: 10px 16px;
+  }
   
   .quote-modal-content {
     grid-template-columns: 1fr;
@@ -408,6 +509,16 @@
   .quotes-title {
     font-size: 1.75rem;
     margin-bottom: 15px;
+  }
+
+  .filters-bar {
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .search-input,
+  .filter-select {
+    min-width: 150px;
   }
   
   .quotes-table {
@@ -459,6 +570,10 @@
   .modal-btn {
     padding: 8px 16px;
     font-size: 0.8rem;
+  }
+
+  .quote-modal-actions {
+    gap: 8px;
   }
 }
 

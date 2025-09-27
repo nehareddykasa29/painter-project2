@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchQuotes, fetchAvailability, updateQuote, deleteQuote } from '../store/bookingSlice';
@@ -30,6 +30,11 @@ const ViewQuotes = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 6;
+
+  // Filters & search
+  const [searchTerm, setSearchTerm] = useState('');
+  const [serviceTypeFilter, setServiceTypeFilter] = useState('all'); // 'all' | specific service
+  const [dateFilter, setDateFilter] = useState('all'); // 'all' | 'today' | 'last7'
 
   useEffect(() => {
     dispatch(fetchQuotes());
@@ -76,12 +81,61 @@ const ViewQuotes = () => {
     }
   }, [quotes]);
 
-  // Keep pagination in range when quotes change
-  useEffect(() => {
-    if (!quotes) return;
-    const totalPages = Math.max(1, Math.ceil(quotes.length / pageSize));
-    setCurrentPage(prev => Math.min(prev, totalPages));
+  // Helpers for date filtering (based on createdAt)
+  const startOfDay = (d) => {
+    const nd = new Date(d);
+    nd.setHours(0, 0, 0, 0);
+    return nd;
+  };
+
+  const isSameDay = (a, b) => startOfDay(a).getTime() === startOfDay(b).getTime();
+
+  const isWithinLastNDays = (dateStr, n) => {
+    if (!dateStr) return false;
+    const target = startOfDay(new Date(dateStr));
+    const today = startOfDay(new Date());
+    const from = new Date(today);
+    from.setDate(from.getDate() - (n - 1)); // inclusive of today
+    return target.getTime() >= from.getTime() && target.getTime() <= today.getTime();
+  };
+
+  // Unique service types for select
+  const serviceTypeOptions = useMemo(() => {
+    const set = new Set();
+    (quotes || []).forEach(q => {
+      if (q?.serviceType) set.add(String(q.serviceType));
+    });
+    return Array.from(set);
   }, [quotes]);
+
+  // Filtered quotes (client-side): by name, service type, and date range on createdAt
+  const filteredQuotes = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    return (quotes || []).filter(q => {
+      // search by name
+      if (term && !String(q?.name || '').toLowerCase().includes(term)) return false;
+
+      // filter by service type
+      if (serviceTypeFilter !== 'all' && String(q?.serviceType) !== serviceTypeFilter) return false;
+
+      // date filter based on createdAt
+      if (dateFilter === 'today') {
+        if (!q?.createdAt) return false;
+        if (!isSameDay(new Date(q.createdAt), new Date())) return false;
+      } else if (dateFilter === 'last7') {
+        if (!q?.createdAt) return false;
+        if (!isWithinLastNDays(q.createdAt, 7)) return false;
+      }
+
+      return true;
+    });
+  }, [quotes, searchTerm, serviceTypeFilter, dateFilter]);
+
+  // Keep pagination in range when filtered quotes change
+  useEffect(() => {
+    const totalPages = Math.max(1, Math.ceil((filteredQuotes?.length || 0) / pageSize));
+    setCurrentPage(prev => Math.min(prev, totalPages));
+  }, [filteredQuotes]);
 
   const handleEditClick = () => {
     setEditingQuoteId(selectedQuote?._id);
@@ -253,9 +307,9 @@ const ViewQuotes = () => {
     return 'status-badge';
   };
 
-  const totalPages = Math.max(1, Math.ceil((quotes?.length || 0) / pageSize));
+  const totalPages = Math.max(1, Math.ceil((filteredQuotes?.length || 0) / pageSize));
   const pageStart = (currentPage - 1) * pageSize;
-  const paginatedQuotes = (quotes || []).slice(pageStart, pageStart + pageSize);
+  const paginatedQuotes = (filteredQuotes || []).slice(pageStart, pageStart + pageSize);
 
   const openModal = (q) => {
     setSelectedQuote(q);
@@ -271,6 +325,59 @@ const ViewQuotes = () => {
     <div className="view-quotes-page">
       <div className="quotes-container">
         <h1 className="quotes-title">Quotes</h1>
+
+        {/* Filters Bar */}
+        <div className="filters-bar">
+          <div className="filter-group">
+            <label className="filter-label" htmlFor="searchName">Search</label>
+            <input
+              id="searchName"
+              type="text"
+              className="search-input"
+              placeholder="Search by applicant name"
+              value={searchTerm}
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+            />
+          </div>
+          <div className="filter-group">
+            <label className="filter-label" htmlFor="serviceTypeFilter">Service type</label>
+            <select
+              id="serviceTypeFilter"
+              className="filter-select"
+              value={serviceTypeFilter}
+              onChange={(e) => { setServiceTypeFilter(e.target.value); setCurrentPage(1); }}
+            >
+              <option value="all">All services</option>
+              {serviceTypeOptions.map(st => (
+                <option key={st} value={st}>{String(st).charAt(0).toUpperCase() + String(st).slice(1)}</option>
+              ))}
+            </select>
+          </div>
+          <div className="filter-group">
+            <label className="filter-label" htmlFor="dateFilter">Date</label>
+            <select
+              id="dateFilter"
+              className="filter-select"
+              value={dateFilter}
+              onChange={(e) => { setDateFilter(e.target.value); setCurrentPage(1); }}
+            >
+              <option value="all">All dates</option>
+              <option value="today">Today</option>
+              <option value="last7">Last 7 days</option>
+            </select>
+          </div>
+          {(searchTerm || serviceTypeFilter !== 'all' || dateFilter !== 'all') && (
+            <div className="filter-group">
+              <button
+                type="button"
+                className="clear-filters"
+                onClick={() => { setSearchTerm(''); setServiceTypeFilter('all'); setDateFilter('all'); setCurrentPage(1); }}
+              >
+                Clear filters
+              </button>
+            </div>
+          )}
+        </div>
 
         <div className="quotes-table-container">
           {quotesLoading && <p>Loading quotes...</p>}
@@ -314,7 +421,7 @@ const ViewQuotes = () => {
         </div>
 
         {/* Pagination */}
-        {(!quotesLoading && !quotesError && (quotes?.length || 0) > pageSize) && (
+        {(!quotesLoading && !quotesError && (filteredQuotes?.length || 0) > pageSize) && (
           <div className="pagination-container">
             <div className="pagination">
               <button
@@ -348,11 +455,20 @@ const ViewQuotes = () => {
       {/* Quote Details Modal */}
       {selectedQuote && (
         <div className="quote-modal-overlay" onClick={closeModal}>
-          <div className="quote-modal" onClick={(e) => e.stopPropagation()}>
+          <div
+            className={`quote-modal ${editingQuoteId === selectedQuote._id ? 'editing-active' : ''}`}
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="quote-modal-header">
               <h3 className="quote-modal-title">Quote Details</h3>
               <button className="quote-modal-close" onClick={closeModal}>×</button>
             </div>
+
+            {editingQuoteId === selectedQuote._id && (
+              <div className="editing-banner" role="status" aria-live="polite">
+                Editing mode is ON — you can now modify the highlighted fields below. Don’t forget to Save.
+              </div>
+            )}
 
             <form id="quote-edit-form" onSubmit={handleEditSubmit}>
               <div className="quote-modal-content">
@@ -400,7 +516,7 @@ const ViewQuotes = () => {
 
                 {/* Budget (Estimated Cost for editing) */}
                 <div className="quote-detail-row">
-                  <div className="quote-detail-label">Budget</div>
+                  <div className="quote-detail-label">Budget {editingQuoteId === selectedQuote._id && <span className="editable-tag">Editable</span>}</div>
                   <div className="quote-detail-value">
                     {editingQuoteId === selectedQuote._id ? (
                       <input
@@ -418,7 +534,7 @@ const ViewQuotes = () => {
 
                 {/* Status */}
                 <div className="quote-detail-row">
-                  <div className="quote-detail-label">Status</div>
+                  <div className="quote-detail-label">Status {editingQuoteId === selectedQuote._id && <span className="editable-tag">Editable</span>}</div>
                   <div className="quote-detail-value">
                     {editingQuoteId === selectedQuote._id ? (
                       <select name="status" value={editForm.status} onChange={handleEditChange} style={{ width: '100%', background: 'transparent', border: 'none', outline: 'none' }}>
@@ -434,7 +550,7 @@ const ViewQuotes = () => {
 
                 {/* Appointment Date */}
                 <div className="quote-detail-row">
-                  <div className="quote-detail-label">Appointment Date</div>
+                  <div className="quote-detail-label">Appointment Date {editingQuoteId === selectedQuote._id && <span className="editable-tag">Editable</span>}</div>
                   <div className="quote-detail-value">
                     {editingQuoteId === selectedQuote._id ? (
                       <input
@@ -468,7 +584,7 @@ const ViewQuotes = () => {
 
                 {/* Appointment Slot */}
                 <div className="quote-detail-row">
-                  <div className="quote-detail-label">Appointment Slot</div>
+                  <div className="quote-detail-label">Appointment Slot {editingQuoteId === selectedQuote._id && <span className="editable-tag">Editable</span>}</div>
                   <div className="quote-detail-value">
                     {editingQuoteId === selectedQuote._id ? (
                       <select
