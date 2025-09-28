@@ -461,6 +461,9 @@ const Home = () => {
             <div className="reviews-title">
               <h2>What Our Customers Says</h2>
               <p>Don't just take our word for it — hear from homeowners and businesses who trusted us to transform their spaces.</p>
+              <Link to="/reviews" className="btn-estimate" style={{ marginTop: '12px' }}>
+                Write a Review
+              </Link>
             </div>
           </div>
           

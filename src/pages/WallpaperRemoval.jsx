@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FaCheckCircle } from 'react-icons/fa';
-import './ServicePlaceholder.css';
+import InteriorPainting from './InteriorPainting';
 
 const WallpaperRemoval = () => {
   useEffect(() => {
@@ -12,17 +10,12 @@ const WallpaperRemoval = () => {
   }, []);
 
   return (
-    <div className="service-placeholder-page">
-      <section className="service-placeholder-hero">
-        <img src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1200&q=80" alt="Wallpaper Removal" className="service-placeholder-img" />
-        <div className="service-placeholder-content">
-          <h1><FaCheckCircle /> Wallpaper Removal</h1>
-          <p>Remove old wallpaper and prep your walls for a flawless new finish.</p>
-          <Link to="/free-quote" className="btn btn-cta btn-large">Request a Free Quote</Link>
-        </div>
-      </section>
-    </div>
+    <InteriorPainting
+      heroTitle="Wallpaper Removal"
+      heroSubtitle="Remove old wallpaper and prep your walls for a flawless new finish."
+      heroImageSrc="/assets/wallpainting.png"
+    />
   );
 };
 
-export default WallpaperRemoval; 
+export default WallpaperRemoval;

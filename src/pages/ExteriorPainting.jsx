@@ -52,7 +52,7 @@ const reviews = [
   }
 ];
 
-const ExteriorPainting = () => {
+const ExteriorPainting = ({ heroTitle, heroSubtitle, heroImageSrc }) => {
   const [currentReview, setCurrentReview] = useState(0);
   
   const transformServices = [
@@ -75,10 +75,10 @@ const ExteriorPainting = () => {
   return (
     <div className="exterior-painting-page">
       <section className="exterior-hero">
-        <img src="/assets/exterior-hero.png" alt="Exterior Painting Hero" className="exterior-hero-img" />
+        <img src={heroImageSrc || "/assets/exterior-hero.png"} alt={heroTitle || "Exterior Painting Hero"} className="exterior-hero-img" />
         <div className="exterior-hero-content">
-          <h1>Exterior Painting That Protects & Impresses</h1>
-          <p>Boost curb appeal and protect your home with long-lasting, expert-applied exterior paint.</p>
+          <h1>{heroTitle || 'Exterior Painting That Protects & Impresses'}</h1>
+          <p>{heroSubtitle || 'Boost curb appeal and protect your home with long-lasting, expert-applied exterior paint.'}</p>
           <Link to="/free-quote" className="btn btn-estimate">Book Free Estimate</Link>
         </div>
       </section>
@@ -170,6 +170,9 @@ const ExteriorPainting = () => {
             <div className="reviews-title">
               <h2>What Our Customers Says</h2>
               <p>Don't just take our word for it — hear from homeowners and businesses who trusted us to transform their spaces.</p>
+              <Link to="/reviews" className="btn btn-estimate" style={{ marginTop: '12px' }}>
+                Write a Review
+              </Link>
             </div>
           </div>
           

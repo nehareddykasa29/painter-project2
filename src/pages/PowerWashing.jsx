@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FaCogs } from 'react-icons/fa';
-import './ServicePlaceholder.css';
+import ExteriorPainting from './ExteriorPainting';
 
 const PowerWashing = () => {
   useEffect(() => {
@@ -11,18 +9,14 @@ const PowerWashing = () => {
     );
   }, []);
 
+  // Reuse the ExteriorPainting component for a consistent look-and-feel
   return (
-    <div className="service-placeholder-page">
-      <section className="service-placeholder-hero">
-        <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1200&q=80" alt="Power Washing" className="service-placeholder-img" />
-        <div className="service-placeholder-content">
-          <h1><FaCogs /> Power Washing</h1>
-          <p>Clean, prep, and restore your property’s surfaces for a flawless finish.</p>
-          <Link to="/free-quote" className="btn btn-cta btn-large">Request a Free Quote</Link>
-        </div>
-      </section>
-    </div>
+    <ExteriorPainting
+      heroTitle="Power Washing & Surface Prep"
+      heroSubtitle="Clean, prep, and restore your property’s surfaces for a flawless finish."
+      heroImageSrc="/assets/powerwash-and-surfaceprep.png"
+    />
   );
 };
 
-export default PowerWashing; 
+export default PowerWashing;

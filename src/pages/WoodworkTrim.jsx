@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FaCheckCircle } from 'react-icons/fa';
-import './ServicePlaceholder.css';
+import InteriorPainting from './InteriorPainting';
 
 const WoodworkTrim = () => {
   useEffect(() => {
@@ -12,17 +10,12 @@ const WoodworkTrim = () => {
   }, []);
 
   return (
-    <div className="service-placeholder-page">
-      <section className="service-placeholder-hero">
-        <img src="https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1200&q=80" alt="Woodwork & Trim Painting" className="service-placeholder-img" />
-        <div className="service-placeholder-content">
-          <h1><FaCheckCircle /> Woodwork & Trim Painting</h1>
-          <p>Crisp, clean lines and flawless finishes for all your woodwork and trim.</p>
-          <Link to="/free-quote" className="btn btn-cta btn-large">Request a Free Quote</Link>
-        </div>
-      </section>
-    </div>
+    <InteriorPainting
+      heroTitle="Woodwork & Trim Painting"
+      heroSubtitle="Crisp, clean lines and flawless finishes for all your woodwork and trim."
+      heroImageSrc="/assets/woodworktrim.png"
+    />
   );
 };
 
-export default WoodworkTrim; 
+export default WoodworkTrim;
