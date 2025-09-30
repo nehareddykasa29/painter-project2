@@ -461,9 +461,6 @@ const Home = () => {
             <div className="reviews-title">
               <h2>What Our Customers Says</h2>
               <p>Don't just take our word for it — hear from homeowners and businesses who trusted us to transform their spaces.</p>
-              <Link to="/reviews" className="btn-estimate" style={{ marginTop: '12px' }}>
-                Write a Review
-              </Link>
             </div>
           </div>
           
@@ -498,6 +495,14 @@ const Home = () => {
                   </div>
                 </Link>
               </div>
+            </div>
+            <div className="review-cta-block">
+              <div className="review-cta-caption">
+                Share your experience and help others choose with confidence.
+              </div>
+              <Link to="/reviews" className="btn-estimate">
+                Write a Review
+              </Link>
             </div>
           </div>
         </div>

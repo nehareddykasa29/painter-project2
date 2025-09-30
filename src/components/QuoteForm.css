@@ -53,6 +53,25 @@
   margin-bottom: 1rem;
 }
 
+/* Phone input layout */
+.phone-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.country-code-select {
+  width: 92px !important;
+  flex: 0 0 125px;
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}
+
+.phone-number-input {
+  flex: 1 1 auto;
+  min-width: 180px;
+}
+
 .form-group {
   margin-bottom: 0;
 }

@@ -436,25 +436,17 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
             <label htmlFor="phone" className="form-label">
               <FaPhone /> Phone Number *
             </label>
-            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+            <div className="phone-input-row">
               <select
                 name="countryCode"
                 value={formData.countryCode}
                 onChange={handleChange}
-                style={{
-                  width: '70px',
-                  minWidth: '40px',
-                  maxWidth: '60px',
-                  padding: '4px 6px',
-                  borderRadius: '4px',
-                  border: '1px solid #ccc',
-                  background: '#fafbfc',
-                  fontSize: '0.95em'
-                }}
+                className="form-control country-code-select"
+                aria-label="Country code"
               >
                 {COUNTRY_CODES.map(opt => (
                   <option key={opt.code} value={opt.code}>
-                    {opt.code} {opt.short}
+                    {opt.short} {opt.code}
                   </option>
                 ))}
               </select>
@@ -464,9 +456,8 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className={`form-control ${errors.phone ? 'error' : ''}`}
+                className={`form-control phone-number-input ${errors.phone ? 'error' : ''}`}
                 placeholder="e.g., 9876543210"
-                style={{ flex: 1, minWidth: '180px', fontSize: '1em' }} // Make input wider
               />
             </div>
             {errors.phone && <div className="form-error">{errors.phone}</div>}
@@ -638,7 +629,7 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
                 maxDate={maxDate}
                 placeholderText="Choose a date"
                 className={`form-control ${errors.appointmentDate ? 'error' : ''}`}
-                dateFormat="yyyy-MM-dd"
+                dateFormat="dd/MM/yy"
                 onFocus={handleAvailabilityFetch}
                 disabled={appointmentLoading}
                 filterDate={date => date.getDay() !== 0} // Block Sundays

@@ -1506,7 +1506,7 @@
   aspect-ratio: 2/3;
   text-decoration: none;
   display: block;
-  height: 130px;
+  height: 260px; /* increased desktop height */
   width: 100%;
 }
 
@@ -1786,6 +1786,24 @@
   line-height: 1.6;
 }
 
+.review-cta-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2.2rem;
+}
+.review-cta-caption {
+  font-size: 1.08rem;
+  color: #2B3674;
+  margin-bottom: 0.7rem;
+  font-weight: 500;
+  text-align: center;
+}
+.review-cta-block .btn-estimate {
+  margin-top: 0;
+  align-self: center;
+}
+
 .review-link {
   flex: 0 0 100px;
   min-width: 100px;
@@ -1837,6 +1855,12 @@
 
   .review-link {
     flex: 0 0 80px;
+
+  /* Ensure action button in reviews title sits below caption with spacing */
+  .reviews-title .btn-estimate {
+    margin-top: 12px;
+    display: inline-block;
+  }
     min-width: 80px;
   }
 
@@ -1935,12 +1959,13 @@
 
 .brand-buttons {
   display: flex;
+  flex-wrap: wrap;
   gap: 1.25rem;
   margin-bottom: 2.5rem;
 }
 
 .brand-button {
-  flex: 1;
+  flex: 1 1 220px; /* flexibly size buttons and wrap */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1954,7 +1979,7 @@
   font-size: 0.85rem;
   transition: all 0.3s ease;
   min-height: 65px;
-  max-width: 220px;
+  max-width: 240px; /* cap width so all buttons look similar */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -1976,7 +2001,9 @@
 }
 
 .btn-estimate {
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.75rem 1.5rem;
   background-color: #F4C542;
   color: #2B3674;
@@ -1986,7 +2013,9 @@
   font-size: 0.9rem;
   transition: all 0.3s ease;
   max-width: 250px;
+  min-height: 48px;
   white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .btn-estimate:hover {
@@ -1996,9 +2025,19 @@
 }
 
 @media (max-width: 768px) {
+  .brand-buttons {
+    gap: 0.75rem;
+  }
+
+  .brand-button {
+    flex: 1 1 180px;
+    min-width: 180px;
+    padding: 0.75rem 1rem;
+  }
   .btn-estimate {
     padding: 0.7rem 1.25rem;
     font-size: 0.85rem;
+    min-height: 44px;
   }
 }
 
