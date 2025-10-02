@@ -35,6 +35,8 @@ const ViewQuotes = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [serviceTypeFilter, setServiceTypeFilter] = useState('all'); // 'all' | specific service
   const [dateFilter, setDateFilter] = useState('all'); // 'all' | 'today' | 'last7'
+  const [appointmentDateFilter, setAppointmentDateFilter] = useState('all'); // 'all' | 'today' | 'next7'
+  const [updatedSort, setUpdatedSort] = useState('desc'); // 'desc' latest->oldest | 'asc' oldest->latest
 
   useEffect(() => {
     dispatch(fetchQuotes());
@@ -99,6 +101,16 @@ const ViewQuotes = () => {
     return target.getTime() >= from.getTime() && target.getTime() <= today.getTime();
   };
 
+  // Next N days window (including today)
+  const isWithinNextNDays = (dateStr, n) => {
+    if (!dateStr) return false;
+    const target = startOfDay(new Date(dateStr));
+    const today = startOfDay(new Date());
+    const to = new Date(today);
+    to.setDate(to.getDate() + (n - 1)); // inclusive through future date
+    return target.getTime() >= today.getTime() && target.getTime() <= to.getTime();
+  };
+
   // Unique service types for select
   const serviceTypeOptions = useMemo(() => {
     const set = new Set();
@@ -108,17 +120,17 @@ const ViewQuotes = () => {
     return Array.from(set);
   }, [quotes]);
 
-  // Filtered quotes (client-side): by name, service type, and date range on createdAt
+  // Filtered + Sorted quotes (client-side)
   const filteredQuotes = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
-    return (quotes || []).filter(q => {
+    const filtered = (quotes || []).filter(q => {
       // search by name
       if (term && !String(q?.name || '').toLowerCase().includes(term)) return false;
 
       // filter by service type
       if (serviceTypeFilter !== 'all' && String(q?.serviceType) !== serviceTypeFilter) return false;
 
-      // date filter based on createdAt
+      // createdAt date filter
       if (dateFilter === 'today') {
         if (!q?.createdAt) return false;
         if (!isSameDay(new Date(q.createdAt), new Date())) return false;
@@ -127,9 +139,26 @@ const ViewQuotes = () => {
         if (!isWithinLastNDays(q.createdAt, 7)) return false;
       }
 
+      // appointment date filter
+      if (appointmentDateFilter === 'today') {
+        if (!q?.appointmentDate) return false;
+        if (!isSameDay(new Date(q.appointmentDate), new Date())) return false;
+      } else if (appointmentDateFilter === 'next7') {
+        if (!q?.appointmentDate) return false;
+        if (!isWithinNextNDays(q.appointmentDate, 7)) return false;
+      }
+
       return true;
     });
-  }, [quotes, searchTerm, serviceTypeFilter, dateFilter]);
+
+    // sort by updatedAt (fallback to createdAt) according to updatedSort
+    const sorted = filtered.slice().sort((a, b) => {
+      const ta = new Date(a?.updatedAt || a?.createdAt || 0).getTime();
+      const tb = new Date(b?.updatedAt || b?.createdAt || 0).getTime();
+      return updatedSort === 'desc' ? tb - ta : ta - tb;
+    });
+    return sorted;
+  }, [quotes, searchTerm, serviceTypeFilter, dateFilter, appointmentDateFilter, updatedSort]);
 
   // Keep pagination in range when filtered quotes change
   useEffect(() => {
@@ -366,12 +395,37 @@ const ViewQuotes = () => {
               <option value="last7">Last 7 days</option>
             </select>
           </div>
-          {(searchTerm || serviceTypeFilter !== 'all' || dateFilter !== 'all') && (
+          <div className="filter-group">
+            <label className="filter-label" htmlFor="apptDateFilter">Appointment date</label>
+            <select
+              id="apptDateFilter"
+              className="filter-select"
+              value={appointmentDateFilter}
+              onChange={(e) => { setAppointmentDateFilter(e.target.value); setCurrentPage(1); }}
+            >
+              <option value="all">All appointments</option>
+              <option value="today">Today</option>
+              <option value="next7">Next 7 days</option>
+            </select>
+          </div>
+          <div className="filter-group">
+            <label className="filter-label" htmlFor="updatedSort">Last updated</label>
+            <select
+              id="updatedSort"
+              className="filter-select"
+              value={updatedSort}
+              onChange={(e) => { setUpdatedSort(e.target.value); setCurrentPage(1); }}
+            >
+              <option value="desc">Latest to oldest</option>
+              <option value="asc">Oldest to latest</option>
+            </select>
+          </div>
+          {(searchTerm || serviceTypeFilter !== 'all' || dateFilter !== 'all' || appointmentDateFilter !== 'all' || updatedSort !== 'desc') && (
             <div className="filter-group">
               <button
                 type="button"
                 className="clear-filters"
-                onClick={() => { setSearchTerm(''); setServiceTypeFilter('all'); setDateFilter('all'); setCurrentPage(1); }}
+                onClick={() => { setSearchTerm(''); setServiceTypeFilter('all'); setDateFilter('all'); setAppointmentDateFilter('all'); setUpdatedSort('desc'); setCurrentPage(1); }}
               >
                 Clear filters
               </button>
@@ -617,6 +671,13 @@ const ViewQuotes = () => {
                   <div className="quote-detail-label">Created At</div>
                   <div className="quote-detail-value">{selectedQuote.createdAt ? new Date(selectedQuote.createdAt).toLocaleString() : 'N/A'}</div>
                 </div>
+                {/* Updated At (if present) */}
+                {selectedQuote.updatedAt && (
+                  <div className="quote-detail-row">
+                    <div className="quote-detail-label">Updated At</div>
+                    <div className="quote-detail-value">{new Date(selectedQuote.updatedAt).toLocaleString()}</div>
+                  </div>
+                )}
               </div>
               {/* Uploaded Images Section */}
               <div className="quote-images-section">
