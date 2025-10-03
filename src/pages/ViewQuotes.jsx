@@ -14,6 +14,7 @@ const ViewQuotes = () => {
   const [selectedQuote, setSelectedQuote] = useState(null);
   // Replace editing boolean with editingQuoteId
   const [editingQuoteId, setEditingQuoteId] = useState(null);
+  const [originalEditSnapshot, setOriginalEditSnapshot] = useState(null); // track original values when entering edit
   const [editForm, setEditForm] = useState({
     status: '',
     estimatedCost: '',
@@ -168,6 +169,15 @@ const ViewQuotes = () => {
 
   const handleEditClick = () => {
     setEditingQuoteId(selectedQuote?._id);
+    if (selectedQuote) {
+      setOriginalEditSnapshot({
+        status: selectedQuote.status || '',
+        estimatedCost: selectedQuote.estimatedCost || '',
+        notes: selectedQuote.notes || '',
+        appointmentDate: selectedQuote.appointmentDate ? selectedQuote.appointmentDate.slice(0,10) : '',
+        appointmentSlot: selectedQuote.appointmentSlot || ''
+      });
+    }
   };
 
   const handleEditChange = e => {
@@ -343,11 +353,29 @@ const ViewQuotes = () => {
   const openModal = (q) => {
     setSelectedQuote(q);
     setEditingQuoteId(null);
+    setOriginalEditSnapshot(null);
   };
 
   const closeModal = () => {
+    // If in edit mode
+    if (editingQuoteId && editingQuoteId === selectedQuote?._id) {
+      // Determine if any changes were made
+      const currentSnapshot = {
+        status: editForm.status || '',
+        estimatedCost: editForm.estimatedCost || '',
+        notes: editForm.notes || '',
+        appointmentDate: editForm.appointmentDate || '',
+        appointmentSlot: editForm.appointmentSlot || ''
+      };
+      const unchanged = originalEditSnapshot && Object.keys(currentSnapshot).every(k => String(currentSnapshot[k]) === String(originalEditSnapshot[k]));
+      if (unchanged) {
+        const proceed = window.confirm('No changes were made. Do you want to close this quote?');
+        if (!proceed) return; // abort closing
+      }
+    }
     setSelectedQuote(null);
     setEditingQuoteId(null);
+    setOriginalEditSnapshot(null);
   };
 
   return (
