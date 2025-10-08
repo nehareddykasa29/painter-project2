@@ -365,6 +365,22 @@
   background-color: #e5b73a;
 }
 
+/* Disabled state for primary modal button (e.g., Save when no changes) */
+.modal-btn-primary:disabled,
+.modal-btn-primary[disabled] {
+  background-color: #f1f1f1;
+  color: #a0a0a0;
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.75;
+  border: 1px solid #e0e0e0;
+}
+
+.modal-btn-primary:disabled:hover,
+.modal-btn-primary[disabled]:hover {
+  background-color: #f1f1f1; /* prevent hover color change */
+}
+
 /* Danger button */
 .modal-btn-danger {
   background-color: #e53e3e;

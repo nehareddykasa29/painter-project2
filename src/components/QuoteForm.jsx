@@ -126,13 +126,7 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
       newErrors.projectType = 'Please select a project type';
     }
 
-    if (!formData.timeframe) {
-      newErrors.timeframe = 'Please select your preferred timeframe';
-    }
-
-    if (!formData.budget) {
-      newErrors.budget = 'Please select your budget range';
-    }
+    // timeframe and budget now optional, so no validation errors
 
     if (!formData.appointmentDate) {
       newErrors.appointmentDate = 'Please select a date for your site visit';
@@ -181,8 +175,8 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
     // Find the slot index for the selected time
     const slotIndex = allPossibleSlots.findIndex(slot => slot === formData.appointmentSlot);
 
-    // Format appointmentDate as "YYYY-MM-DD"
-    const appointmentDateStr = formatDate(formData.appointmentDate);
+  // Format appointmentDate as "YYYY-MM-DD" using local date components (no UTC shift)
+  const appointmentDateStr = localDateString(formData.appointmentDate);
 
     // Prepend country code to phone number
     const fullPhone = `${formData.countryCode}${formData.phone.replace(/^0+/, '')}`;
@@ -195,13 +189,15 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
       address: formData.address,
       serviceType: formData.serviceType,
       projectType: formData.projectType,
-      timeframe: formData.timeframe,
-      budget: formData.budget,
       description: formData.description,
       appointmentDate: appointmentDateStr,
       appointmentSlot: slotIndex,
       images // <-- add images array here
     };
+
+    // Include optional fields only if user supplied them
+    if (formData.timeframe) quoteBody.timeframe = formData.timeframe;
+    if (formData.budget) quoteBody.budget = formData.budget;
 
     dispatch(submitQuote(quoteBody));
     setFormData({
@@ -269,17 +265,15 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
     dispatch(fetchAvailability());
   };
 
-  // Helper to format date to YYYY-MM-DD for comparison
-  const formatDate = date =>
-    date
-      ? date.getFullYear() +
-        '-' +
-        String(date.getMonth() + 1).padStart(2, '0') +
-        '-' +
-        String(date.getDate()).padStart(2, '0')
-      : null;
+  // Helper to format date to YYYY-MM-DD using LOCAL calendar values (prevents timezone-related day shifts)
+  const localDateString = (date) =>
+    date ? [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2,'0'),
+      String(date.getDate()).padStart(2,'0')
+    ].join('-') : null;
 
-  const selectedDateStr = formatDate(formData.appointmentDate);
+  const selectedDateStr = localDateString(formData.appointmentDate);
 
   // Convert keys of appointmentAvailability to formatted strings for matching
   let blockedIndexes = [];
@@ -293,11 +287,11 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
       if (typeof key === 'string' && key.includes('-')) {
         keyStr = key;
       } else if (key instanceof Date) {
-        keyStr = formatDate(key);
+        keyStr = localDateString(key);
       } else {
         // Try to parse if it's not a string or Date
         try {
-          keyStr = formatDate(new Date(key));
+          keyStr = localDateString(new Date(key));
         } catch {
           keyStr = key;
         }
@@ -311,6 +305,20 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
   const allPossibleSlots = [
     '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'
   ];
+
+  // Helper to display slots in 12-hour format with AM/PM while keeping 24h value internally
+  const formatSlotForDisplay = (slot) => {
+    if (!slot) return '';
+    const [hStr, m] = slot.split(':');
+    let h = parseInt(hStr, 10);
+    const suffix = h >= 12 ? 'PM' : 'AM';
+    if (h === 0) {
+      h = 12; // 00:00 -> 12 AM
+    } else if (h > 12) {
+      h = h - 12; // 13:00 -> 1 PM
+    }
+    return `${h.toString().padStart(1, '0')}:${m} ${suffix}`;
+  };
 
   // Block slots that are already completed for today
   let availableSlots = [];
@@ -558,14 +566,14 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="timeframe" className="form-label">
-              Preferred Timeframe *
+              Preferred Timeframe (Optional)
             </label>
             <select
               id="timeframe"
               name="timeframe"
               value={formData.timeframe}
               onChange={handleChange}
-              className={`form-control ${errors.timeframe ? 'error' : ''}`}
+              className={`form-control`}
             >
               <option value="">Select timeframe</option>
               <option value="asap">As soon as possible</option>
@@ -574,19 +582,19 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
               <option value="2-3months">2-3 months</option>
               <option value="flexible">Flexible</option>
             </select>
-            {errors.timeframe && <div className="form-error">{errors.timeframe}</div>}
+            {/* timeframe optional - no error message */}
           </div>
 
           <div className="form-group">
             <label htmlFor="budget" className="form-label">
-              Budget Range *
+              Budget Range (Optional)
             </label>
             <select
               id="budget"
               name="budget"
               value={formData.budget}
               onChange={handleChange}
-              className={`form-control ${errors.budget ? 'error' : ''}`}
+              className={`form-control`}
             >
               <option value="">Select budget range</option>
               <option value="under-1000">Under $1,000</option>
@@ -595,7 +603,7 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
               <option value="5000-10000">$5,000 - $10,000</option>
               <option value="over-10000">Over $10,000</option>
             </select>
-            {errors.budget && <div className="form-error">{errors.budget}</div>}
+            {/* budget optional - no error message */}
           </div>
         </div>
 
@@ -679,7 +687,7 @@ const QuoteForm = ({ onSubmit, isLoading = false, initialData = null }) => {
             >
               <option value="">Select a time slot</option>
               {availableSlots.length > 0 && availableSlots.map(slot => (
-                <option key={slot} value={slot}>{slot}</option>
+                <option key={slot} value={slot}>{formatSlotForDisplay(slot)}</option>
               ))}
             </select>
             {availableSlots.length === 0 && formData.appointmentDate && (

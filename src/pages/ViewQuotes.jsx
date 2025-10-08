@@ -168,16 +168,27 @@ const ViewQuotes = () => {
   }, [filteredQuotes]);
 
   const handleEditClick = () => {
-    setEditingQuoteId(selectedQuote?._id);
-    if (selectedQuote) {
-      setOriginalEditSnapshot({
-        status: selectedQuote.status || '',
-        estimatedCost: selectedQuote.estimatedCost || '',
-        notes: selectedQuote.notes || '',
-        appointmentDate: selectedQuote.appointmentDate ? selectedQuote.appointmentDate.slice(0,10) : '',
-        appointmentSlot: selectedQuote.appointmentSlot || ''
-      });
+    if (!selectedQuote) return;
+    // Toggle behavior: if already editing this quote, treat as cancel (handled elsewhere), else enter edit
+    if (editingQuoteId === selectedQuote._id) {
+      // toggle off handled by separate cancel function, early return
+      return;
     }
+    setEditingQuoteId(selectedQuote._id);
+    // Do not fallback to budget anymore; keep blank unless estimatedCost exists
+    let estimatedCostFallback = '';
+    if (selectedQuote.estimatedCost !== undefined && selectedQuote.estimatedCost !== null && selectedQuote.estimatedCost !== '') {
+      estimatedCostFallback = selectedQuote.estimatedCost;
+    }
+    const snapshot = {
+      status: selectedQuote.status || '',
+      estimatedCost: estimatedCostFallback,
+      notes: selectedQuote.notes || '',
+      appointmentDate: selectedQuote.appointmentDate ? selectedQuote.appointmentDate.slice(0,10) : '',
+      appointmentSlot: selectedQuote.appointmentSlot || ''
+    };
+    setOriginalEditSnapshot(snapshot);
+    setEditForm(snapshot);
   };
 
   const handleEditChange = e => {
@@ -189,21 +200,39 @@ const ViewQuotes = () => {
   };
 
   const handleEditCancel = () => {
+    // Restore original snapshot if exists
+    if (originalEditSnapshot) {
+      setEditForm(originalEditSnapshot);
+    }
     setEditingQuoteId(null);
   };
 
+  // Determine if there are unsaved changes when in edit mode
+  const hasChanges = useMemo(() => {
+    if (!editingQuoteId || !originalEditSnapshot) return false;
+    const keys = ['status', 'estimatedCost', 'notes', 'appointmentDate', 'appointmentSlot'];
+    return keys.some(k => String(editForm[k] || '') !== String(originalEditSnapshot[k] || ''));
+  }, [editingQuoteId, originalEditSnapshot, editForm]);
+
   const handleEditSubmit = async e => {
     e.preventDefault();
+    if (!hasChanges) {
+      return; // no-op if nothing changed
+    }
     try {
+      const payload = {
+        status: editForm.status,
+        notes: editForm.notes,
+        appointmentDate: editForm.appointmentDate,
+        appointmentSlot: editForm.appointmentSlot !== '' ? Number(editForm.appointmentSlot) : undefined
+      };
+      if (editForm.estimatedCost !== '' && !isNaN(Number(editForm.estimatedCost))) {
+        payload.estimatedCost = Number(editForm.estimatedCost);
+      }
+
       await dispatch(updateQuote({
         id: selectedQuote._id,
-        data: {
-          status: editForm.status,
-          estimatedCost: Number(editForm.estimatedCost),
-          notes: editForm.notes,
-          appointmentDate: editForm.appointmentDate,
-          appointmentSlot: Number(editForm.appointmentSlot)
-        }
+        data: payload
       })).unwrap();
 
       alert('Quote updated successfully!');
@@ -292,10 +321,12 @@ const ViewQuotes = () => {
   };
 
   // Helper to get today's date in YYYY-MM-DD format
-  const todayStr = () => {
-    const d = new Date();
-    return d.toISOString().slice(0, 10);
+  // Timezone-agnostic (local) date string helper to avoid UTC shift issues across timezones
+  const dateToLocalDateString = (d) => {
+    if (!(d instanceof Date)) d = new Date(d);
+    return [d.getFullYear(), String(d.getMonth() + 1).padStart(2,'0'), String(d.getDate()).padStart(2,'0')].join('-');
   };
+  const todayStr = () => dateToLocalDateString(new Date());
 
   // Helper to get the next available slot index for today
   const getNextAvailableSlotIdx = () => {
@@ -357,25 +388,26 @@ const ViewQuotes = () => {
   };
 
   const closeModal = () => {
-    // If in edit mode
     if (editingQuoteId && editingQuoteId === selectedQuote?._id) {
-      // Determine if any changes were made
-      const currentSnapshot = {
-        status: editForm.status || '',
-        estimatedCost: editForm.estimatedCost || '',
-        notes: editForm.notes || '',
-        appointmentDate: editForm.appointmentDate || '',
-        appointmentSlot: editForm.appointmentSlot || ''
-      };
-      const unchanged = originalEditSnapshot && Object.keys(currentSnapshot).every(k => String(currentSnapshot[k]) === String(originalEditSnapshot[k]));
-      if (unchanged) {
-        const proceed = window.confirm('No changes were made. Do you want to close this quote?');
-        if (!proceed) return; // abort closing
+      // Determine unsaved changes (reuse logic akin to hasChanges)
+      const keys = ['status', 'estimatedCost', 'notes', 'appointmentDate', 'appointmentSlot'];
+      const unsaved = originalEditSnapshot && keys.some(k => String(editForm[k] || '') !== String(originalEditSnapshot[k] || ''));
+      if (unsaved) {
+        const proceed = window.confirm('the changes are made but not saved. Close without saving?');
+        if (!proceed) return; // user opted to stay
       }
     }
+    // Fully reset edit state
     setSelectedQuote(null);
     setEditingQuoteId(null);
     setOriginalEditSnapshot(null);
+    setEditForm({
+      status: '',
+      estimatedCost: '',
+      notes: '',
+      appointmentDate: '',
+      appointmentSlot: ''
+    });
   };
 
   return (
@@ -596,9 +628,15 @@ const ViewQuotes = () => {
                   <div className="quote-detail-value">{selectedQuote.timeframe || 'N/A'}</div>
                 </div>
 
-                {/* Budget (Estimated Cost for editing) */}
+                {/* Budget (original user-provided; always read-only) */}
                 <div className="quote-detail-row">
-                  <div className="quote-detail-label">Budget {editingQuoteId === selectedQuote._id && <span className="editable-tag">Editable</span>}</div>
+                  <div className="quote-detail-label">Budget</div>
+                  <div className="quote-detail-value">{selectedQuote.budget || 'N/A'}</div>
+                </div>
+
+                {/* Estimated Cost (admin input) */}
+                <div className="quote-detail-row">
+                  <div className="quote-detail-label">Estimated Cost {editingQuoteId === selectedQuote._id && <span className="editable-tag">Editable</span>}</div>
                   <div className="quote-detail-value">
                     {editingQuoteId === selectedQuote._id ? (
                       <input
@@ -606,10 +644,13 @@ const ViewQuotes = () => {
                         value={editForm.estimatedCost}
                         onChange={handleEditChange}
                         type="number"
+                        placeholder="Enter estimated total (numbers only)"
                         style={{ width: '100%', background: 'transparent', border: 'none', outline: 'none' }}
                       />
                     ) : (
-                      selectedQuote.budget || 'N/A'
+                      (selectedQuote.estimatedCost !== undefined && selectedQuote.estimatedCost !== null && selectedQuote.estimatedCost !== '')
+                        ? `$${selectedQuote.estimatedCost}`
+                        : 'N/A'
                     )}
                   </div>
                 </div>
@@ -736,22 +777,33 @@ const ViewQuotes = () => {
             </form>
 
             <div className="quote-modal-actions">
-              <button
-                type="button"
-                className="modal-btn modal-btn-primary"
-                onClick={handleEditClick}
-                disabled={editingQuoteId === selectedQuote._id}
-              >
-                Edit
-              </button>
-              <button
-                type="submit"
-                form="quote-edit-form"
-                className="modal-btn modal-btn-primary"
-                disabled={editingQuoteId !== selectedQuote._id}
-              >
-                Save
-              </button>
+              {editingQuoteId === selectedQuote._id ? (
+                <>
+                  <button
+                    type="button"
+                    className="modal-btn"
+                    onClick={handleEditCancel}
+                  >
+                    Cancel Edit
+                  </button>
+                  <button
+                    type="submit"
+                    form="quote-edit-form"
+                    className="modal-btn modal-btn-primary"
+                    disabled={!hasChanges}
+                  >
+                    Save
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  className="modal-btn modal-btn-primary"
+                  onClick={handleEditClick}
+                >
+                  Edit
+                </button>
+              )}
               {String(selectedQuote.status).toLowerCase() === 'completed' && (
                 <button
                   type="button"
