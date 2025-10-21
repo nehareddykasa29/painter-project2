@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchQuotes, fetchAvailability, updateQuote, deleteQuote } from '../store/bookingSlice';
+import { fetchQuotes, fetchAvailability, updateQuote, deleteQuote, markQuoteSeen, markQuoteViewed, handleReschedule } from '../store/bookingSlice';
 import { BACKEND_URL } from '../store/backend';
 import './ViewQuotes.css';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -31,6 +31,7 @@ const ViewQuotes = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 6;
+  const [initialSelectionApplied, setInitialSelectionApplied] = useState(false);
 
   // Filters & search
   const [searchTerm, setSearchTerm] = useState('');
@@ -75,14 +76,20 @@ const ViewQuotes = () => {
 
   // On mount, if quoteId in URL, select that quote after quotes are fetched
   useEffect(() => {
+    if (initialSelectionApplied) return;
     if (quotes && quotes.length > 0) {
       const quoteId = getQuoteIdFromQuery();
       if (quoteId) {
         const found = quotes.find(q => q._id === quoteId);
-        if (found) setSelectedQuote(found);
+        if (found) {
+          setSelectedQuote(found);
+          setInitialSelectionApplied(true);
+        }
+      } else {
+        setInitialSelectionApplied(true);
       }
     }
-  }, [quotes]);
+  }, [quotes, initialSelectionApplied]);
 
   // Helpers for date filtering (based on createdAt)
   const startOfDay = (d) => {
@@ -280,6 +287,11 @@ const ViewQuotes = () => {
     { value: "7", label: "16:00 - 17:00" }
   ];
 
+  // Simple start-time map for slots (0 -> 09:00, ..., 7 -> 16:00)
+  const timeSlotMap = [
+    '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'
+  ];
+
   // Get unavailable slots for selected date from availability response
   const unavailableSlots = (() => {
     if (
@@ -328,19 +340,39 @@ const ViewQuotes = () => {
   };
   const todayStr = () => dateToLocalDateString(new Date());
 
+  // UTC-safe helpers for date-only strings (YYYY-MM-DD)
+  const ymdToUTCDate = (ymd) => {
+    // ymd expected format: 'YYYY-MM-DD'
+    const [y, m, d] = String(ymd).split('-').map(n => parseInt(n, 10));
+    if (Number.isNaN(y) || Number.isNaN(m) || Number.isNaN(d)) return null;
+    return new Date(Date.UTC(y, m - 1, d));
+  };
+  const isSundayUTCFromYMD = (ymd) => {
+    const dt = ymdToUTCDate(ymd);
+    if (!dt) return false;
+    return dt.getUTCDay() === 0; // Sunday in UTC
+  };
+  const todayUTCStr = () => new Date().toISOString().slice(0, 10); // YYYY-MM-DD in UTC
+
   // Helper to get the next available slot index for today
   const getNextAvailableSlotIdx = () => {
     const now = new Date();
     const currentHour = now.getHours();
-    // slotOptions: [{ value: "0", label: "09:00 - 10:00" }, ...]
-    // Find the first slot whose start hour is greater than current hour
     for (let i = 0; i < slotOptions.length; i++) {
-      const slotHour = 9 + i; // slot 0 = 9:00, slot 1 = 10:00, etc.
-      if (slotHour > currentHour) {
-        return i;
-      }
+      const slotHour = 9 + i;
+      if (slotHour > currentHour) return i;
     }
-    // If all slots are in the past, return a value greater than any slot index
+    return slotOptions.length;
+  };
+
+  // UTC-based variant for universal comparison
+  const getNextAvailableSlotIdxUTC = () => {
+    const now = new Date();
+    const currentHourUTC = now.getUTCHours();
+    for (let i = 0; i < slotOptions.length; i++) {
+      const slotHourUTC = 9 + i; // interpret schedule in UTC
+      if (slotHourUTC > currentHourUTC) return i;
+    }
     return slotOptions.length;
   };
 
@@ -381,10 +413,44 @@ const ViewQuotes = () => {
   const pageStart = (currentPage - 1) * pageSize;
   const paginatedQuotes = (filteredQuotes || []).slice(pageStart, pageStart + pageSize);
 
-  const openModal = (q) => {
+  // Detect if any quote exposes the admin-view flags we rely on (viewedByAdmin, seenByAdmin)
+  const hasSeenFlag = useMemo(() => {
+    return (quotes || []).some(q => (
+      q && (
+        (typeof q.viewedByAdmin === 'boolean') ||
+        (typeof q.seenByAdmin === 'boolean')
+      )
+    ));
+  }, [quotes]);
+
+  const openModal = async (q) => {
     setSelectedQuote(q);
     setEditingQuoteId(null);
     setOriginalEditSnapshot(null);
+    // Reflect selection in URL so a refresh opens the same quote
+    try { navigate(`?quoteId=${q._id}`, { replace: false }); } catch (_) {}
+    try {
+      // 1) If it's a new reschedule request: rescheduleRequest.status === 'pending' AND rescheduleRequest.seenByAdmin === false
+      const isReschedulePendingUnseen = (
+        q?.rescheduleRequest &&
+        q.rescheduleRequest.status === 'pending' &&
+        typeof q.rescheduleRequest.seenByAdmin === 'boolean' &&
+        q.rescheduleRequest.seenByAdmin === false
+      );
+      if (isReschedulePendingUnseen) {
+        await dispatch(markQuoteSeen(q._id)).unwrap();
+        dispatch(fetchQuotes());
+        return; // Done
+      }
+
+      // 2) Else if it's a brand new quote: viewedByAdmin === false
+      if (typeof q?.viewedByAdmin === 'boolean' && q.viewedByAdmin === false) {
+        await dispatch(markQuoteViewed(q._id)).unwrap();
+        dispatch(fetchQuotes());
+      }
+    } catch (e) {
+      console.error('Failed to mark quote viewed/seen:', e);
+    }
   };
 
   const closeModal = () => {
@@ -408,6 +474,17 @@ const ViewQuotes = () => {
       appointmentDate: '',
       appointmentSlot: ''
     });
+    // Remove quoteId from URL so it doesn't reopen after refetch
+    try {
+      const params = new URLSearchParams(location.search);
+      if (params.has('quoteId')) {
+        params.delete('quoteId');
+        const newSearch = params.toString();
+        navigate({ search: newSearch ? `?${newSearch}` : '' }, { replace: true });
+      }
+    } catch (_) {}
+    // After closing, refetch quotes to display the latest state
+    dispatch(fetchQuotes());
   };
 
   return (
@@ -514,9 +591,28 @@ const ViewQuotes = () => {
                     <td colSpan={6}>No quotes found.</td>
                   </tr>
                 ) : (
-                  paginatedQuotes.map((q) => (
-                    <tr key={q._id} className="quote-row">
-                      <td className="name-cell">{q.name}</td>
+                  paginatedQuotes.map((q) => {
+                    // Highlight unseen only when the specific fields exist and are false
+                    let showUnseen = false;
+                    if (typeof q?.viewedByAdmin === 'boolean' && q.viewedByAdmin === false) {
+                      showUnseen = true;
+                    } else if (typeof q?.seenByAdmin === 'boolean' && q.seenByAdmin === false) {
+                      showUnseen = true;
+                    }
+                    // Guard: if neither field exists anywhere, do not highlight at all
+                    if (!hasSeenFlag) showUnseen = false;
+                    const hasPendingReschedule = q?.rescheduleRequest && q.rescheduleRequest.status === 'pending';
+                    return (
+                    <tr key={q._id} className={`quote-row ${showUnseen ? 'unseen-quote' : ''}`}>
+                      <td className="name-cell">
+                        {showUnseen && (
+                          <span className="unseen-indicator" title="New / Unseen"></span>
+                        )}
+                        {q.name}
+                        {hasPendingReschedule && (
+                          <span style={{ marginLeft: 8, padding: '2px 6px', borderRadius: 12, background:'#ffedd5', color:'#9a3412', fontSize:'0.75rem' }}>New Request</span>
+                        )}
+                      </td>
                       <td className="service-cell">{[q.serviceType, q.projectType].filter(Boolean).join(' - ')}</td>
                       <td className="budget-cell">{q.budget || 'N/A'}</td>
                       <td className="date-cell">{q.appointmentDate ? formatDateDMY(q.appointmentDate) : 'N/A'}</td>
@@ -527,12 +623,20 @@ const ViewQuotes = () => {
                         <button className="view-more-btn" onClick={() => openModal(q)}>View More</button>
                       </td>
                     </tr>
-                  ))
+                    );
+                  })
                 )}
               </tbody>
             </table>
           )}
         </div>
+        {/* Legend for unseen quotes: only show if at least one quote supports the flag */}
+        {hasSeenFlag && (
+          <div className="unseen-legend">
+            <span className="unseen-indicator"></span>
+            <span className="unseen-legend-text">New / Unseen quote</span>
+          </div>
+        )}
 
         {/* Pagination */}
         {(!quotesLoading && !quotesError && (filteredQuotes?.length || 0) > pageSize) && (
@@ -681,19 +785,25 @@ const ViewQuotes = () => {
                         value={editForm.appointmentDate}
                         onChange={e => {
                           const value = e.target.value;
-                          const selected = new Date(value);
-                          if (selected.getDay() === 0) {
+                          // Block Sundays using UTC day to avoid timezone skew
+                          if (isSundayUTCFromYMD(value)) {
                             setErrorMsg('Sundays are not available. Please select another day.');
+                            try {
+                              // Show native validation bubble
+                              e.target.setCustomValidity('Sundays are not available.');
+                              e.target.reportValidity();
+                            } catch (_) {}
+                            try { e.target.setCustomValidity(''); } catch (_) {}
                             setEditForm(prev => ({ ...prev, appointmentDate: '', appointmentSlot: '' }));
                             return;
                           }
-                          setErrorMsg('');
-                          handleEditChange(e);
+        setErrorMsg('');
+        handleEditChange(e);
                           setEditForm(prev => ({ ...prev, appointmentSlot: '' }));
                         }}
                         type="date"
                         onClick={handleDateClick}
-                        min={todayStr()}
+                        min={todayUTCStr()}
                         style={{ width: '100%', background: 'transparent', border: 'none', outline: 'none' }}
                       />
                     ) : (
@@ -720,8 +830,9 @@ const ViewQuotes = () => {
                         {slotOptions
                           .filter(opt => !unavailableSlots.includes(Number(opt.value)))
                           .filter(opt => {
-                            if (editForm.appointmentDate === todayStr()) {
-                              return Number(opt.value) >= getNextAvailableSlotIdx();
+                            // Use UTC today string to compare date-only values universally
+                            if (editForm.appointmentDate === todayUTCStr()) {
+                              return Number(opt.value) >= getNextAvailableSlotIdxUTC();
                             }
                             return true;
                           })
@@ -734,6 +845,73 @@ const ViewQuotes = () => {
                     )}
                   </div>
                 </div>
+
+                {/* Pending Reschedule Request details */}
+                {selectedQuote?.rescheduleRequest?.status === 'pending' && (
+                  <>
+                    <div className="quote-detail-row">
+                      <div className="quote-detail-label">Requested Date</div>
+                      <div className="quote-detail-value">
+                        {selectedQuote?.rescheduleRequest?.requestedDate
+                          ? formatDateDMY(selectedQuote.rescheduleRequest.requestedDate)
+                          : 'N/A'}
+                      </div>
+                    </div>
+                    <div className="quote-detail-row">
+                      <div className="quote-detail-label">Requested Slot</div>
+                      <div className="quote-detail-value">
+                        {(() => {
+                          const rs = selectedQuote?.rescheduleRequest?.requestedSlot;
+                          if (rs === undefined || rs === null || rs === '') return 'N/A';
+                          const idx = Number(rs);
+                          if (Number.isNaN(idx) || idx < 0 || idx >= timeSlotMap.length) return 'N/A';
+                          return timeSlotMap[idx];
+                        })()}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Reschedule decision controls: show while reschedule is pending */}
+                {selectedQuote?.rescheduleRequest && selectedQuote.rescheduleRequest.status === 'pending' && (
+                  <div className="quote-detail-row" style={{ gridColumn: '1 / -1' }}>
+                    <div className="quote-detail-label">Reschedule Decision</div>
+                    <div className="quote-detail-value" style={{ display: 'flex', gap: 8 }}>
+                      <button
+                        type="button"
+                        className="modal-btn modal-btn-primary"
+                        onClick={async () => {
+                          try {
+                            await dispatch(handleReschedule({ id: selectedQuote._id, action: 'approve' })).unwrap();
+                            // Reload the page and keep this quote selected via query param
+                            try { navigate(`?quoteId=${selectedQuote._id}`, { replace: true }); } catch (_) {}
+                            window.location.reload();
+                          } catch (e) {
+                            console.error('Failed to approve reschedule:', e);
+                          }
+                        }}
+                      >
+                        Approve
+                      </button>
+                      <button
+                        type="button"
+                        className="modal-btn modal-btn-danger"
+                        onClick={async () => {
+                          try {
+                            await dispatch(handleReschedule({ id: selectedQuote._id, action: 'deny' })).unwrap();
+                            // Reload the page and keep this quote selected via query param
+                            try { navigate(`?quoteId=${selectedQuote._id}`, { replace: true }); } catch (_) {}
+                            window.location.reload();
+                          } catch (e) {
+                            console.error('Failed to deny reschedule:', e);
+                          }
+                        }}
+                      >
+                        Deny
+                      </button>
+                    </div>
+                  </div>
+                )}
 
                 {/* Created At */}
                 <div className="quote-detail-row">

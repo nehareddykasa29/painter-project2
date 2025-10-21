@@ -108,6 +108,43 @@
   background-color: #f8f9fa;
 }
 
+/* Unseen quotes (e.g., reschedule request not yet viewed) */
+.quote-row.unseen-quote {
+  background: #fff9e6; /* soft highlight */
+  position: relative;
+}
+
+.quote-row.unseen-quote:hover {
+  background: #fff4d1; /* slightly stronger on hover */
+}
+
+.unseen-indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff9800;
+  margin-right: 6px;
+  box-shadow: 0 0 0 2px #ffffff;
+  vertical-align: middle;
+}
+
+.unseen-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 8px;
+  margin-left: 4px;
+}
+
+.unseen-legend-text {
+  font-size: 0.7rem;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
 .name-cell {
   font-weight: 500;
   color: #2d3748;

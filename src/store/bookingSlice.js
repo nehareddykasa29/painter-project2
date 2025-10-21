@@ -94,6 +94,151 @@ export const deleteQuote = createAsyncThunk(
   }
 );
 
+// Thunk for marking a quote as seen (no body required)
+export const markQuoteSeen = createAsyncThunk(
+  'booking/markQuoteSeen',
+  async (id, { getState, rejectWithValue }) => {
+    const token = getState().auth?.token;
+    if (!token) {
+      return rejectWithValue('Missing admin token');
+    }
+    const endpoint = `${BACKEND_URL}/api/admin/quotes/${id}/mark-seen`;
+    // Some backends expect a body (e.g., { seen: true }) even if docs say none; we try minimal first then fallback.
+    try {
+      let response = await fetch(endpoint, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) {
+        const status = response.status;
+        let errText = '';
+        try { errText = await response.text(); } catch (_) {}
+        // Fallback attempt with JSON body if 400 Bad Request (common for validation expecting body)
+        if (status === 400) {
+          response = await fetch(endpoint, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ seen: true })
+          });
+          if (!response.ok) {
+            let secondText = '';
+            try { secondText = await response.text(); } catch (_) {}
+            // Try alternative body shapes one more time
+            const altBodies = [
+              { viewedByAdmin: true },
+              { seenByAdmin: true },
+              { unseen: false },
+              { rescheduleRequest: { seenByAdmin: true } }
+            ];
+            for (const body of altBodies) {
+              const altResp = await fetch(endpoint, {
+                method: 'PUT',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+              });
+              if (altResp.ok) {
+                try { return await altResp.json(); } catch (_) { return { _id: id, ...body }; }
+              }
+            }
+            throw new Error(`Failed (400) mark-seen. First: ${errText || 'no body'} | Second: ${secondText || 'no body'} | Tried alt bodies`);
+          }
+        } else {
+          throw new Error(`HTTP ${status} ${errText}`);
+        }
+      }
+      // Try parse JSON; if fails, return empty object to avoid crashing
+      try {
+        return await response.json();
+      } catch (_) {
+        return { _id: id, seen: true };
+      }
+    } catch (err) {
+      return rejectWithValue(err.message || 'Unknown error while marking seen');
+    }
+  }
+);
+
+// Thunk for marking a quote as viewed (no body required by spec)
+export const markQuoteViewed = createAsyncThunk(
+  'booking/markQuoteViewed',
+  async (id, { getState, rejectWithValue }) => {
+    const token = getState().auth?.token;
+    if (!token) {
+      return rejectWithValue('Missing admin token');
+    }
+    const endpoint = `${BACKEND_URL}/api/admin/quotes/${id}/mark-viewed`;
+    try {
+      let response = await fetch(endpoint, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) {
+        const status = response.status;
+        let errText = '';
+        try { errText = await response.text(); } catch (_) {}
+        if (status === 400) {
+          // Some setups require an explicit body
+          response = await fetch(endpoint, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ viewedByAdmin: true })
+          });
+          if (!response.ok) {
+            let secondText = '';
+            try { secondText = await response.text(); } catch (_) {}
+            throw new Error(`Failed (400) mark-viewed. First: ${errText || 'no body'} | Second: ${secondText || 'no body'}`);
+          }
+        } else {
+          throw new Error(`HTTP ${status} ${errText}`);
+        }
+      }
+      try { return await response.json(); } catch (_) { return { _id: id, viewedByAdmin: true }; }
+    } catch (err) {
+      return rejectWithValue(err.message || 'Unknown error while marking viewed');
+    }
+  }
+);
+
+// Thunk to handle reschedule requests (approve/deny)
+export const handleReschedule = createAsyncThunk(
+  'booking/handleReschedule',
+  async ({ id, action }, { getState, rejectWithValue }) => {
+    try {
+      const token = getState().auth?.token;
+      if (!token) return rejectWithValue('Missing admin token');
+      const response = await fetch(`${BACKEND_URL}/api/admin/quotes/${id}/handle-reschedule`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action })
+      });
+      if (!response.ok) {
+        let text = '';
+        try { text = await response.text(); } catch (_) {}
+        throw new Error(text || 'Failed to handle reschedule');
+      }
+      return await response.json();
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 const bookingSlice = createSlice({
   name: 'booking',
   initialState: {
@@ -183,6 +328,56 @@ const bookingSlice = createSlice({
         state.updateSuccess = true;
       })
       .addCase(deleteQuote.rejected, (state, action) => {
+        state.updateLoading = false;
+        state.updateError = action.payload;
+        state.updateSuccess = false;
+      });
+      // Mark quote seen
+    builder
+      .addCase(markQuoteSeen.pending, state => {
+        // reuse updateLoading flags minimally
+        state.updateError = null;
+      })
+      .addCase(markQuoteSeen.fulfilled, (state, action) => {
+        // Optimistically update the specific quote's unseen/seen fields if included
+        const updated = action.payload;
+        if (updated && updated._id) {
+          state.quotes = state.quotes.map(q => q._id === updated._id ? { ...q, ...updated } : q);
+        }
+      })
+      .addCase(markQuoteSeen.rejected, (state, action) => {
+        state.updateError = action.payload;
+      });
+      // Mark quote viewed
+    builder
+      .addCase(markQuoteViewed.pending, state => {
+        state.updateError = null;
+      })
+      .addCase(markQuoteViewed.fulfilled, (state, action) => {
+        const updated = action.payload;
+        if (updated && updated._id) {
+          state.quotes = state.quotes.map(q => q._id === updated._id ? { ...q, ...updated } : q);
+        }
+      })
+      .addCase(markQuoteViewed.rejected, (state, action) => {
+        state.updateError = action.payload;
+      });
+      // Handle reschedule approve/deny
+    builder
+      .addCase(handleReschedule.pending, state => {
+        state.updateError = null;
+        state.updateSuccess = false;
+        state.updateLoading = true;
+      })
+      .addCase(handleReschedule.fulfilled, (state, action) => {
+        state.updateLoading = false;
+        state.updateSuccess = true;
+        const updated = action.payload;
+        if (updated && updated._id) {
+          state.quotes = state.quotes.map(q => q._id === updated._id ? { ...q, ...updated } : q);
+        }
+      })
+      .addCase(handleReschedule.rejected, (state, action) => {
         state.updateLoading = false;
         state.updateError = action.payload;
         state.updateSuccess = false;
