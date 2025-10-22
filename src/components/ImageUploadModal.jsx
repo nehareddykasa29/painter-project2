@@ -13,26 +13,46 @@ const ImageUploadModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
     imageUrl: '',
     caption: '',
-    serviceType: ''
+    serviceType: '',
+    category: ''
   });
   const [error, setError] = useState("");
 
   const handleClose = useCallback(() => {
-    setFormData({ imageUrl: '', caption: '', serviceType: '' });
+    setFormData({ imageUrl: '', caption: '', serviceType: '', category: '' });
     setError("");
     if (onClose) onClose();
   }, [onClose]);
 
+  const EXTERIOR_CATEGORIES = [
+    'Power Washing',
+    'Stucco Repair and Painting',
+    'Vinyl and Aluminum Siding',
+    'Deck & Fence Services',
+    'Exterior Painting',
+  ];
+
+  const INTERIOR_CATEGORIES = [
+    'Cabinet Refinishing/Repainting',
+    'Wallpaper Removal',
+    'Textured Wall & Ceiling Painting',
+    'Woodwork and Trim Painting',
+    'Interior Painting',
+  ];
+
   const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    // If serviceType changes, reset category
+    if (name === 'serviceType') {
+      setFormData(prev => ({ ...prev, serviceType: value, category: '' }));
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.imageUrl || !formData.caption || !formData.serviceType) return;
+  if (!formData.imageUrl || !formData.caption || !formData.serviceType || !formData.category) return;
 
     setError("");
     dispatch(
@@ -40,7 +60,8 @@ const ImageUploadModal = ({ isOpen, onClose }) => {
         imageUrl: formData.imageUrl,
         caption: formData.caption,
         serviceType: formData.serviceType,
-        token
+        token,
+        category: formData.category
       })
     )
       .unwrap()
@@ -141,11 +162,29 @@ const ImageUploadModal = ({ isOpen, onClose }) => {
                 <option value="">Select service type</option>
                 <option value="Interior Painting">Interior Painting</option>
                 <option value="Exterior Painting">Exterior Painting</option>
-                <option value="Residential Painting">Residential Painting</option>
-                <option value="Commercial Painting">Commercial Painting</option>
-                <option value="Cabinet Refinishing">Cabinet Refinishing</option>
-                <option value="Deck Staining">Deck Staining</option>
-                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            {/* Category dependent on serviceType */}
+            <div className="form-group">
+              <label htmlFor="category">Category</label>
+              <select
+                id="category"
+                name="category"
+                value={formData.category}
+                onChange={handleInputChange}
+                required
+                disabled={uploadLoading || !formData.serviceType}
+              >
+                <option value="">Select category</option>
+                {formData.serviceType === 'Exterior Painting' &&
+                  EXTERIOR_CATEGORIES.map(opt => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                {formData.serviceType === 'Interior Painting' &&
+                  INTERIOR_CATEGORIES.map(opt => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
               </select>
             </div>
 

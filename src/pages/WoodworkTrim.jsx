@@ -14,6 +14,8 @@ const WoodworkTrim = () => {
       heroTitle="Woodwork & Trim Painting"
       heroSubtitle="Crisp, clean lines and flawless finishes for all your woodwork and trim."
       heroImageSrc="/assets/woodworktrim.png"
+      galleryService="interior"
+      galleryCategory="Woodwork and Trim Painting"
     />
   );
 };

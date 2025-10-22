@@ -14,6 +14,8 @@ const DeckFence = () => {
       heroTitle="Deck & Fence Services"
       heroSubtitle="Stain, seal, and protect your deck and fence for years of beauty and durability."
       heroImageSrc="/assets/deck-and-fence-finishing.png"
+      galleryService="exterior"
+      galleryCategory="Deck & Fence Services"
     />
   );
 };

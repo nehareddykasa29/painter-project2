@@ -15,6 +15,20 @@ export const fetchAvailability = createAsyncThunk(
   }
 );
 
+// Thunk for detailed occupied slots (booked vs admin blocked)
+export const fetchOccupiedDetailed = createAsyncThunk(
+  'booking/fetchOccupiedDetailed',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/appointments/occupied-detailed`);
+      if (!response.ok) throw new Error('Failed to fetch occupied slots');
+      return await response.json();
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 // Thunk for saving blocked slots (admin)
 export const saveBlockedSlots = createAsyncThunk(
   'booking/saveBlockedSlots',
@@ -283,6 +297,7 @@ const bookingSlice = createSlice({
   name: 'booking',
   initialState: {
     availability: null,
+    occupiedDetailed: null,
     appointmentLoading: false,
     appointmentError: null,
     quoteSubmitting: false,
@@ -309,6 +324,19 @@ const bookingSlice = createSlice({
         state.availability = action.payload;
       })
       .addCase(fetchAvailability.rejected, (state, action) => {
+        state.appointmentLoading = false;
+        state.appointmentError = action.payload;
+      })
+      // Occupied detailed (booked + admin blocked)
+      .addCase(fetchOccupiedDetailed.pending, state => {
+        state.appointmentLoading = true;
+        state.appointmentError = null;
+      })
+      .addCase(fetchOccupiedDetailed.fulfilled, (state, action) => {
+        state.appointmentLoading = false;
+        state.occupiedDetailed = action.payload;
+      })
+      .addCase(fetchOccupiedDetailed.rejected, (state, action) => {
         state.appointmentLoading = false;
         state.appointmentError = action.payload;
       })

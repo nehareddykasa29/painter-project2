@@ -19,7 +19,7 @@ import {
 } from 'react-icons/fa';
 import './InteriorPainting.css';
 
-const InteriorPainting = ({ heroTitle, heroSubtitle, heroImageSrc }) => {
+const InteriorPainting = ({ heroTitle, heroSubtitle, heroImageSrc, galleryService = 'interior', galleryCategory = 'Interior Painting' }) => {
   const [currentReview, setCurrentReview] = useState(0);
 
   useEffect(() => {
@@ -117,9 +117,15 @@ const InteriorPainting = ({ heroTitle, heroSubtitle, heroImageSrc }) => {
               }}>
                 {heroSubtitle || 'From cozy bedrooms to bold feature walls — we bring life and elegance to every corner of your home.'}
               </p>
-              <div className="hero-buttons">
+              <div className="hero-buttons" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                 <Link to="/free-quote" className="btn btn-yellow" style={{ zIndex: 10, position: 'relative' }}>
                   Get Free Estimate
+                </Link>
+                <Link
+                  to={`/gallery?service=${encodeURIComponent(galleryService)}&category=${encodeURIComponent(galleryCategory)}`}
+                  className="btn btn-yellow"
+                >
+                  View Our Work
                 </Link>
               </div>
             </motion.div>

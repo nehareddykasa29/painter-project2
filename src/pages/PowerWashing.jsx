@@ -15,6 +15,8 @@ const PowerWashing = () => {
       heroTitle="Power Washing & Surface Prep"
       heroSubtitle="Clean, prep, and restore your property’s surfaces for a flawless finish."
       heroImageSrc="/assets/powerwash-and-surfaceprep.png"
+      galleryService="exterior"
+      galleryCategory="Power Washing"
     />
   );
 };

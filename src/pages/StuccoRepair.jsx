@@ -14,6 +14,8 @@ const StuccoRepair = () => {
       heroTitle="Stucco Repair & Painting"
       heroSubtitle="Restore, repair, and refresh your stucco surfaces for lasting beauty and protection."
       heroImageSrc="/assets/staircasecleanandpaint.png"
+      galleryService="exterior"
+      galleryCategory="Stucco Repair and Painting"
     />
   );
 };

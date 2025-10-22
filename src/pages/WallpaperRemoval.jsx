@@ -14,6 +14,8 @@ const WallpaperRemoval = () => {
       heroTitle="Wallpaper Removal"
       heroSubtitle="Remove old wallpaper and prep your walls for a flawless new finish."
       heroImageSrc="/assets/wallpainting.png"
+      galleryService="interior"
+      galleryCategory="Wallpaper Removal"
     />
   );
 };

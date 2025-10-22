@@ -52,7 +52,7 @@ const reviews = [
   }
 ];
 
-const ExteriorPainting = ({ heroTitle, heroSubtitle, heroImageSrc }) => {
+const ExteriorPainting = ({ heroTitle, heroSubtitle, heroImageSrc, galleryService = 'exterior', galleryCategory = 'Exterior Painting' }) => {
   const [currentReview, setCurrentReview] = useState(0);
   
   const transformServices = [
@@ -79,7 +79,15 @@ const ExteriorPainting = ({ heroTitle, heroSubtitle, heroImageSrc }) => {
         <div className="exterior-hero-content">
           <h1>{heroTitle || 'Exterior Painting That Protects & Impresses'}</h1>
           <p>{heroSubtitle || 'Boost curb appeal and protect your home with long-lasting, expert-applied exterior paint.'}</p>
-          <Link to="/free-quote" className="btn btn-estimate">Book Free Estimate</Link>
+          <div className="hero-buttons" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <Link to="/free-quote" className="btn btn-estimate">Book Free Estimate</Link>
+            <Link
+              to={`/gallery?service=${encodeURIComponent(galleryService)}&category=${encodeURIComponent(galleryCategory)}`}
+              className="btn btn-estimate"
+            >
+              View Our Work
+            </Link>
+          </div>
         </div>
       </section>
 

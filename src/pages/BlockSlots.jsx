@@ -1,7 +1,8 @@
 // filepath: c:\\Users\\Aryan\\Desktop\\New folder (2)\\PainterGuys\\src\\pages\\BlockSlots.jsx
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAvailability, saveBlockedSlots } from '../store/bookingSlice';
+import { fetchOccupiedDetailed, saveBlockedSlots } from '../store/bookingSlice';
+import './BlockSlots.css';
 
 // Universal (UTC) helpers — avoid local timezone conversions entirely
 const todayUTCStr = () => new Date().toISOString().slice(0, 10); // YYYY-MM-DD in UTC
@@ -51,9 +52,10 @@ const isSundayUTCFromYMD = (ymd) => {
 
 export default function BlockSlots() {
   const dispatch = useDispatch();
-  // IMPORTANT: don't coalesce to a new {} each render (causes effect loops)
-  const availability = useSelector((s) => s.booking.availability);
-  const availabilityMap = useMemo(() => availability || {}, [availability]);
+  // Occupied detailed contains booked and admin-blocked maps
+  const occupied = useSelector((s) => s.booking.occupiedDetailed);
+  const bookedMap = useMemo(() => (occupied?.bookedSlots) || {}, [occupied]);
+  const adminBlockedMap = useMemo(() => (occupied?.adminBlockedSlots) || {}, [occupied]);
   const [rangeStart, setRangeStart] = useState(todayUTCStr());
   const [daysToShow, setDaysToShow] = useState(14);
   const [saving, setSaving] = useState(false);
@@ -61,10 +63,10 @@ export default function BlockSlots() {
   useEffect(() => {
     (async () => {
       try {
-        const data = await dispatch(fetchAvailability()).unwrap();
-        console.log('[BlockSlots] Availability fetched:', data);
+        const data = await dispatch(fetchOccupiedDetailed()).unwrap();
+        console.log('[BlockSlots] Occupied detailed fetched:', data);
       } catch (e) {
-        console.warn('[BlockSlots] Availability fetch failed:', e);
+        console.warn('[BlockSlots] Occupied detailed fetch failed:', e);
       }
     })();
   }, [dispatch]);
@@ -88,13 +90,13 @@ export default function BlockSlots() {
 
   const [pending, setPending] = useState({}); // { 'YYYY-MM-DD': Set<number> }
 
-  // Initialize pending with existing availability (treat those arrays as blocked)
+  // Initialize pending with existing admin-blocked slots
   useEffect(() => {
     // Merge availability into pending only when a date's blocked slots actually differ
     setPending((prev) => {
       let changed = false;
       const next = { ...prev };
-      Object.entries(availabilityMap).forEach(([date, arr]) => {
+  Object.entries(adminBlockedMap).forEach(([date, arr]) => {
         const newSet = new Set((arr || []).map(Number));
         const oldSet = prev[date];
         const same = !!oldSet && oldSet.size === newSet.size && Array.from(newSet).every((v) => oldSet.has(v));
@@ -105,7 +107,7 @@ export default function BlockSlots() {
       });
       return changed ? next : prev;
     });
-  }, [availabilityMap]);
+  }, [adminBlockedMap]);
 
   const toggle = (date, slot) => {
     setPending((prev) => {
@@ -131,9 +133,9 @@ export default function BlockSlots() {
       const res = await dispatch(saveBlockedSlots(payload)).unwrap();
       console.log('[BlockSlots] Save responses posted, summary:', res);
       alert('Blocked slots updated');
-      // Refetch and the table will reflect the new availability
-      const data = await dispatch(fetchAvailability()).unwrap();
-      console.log('[BlockSlots] Availability after save:', data);
+  // Refetch and the table will reflect the new occupied details
+  const data = await dispatch(fetchOccupiedDetailed()).unwrap();
+  console.log('[BlockSlots] Occupied detailed after save:', data);
     } catch (e) {
       alert('Failed to save: ' + e);
     } finally {
@@ -142,33 +144,44 @@ export default function BlockSlots() {
   };
 
   return (
-    <div style={{ maxWidth: 1000, margin: '0 auto', padding: '2rem 1rem' }}>
-      <h1 style={{ marginBottom: 16 }}>Block slots</h1>
-      <p style={{ color: '#555', marginBottom: 16 }}>Select dates and time slots to block for bookings. Sundays are not bookable and shown for reference only.</p>
+    <div className="blockslots-container">
+      <h1 className="page-title">Block slots</h1>
+      <p className="page-subtle">Select dates and time slots to block for bookings. Sundays are not bookable and shown for reference only.</p>
 
-      <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 16 }}>
+      <div className="controls">
         <label>
-          Start date:
-          <input type="date" value={rangeStart} min={todayUTCStr()} onChange={(e) => setRangeStart(e.target.value)} style={{ marginLeft: 8 }} />
+          <span>Start date:</span>
+          <input type="date" value={rangeStart} min={todayUTCStr()} onChange={(e) => setRangeStart(e.target.value)} />
         </label>
         <label>
-          Days:
-          <select value={daysToShow} onChange={(e) => setDaysToShow(Number(e.target.value))} style={{ marginLeft: 8 }}>
+          <span>Days:</span>
+          <select value={daysToShow} onChange={(e) => setDaysToShow(Number(e.target.value))}>
             {[7, 14, 21, 28].map((n) => (
               <option key={n} value={n}>{n}</option>
             ))}
           </select>
         </label>
-        <button onClick={save} disabled={saving} style={{ marginLeft: 'auto', padding: '8px 14px', background: saving ? '#4b5563' : '#111827', color: '#fff', borderRadius: 6, opacity: saving ? 0.8 : 1, cursor: saving ? 'not-allowed' : 'pointer' }}>{saving ? 'Saving…' : 'Save changes'}</button>
+        <button onClick={save} disabled={saving} className="btn-primary">{saving ? 'Saving…' : 'Save changes'}</button>
       </div>
 
-      <div style={{ overflowX: 'auto', border: '1px solid #e5e7eb', borderRadius: 8 }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <div className="legend">
+        <span className="legend-item">
+          <span className="legend-dot booked"></span>
+          <span>Booked (customer)</span>
+        </span>
+        <span className="legend-item">
+          <span className="legend-dot blocked"></span>
+          <span>Blocked (admin)</span>
+        </span>
+      </div>
+
+      <div className="table-wrap">
+        <table className="slot-table">
           <thead>
             <tr>
-              <th style={{ textAlign: 'left', padding: '10px 12px', borderBottom: '1px solid #e5e7eb' }}>Date</th>
+              <th>Date</th>
               {slotOptions.map((s) => (
-                <th key={s.value} style={{ textAlign: 'center', padding: '10px 12px', borderBottom: '1px solid #e5e7eb' }}>{s.label}</th>
+                <th key={s.value}>{s.label}</th>
               ))}
             </tr>
           </thead>
@@ -176,18 +189,27 @@ export default function BlockSlots() {
             {visibleDates.map((d) => {
               const isSunday = isSundayUTCFromYMD(d);
               const blocked = pending[d] || new Set();
-              const serverBlockedSet = new Set((availabilityMap[d] || []).map(Number));
+              const bookedSet = new Set((bookedMap[d] || []).map(Number));
               return (
-                <tr key={d} style={{ background: isSunday ? '#f9fafb' : 'transparent', opacity: isSunday ? 0.6 : 1 }}>
-                  <td style={{ padding: '10px 12px', borderBottom: '1px solid #f3f4f6', whiteSpace: 'nowrap' }}>{d} {isSunday && <span style={{ fontSize: 12, color: '#6b7280' }}>(Sunday)</span>}</td>
+                <tr key={d} style={{ opacity: isSunday ? 0.7 : 1 }}>
+                  <td className="cell date-cell">{d} {isSunday && <span style={{ fontSize: 12, color: '#6b7280' }}>(Sunday)</span>}</td>
                   {slotOptions.map((s) => (
-                    <td key={s.value} style={{ textAlign: 'center', padding: '8px 12px', borderBottom: '1px solid #f3f4f6' }}>
-                      <input
-                        type="checkbox"
-                        checked={blocked.has(s.value)}
-                        onChange={() => toggle(d, s.value)}
-                        disabled={isSunday || serverBlockedSet.has(s.value)}
-                      />
+                    <td key={s.value} className="cell">
+                      <div className="cell-inner">
+                        <input
+                          type="checkbox"
+                          checked={blocked.has(s.value)}
+                          onChange={() => toggle(d, s.value)}
+                          disabled={isSunday || bookedSet.has(s.value)}
+                          title={bookedSet.has(s.value) ? 'Booked by customer' : (isSunday ? 'Sunday (not bookable)' : 'Toggle admin block')}
+                        />
+                        {bookedSet.has(s.value) && (
+                          <span className="slot-badge booked">Booked</span>
+                        )}
+                        {!bookedSet.has(s.value) && blocked.has(s.value) && (
+                          <span className="slot-badge blocked">Blocked</span>
+                        )}
+                      </div>
                     </td>
                   ))}
                 </tr>

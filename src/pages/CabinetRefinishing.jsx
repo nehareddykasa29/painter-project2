@@ -14,6 +14,8 @@ const CabinetRefinishing = () => {
       heroTitle="Cabinet Refinishing & Repainting"
       heroSubtitle="Modernize your kitchen or bath with flawless cabinet refinishing and repainting."
       heroImageSrc="/assets/kitchencabinets.png"
+      galleryService="interior"
+      galleryCategory="Cabinet Refinishing/Repainting"
     />
   );
 };
