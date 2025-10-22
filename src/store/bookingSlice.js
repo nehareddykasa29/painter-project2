@@ -15,6 +15,46 @@ export const fetchAvailability = createAsyncThunk(
   }
 );
 
+// Thunk for saving blocked slots (admin)
+export const saveBlockedSlots = createAsyncThunk(
+  'booking/saveBlockedSlots',
+  async (blockedMap, { getState, rejectWithValue }) => {
+    try {
+      const token = getState().auth?.token;
+      if (!token) return rejectWithValue('Missing admin token');
+      // POST per day as { date, slots } to /api/admin/blocker
+      for (const [date, slots] of Object.entries(blockedMap)) {
+        const resp = await fetch(`${BACKEND_URL}/api/admin/blocker`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ date, slots })
+        });
+        if (!(resp.ok || resp.status === 201)) {
+          let text = '';
+          try { text = await resp.text(); } catch (_) {}
+          throw new Error(text || `Failed to update blocks for ${date}`);
+        }
+        try {
+          const json = await resp.clone().json();
+          console.log('[booking/saveBlockedSlots] Updated', date, '->', json);
+        } catch (_) {
+          try {
+            const text = await resp.clone().text();
+            console.log('[booking/saveBlockedSlots] Updated', date, '->', text);
+          } catch (_) {}
+        }
+      }
+      // Caller will refetch availability; return success summary
+      return { success: true };
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 // Thunk for submitting a quote
 export const submitQuote = createAsyncThunk(
   'booking/submitQuote',
@@ -271,6 +311,25 @@ const bookingSlice = createSlice({
       .addCase(fetchAvailability.rejected, (state, action) => {
         state.appointmentLoading = false;
         state.appointmentError = action.payload;
+      })
+      // Save blocked slots
+      .addCase(saveBlockedSlots.pending, (state) => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateSuccess = false;
+      })
+      .addCase(saveBlockedSlots.fulfilled, (state, action) => {
+        state.updateLoading = false;
+        state.updateSuccess = true;
+        // If API returned a full availability map, update it; otherwise do nothing here
+        if (action.payload && typeof action.payload === 'object' && !action.payload.success) {
+          state.availability = action.payload;
+        }
+      })
+      .addCase(saveBlockedSlots.rejected, (state, action) => {
+        state.updateLoading = false;
+        state.updateError = action.payload;
+        state.updateSuccess = false;
       })
       // Quote submission
       .addCase(submitQuote.pending, state => {

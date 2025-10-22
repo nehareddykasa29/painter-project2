@@ -78,6 +78,7 @@ const Header = () => {
   const adminNavLinks = [
     { path: '/manage-users', label: 'Manage Users' },
     { path: '/view-quotes', label: 'View Quotes' },
+    { path: '/block-slots', label: 'Block slots' },
   ];
 
   return (
