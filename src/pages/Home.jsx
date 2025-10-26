@@ -8,6 +8,14 @@ import AnnouncementBanner from '../components/AnnouncementBanner';
 const heroImage = '/assets/hero-s1.jpg';
 const heroImage2 = '/assets/hero-s2.jpg';
 const heroImage3 = '/assets/hero-s3.jpg';
+// Additional hero slide image (place the attached image at this path)
+const heroAttachment = '/assets/hero-attachment.jpg';
+// Decorative image to place on the right side of the first slide
+const heroDecor = '/assets/hero-decor.png';
+// Overlay logo to display on top of the right decorative image
+const heroOverlayLogo = '/assets/hero-logo-overlay.png';
+// Small shape to place below the logo overlay on the right side
+const heroShape = '/assets/hero-shape.png';
 const howItWorks1 = '/assets/how-it-works1.png';
 const howItWorks2 = '/assets/how-it-works2.png';
 const howItWorks3 = '/assets/how-it-works3.png';
@@ -20,6 +28,19 @@ const swLogo = '/assets/sw.jpg';
 const bmLogo = '/assets/bm.jpg';
 
 const heroSlides = [
+  {
+    title: 'Painter Guys — Professional Results',
+    subtitle: 'Quality, integrity, and attention to detail — now showing more of our work and services.',
+    background: `linear-gradient(135deg, rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url(${heroAttachment})`,
+    // right side decorative image (place file at public/assets/hero-decor.png)
+    rightImage: heroDecor,
+    // optional overlay logo to display over the decorative image
+    rightOverlay: heroOverlayLogo,
+  // small shape under the overlay (place file at public/assets/hero-shape.png)
+  rightUnderlay: heroShape,
+    cta: 'View Our Work',
+    ctaLink: '/gallery',
+  },
   {
     title: 'Excellence in Every Brushstroke',
     subtitle: 'Trusted Residential and Commercial Painting Services in Southeast Wisconsin',
@@ -146,6 +167,10 @@ const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentReview, setCurrentReview] = useState(0);
   const [expandedStep, setExpandedStep] = useState(null);
+  // Prevent automatic slide advance while slide preparation is happening.
+  // Autoplay is disabled by default; call `window.resumeHeroAutoplay()` from the console
+  // or in code when prep is done to resume automatic advances.
+  const [autoPlay, setAutoPlay] = useState(false);
   const [bookingData, setBookingData] = useState({
     fullName: '',
     phoneNo: '',
@@ -159,10 +184,27 @@ const Home = () => {
   });
 
   useEffect(() => {
+    if (!autoPlay) return; // do nothing while autoplay is off
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
     }, 6000);
     return () => clearInterval(timer);
+  }, [autoPlay]);
+
+  // Expose simple helpers to resume/pause autoplay from the console or other scripts
+  useEffect(() => {
+    // attach safely to window for temporary control during prep
+    // call window.resumeHeroAutoplay() or window.pauseHeroAutoplay()
+    if (typeof window !== 'undefined') {
+      window.resumeHeroAutoplay = () => setAutoPlay(true);
+      window.pauseHeroAutoplay = () => setAutoPlay(false);
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        try { delete window.resumeHeroAutoplay; } catch (e) {}
+        try { delete window.pauseHeroAutoplay; } catch (e) {}
+      }
+    };
   }, []);
 
   // Remove auto-sliding for reviews
@@ -248,6 +290,31 @@ const Home = () => {
                       {slide.cta}
                     </Link>
                   </motion.div>
+                  {(slide.rightImage || slide.rightOverlay || slide.rightUnderlay) && (
+                    <div className="slide-right-group" aria-hidden>
+                      {slide.rightImage && (
+                        <img
+                          src={slide.rightImage}
+                          alt={slide.title ? `${slide.title} decoration` : 'hero decoration'}
+                          className="slide-right-image"
+                        />
+                      )}
+                      {slide.rightUnderlay && (
+                        <img
+                          src={slide.rightUnderlay}
+                          alt={slide.title ? `${slide.title} underlay` : 'hero underlay'}
+                          className="slide-right-underlay"
+                        />
+                      )}
+                      {slide.rightOverlay && (
+                        <img
+                          src={slide.rightOverlay}
+                          alt={slide.title ? `${slide.title} overlay` : 'hero overlay'}
+                          className="slide-right-overlay"
+                        />
+                      )}
+                    </div>
+                  )}
               </div>
             </motion.div>
           ))}
