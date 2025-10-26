@@ -13,9 +13,9 @@ const heroAttachment = '/assets/hero-attachment.jpg';
 // Decorative image to place on the right side of the first slide
 const heroDecor = '/assets/hero-decor.png';
 // Overlay logo to display on top of the right decorative image
-const heroOverlayLogo = '/assets/hero-logo-overlay.png';
-// Small shape to place below the logo overlay on the right side
-const heroShape = '/assets/hero-shape.png';
+const heroOverlayLogo = '/assets/logo_painter2.png';
+
+// Small shape to place below the logo overlay on the right side - REMOVED
 const howItWorks1 = '/assets/how-it-works1.png';
 const howItWorks2 = '/assets/how-it-works2.png';
 const howItWorks3 = '/assets/how-it-works3.png';
@@ -29,17 +29,18 @@ const bmLogo = '/assets/bm.jpg';
 
 const heroSlides = [
   {
-    title: 'Painter Guys — Professional Results',
-    subtitle: 'Quality, integrity, and attention to detail — now showing more of our work and services.',
+    title: 'The Painter Guys',
+    titleLine2: 'Pros',
+    subtitle: 'The Painter Guys Pros LLC is dedicated to client satisfaction. We\'re professional painters serving the greater Milwaukee area with over a quarter century of experience in commercial and residential painting across Southeastern Wisconsin.',
     background: `linear-gradient(135deg, rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url(${heroAttachment})`,
     // right side decorative image (place file at public/assets/hero-decor.png)
     rightImage: heroDecor,
     // optional overlay logo to display over the decorative image
     rightOverlay: heroOverlayLogo,
-  // small shape under the overlay (place file at public/assets/hero-shape.png)
-  rightUnderlay: heroShape,
-    cta: 'View Our Work',
-    ctaLink: '/gallery',
+  // small shape under the overlay - REMOVED
+    cta: 'Book Your Free Estimate',
+    ctaLink: '/free-quote',
+    hasSparkle: true,
   },
   {
     title: 'Excellence in Every Brushstroke',
@@ -284,26 +285,33 @@ const Home = () => {
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ delay: 0.2, duration: 0.8 }}
                   >
-                    <h1>{slide.title}</h1>
+                    {slide.hasSparkle && (
+                      <div className="sparkle-tag">
+                        <span className="sparkle-icon">✨</span>
+                        <span className="sparkle-text">Professional painters in Southeast Wisconsin</span>
+                      </div>
+                    )}
+                    <h1>
+                      {slide.title}
+                      {slide.titleLine2 && (
+                        <>
+                          <br />
+                          {slide.titleLine2}
+                        </>
+                      )}
+                    </h1>
                     <h2>{slide.subtitle}</h2>
                     <Link to={slide.ctaLink} className="btn btn-cta btn-large">
                       {slide.cta}
                     </Link>
                   </motion.div>
-                  {(slide.rightImage || slide.rightOverlay || slide.rightUnderlay) && (
+                  {(slide.rightImage || slide.rightOverlay) && (
                     <div className="slide-right-group" aria-hidden>
                       {slide.rightImage && (
                         <img
                           src={slide.rightImage}
                           alt={slide.title ? `${slide.title} decoration` : 'hero decoration'}
                           className="slide-right-image"
-                        />
-                      )}
-                      {slide.rightUnderlay && (
-                        <img
-                          src={slide.rightUnderlay}
-                          alt={slide.title ? `${slide.title} underlay` : 'hero underlay'}
-                          className="slide-right-underlay"
                         />
                       )}
                       {slide.rightOverlay && (

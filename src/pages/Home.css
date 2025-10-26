@@ -49,7 +49,7 @@
   padding: 0 20px;
 }
 .slide-text {
-  max-width: 1000px;
+  max-width: 1400px;
   min-width: 0;
   width: 100%;
   text-align: left;
@@ -57,29 +57,52 @@
   padding-left: 0;
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 1.5rem;
 }
+
+/* Sparkle tag styling */
+.sparkle-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid #F4C542;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  color: #fff;
+  width: fit-content;
+}
+
+.sparkle-icon {
+  font-size: 0.8rem;
+}
+
+.sparkle-text {
+  font-weight: 400;
+}
+
 .slide-text h1 {
-  font-size: 2.8rem;
-  font-weight: 600;
+  font-size: 3rem;
+  font-weight: 500;
   margin: 0;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
   text-align: left;
-  line-height: 1.2;
+  line-height: 1.3;
   color: #fff;
-  letter-spacing: -0.5px;
-  max-width: 600px;
+  letter-spacing: 2px;
+  max-width: 700px;
 }
 
 .slide-text h2 {
-  font-size: 1.2rem;
+  font-size: 0.95rem;
   font-weight: 400;
   margin: 0;
   opacity: 0.95;
   text-align: left;
   line-height: 1.5;
   color: #fff;
-  max-width: 550px;
+  max-width: 850px;
 }
 
 .slide-text .btn {
@@ -87,11 +110,11 @@
   box-shadow: var(--shadow-md);
   display: inline-block;
   font-weight: 500;
-  padding: 12px 24px;
-  font-size: 1rem;
+  padding: 0.65rem 1.5rem;
+  font-size: 0.85rem;
   width: fit-content;
-  min-width: 200px;
-  max-width: 250px;
+  min-width: 180px;
+  max-width: 220px;
 }
 
 /* Right-side group that holds decorative image, underlay and overlay */
@@ -118,76 +141,85 @@
   filter: drop-shadow(0 8px 26px rgba(0,0,0,0.45));
 }
 
-/* Overlay logo displayed above the right decorative image */
-.slide-right-overlay {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  top: 42%; /* adjust so overlay centers around logo text */
-  width: 60%;
-  max-width: 420px;
-  height: auto;
-  z-index: 4; /* above text and decorative image */
-  pointer-events: none;
-  display: block;
-  object-fit: contain;
-  filter: drop-shadow(0 8px 26px rgba(0,0,0,0.55));
-}
-
-@media (max-width: 1400px) {
-  .slide-right-overlay {
-    width: 32%;
-    right: 3.5%;
-  }
-}
-
-@media (max-width: 1100px) {
-  .slide-right-overlay {
-    width: 36%;
-    right: 2.5%;
-  }
-}
-
-@media (max-width: 900px) {
-  .slide-right-overlay {
-    display: none; /* hide overlay on smaller screens */
-  }
-}
-
-/* Underlay/shape positioned slightly below the overlay */
+/* Underlay/shape positioned behind the logo overlay */
 .slide-right-underlay {
   position: absolute;
-  left: 50%;
-  transform: translate(-50%, 10%);
-  top: 62%; /* slightly below overlay center */
-  width: 44%;
-  max-width: 700px;
+  left: 60%;
+  transform: translate(-50%, -50%);
+  top: 44%; /* moved up */
+  width: 76%;
+  max-width: 575px;
   height: auto;
-  z-index: 3; /* between decorative image (1) and overlay (4) */
+  z-index: 2; /* behind the logo overlay but above decorative image */
   pointer-events: none;
   object-fit: contain;
-  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.35));
+  opacity: 1 !important;
+  filter: none !important;
 }
 
 @media (max-width: 1400px) {
   .slide-right-underlay {
-    width: 20%;
-    right: 5.5%;
-    top: 66%;
+    width: 43%;
+    max-width: 408px;
+    top: 45%;
+    left: 60%;
   }
 }
 
 @media (max-width: 1100px) {
   .slide-right-underlay {
-    width: 22%;
-    right: 4%;
-    top: 64%;
+    width: 47%;
+    max-width: 423px;
+    top: 45%;
+    left: 60%;
   }
 }
 
 @media (max-width: 900px) {
   .slide-right-underlay {
     display: none;
+  }
+}
+
+/* Overlay logo displayed above the white underlay shape */
+.slide-right-overlay {
+  position: absolute;
+  left: 60%;
+  transform: translate(-50%, -50%);
+  top: 45%;
+  width: 105%;
+  max-width: 800px;
+  height: auto;
+  z-index: 4; /* above text, decorative image, and underlay */
+  pointer-events: none;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 26px rgba(0,0,0,0.55));
+  /* Remove white background by making it transparent */
+  mix-blend-mode: multiply;
+}
+
+@media (max-width: 1400px) {
+  .slide-right-overlay {
+    width: 62%;
+    max-width: 590px;
+    left: 60%;
+    top: 45%;
+  }
+}
+
+@media (max-width: 1100px) {
+  .slide-right-overlay {
+    width: 66%;
+    max-width: 600px;
+    left: 60%;
+    top: 45%;
+  }
+}
+
+@media (max-width: 900px) {
+  .slide-right-overlay {
+    display: none; /* hide overlay on smaller screens */
   }
 }
 
@@ -839,11 +871,12 @@
 /* Responsive Design */
 @media (max-width: 1024px) {
   .slide-text h1 {
-    font-size: 3rem;
+    font-size: 2.5rem;
+    font-weight: 500;
   }
   
   .slide-text h2 {
-    font-size: 1.25rem;
+    font-size: 0.9rem;
   }
   
   .services-grid {
@@ -861,21 +894,52 @@
     height: 72vh;
     min-height: 500px;
   }
+
+  .slide-content {
+    align-items: flex-start !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 1rem !important;
+    min-height: auto !important;
+  }
   
   .slide-text {
     padding: 0 var(--spacing-sm);
+    gap: 0.6rem;
+    margin-top: 0 !important;
+  }
+
+  .sparkle-tag {
+    display: none;
+  }
+
+  .sparkle-icon {
+    font-size: 0.75rem;
   }
   
   .slide-text h1 {
-    font-size: 2.2rem;
+    font-size: 1.6rem;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.8px;
+    margin-top: 0 !important;
+    margin-bottom: 0.2rem;
   }
   
   .slide-text h2 {
-    font-size: 1.1rem;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    margin-top: 0 !important;
+    margin-bottom: 0.2rem;
   }
   
   .slide-text p {
-    font-size: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .slide-text .btn {
+    font-size: 0.75rem;
+    padding: 0.55rem 1.1rem;
+    margin-top: 0.4rem;
   }
   
   .slide-nav {
@@ -941,16 +1005,34 @@
 
 @media (max-width: 480px) {
   .hero-slideshow {
-    height: 63vh;
-    min-height: 400px;
+    height: 70vh;
+    min-height: 450px;
+  }
+
+  .slide-content {
+    padding-top: 0.5rem !important;
+    padding-bottom: 1rem !important;
+    min-height: auto !important;
+  }
+
+  .sparkle-tag {
+    display: none;
+  }
+
+  .sparkle-icon {
+    font-size: 0.7rem;
   }
   
   .slide-text h1 {
-    font-size: 2rem;
+    font-size: 1.55rem;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.8px;
   }
   
   .slide-text h2 {
-    font-size: 1rem;
+    font-size: 0.75rem;
+    line-height: 1.4;
   }
   
   .slide-text p {
