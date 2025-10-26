@@ -3,19 +3,83 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaTimes, FaChevronLeft, FaChevronRight, FaExpand, FaTrash, FaEdit } from 'react-icons/fa';
 import './Gallery.css';
 
-const Gallery = ({ images = [], showFilters = true, limit = null, isAuthenticated = false, onOpenUploadModal, onDeleteImage, onEditImage }) => {
+const Gallery = ({ images = [], showFilters = true, limit = null, isAuthenticated = false, onOpenUploadModal, onDeleteImage, onEditImage, initialFilter, initialCategory }) => {
   const [filter, setFilter] = useState('all');
+  const [selectedCategories, setSelectedCategories] = useState([]); // multi-select categories for interior/exterior
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Filtering logic based on serviceType
+  const EXTERIOR_CATEGORIES = [
+    'Power Washing',
+    'Stucco Repair and Painting',
+    'Vinyl and Aluminum Siding',
+    'Deck & Fence Services',
+    'Exterior Painting',
+  ];
+
+  const INTERIOR_CATEGORIES = [
+    'Cabinet Refinishing/Repainting',
+    'Wallpaper Removal',
+    'Textured Wall & Ceiling Painting',
+    'Woodwork and Trim Painting',
+    'Interior Painting',
+  ];
+
+  const normalize = (s = '') => s.toString().trim().toLowerCase();
+  const INTERIOR_N = INTERIOR_CATEGORIES.map(normalize);
+  const EXTERIOR_N = EXTERIOR_CATEGORIES.map(normalize);
+
+  // Seed initial filter/category from props (e.g., when navigated with query params)
+  useEffect(() => {
+    if (initialFilter) {
+      const lf = initialFilter.toLowerCase();
+      setFilter(lf);
+      if (lf === 'interior') {
+        setSelectedCategories(INTERIOR_N);
+      } else if (lf === 'exterior') {
+        setSelectedCategories(EXTERIOR_N);
+      } else {
+        setSelectedCategories([]);
+      }
+    }
+    if (initialCategory) {
+      const norm = normalize(initialCategory);
+      setSelectedCategories(norm ? [norm] : []);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Filtering logic based on serviceType and optional sub-category
   const filteredImages = images
     .slice() // copy array to avoid mutating original
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // sort by createdAt desc
     .filter(item => {
+      const st = (item.serviceType || '').toLowerCase();
+      const catNorm = normalize(item.category || '');
       if (filter === 'all') return true;
-      return (item.serviceType && item.serviceType.toLowerCase().includes(filter)) ||
-             (item.caption && item.caption.toLowerCase().includes(filter));
+      if (filter === 'interior') {
+        if (!st.includes('interior')) return false;
+        // If categories selected, show items whose category is in selection;
+        // include legacy items without category only when all categories are selected
+        if (selectedCategories.length > 0) {
+          if (catNorm) return selectedCategories.includes(catNorm);
+          return selectedCategories.length === INTERIOR_N.length; // show unclassified when all selected
+        }
+        return true;
+      }
+      if (filter === 'exterior') {
+        if (!st.includes('exterior')) return false;
+        if (selectedCategories.length > 0) {
+          if (catNorm) return selectedCategories.includes(catNorm);
+          return selectedCategories.length === EXTERIOR_N.length;
+        }
+        return true;
+      }
+      if (filter === 'commercial') {
+        return st.includes('commercial');
+      }
+      // fallback text search
+      return st.includes(filter) || (item.caption && item.caption.toLowerCase().includes(filter));
     });
 
   const displayImages = limit ? filteredImages.slice(0, limit) : filteredImages;
@@ -59,7 +123,6 @@ const Gallery = ({ images = [], showFilters = true, limit = null, isAuthenticate
     { value: 'all', label: 'All Projects' },
     { value: 'interior', label: 'Interior' },
     { value: 'exterior', label: 'Exterior' },
-    { value: 'residential', label: 'Residential' },
     { value: 'commercial', label: 'Commercial' }
   ];
 
@@ -72,12 +135,44 @@ const Gallery = ({ images = [], showFilters = true, limit = null, isAuthenticate
               <button
                 key={option.value}
                 className={`filter-btn ${filter === option.value ? 'active' : ''}`}
-                onClick={() => setFilter(option.value)}
+                onClick={() => {
+                  setFilter(option.value);
+                  if (option.value === 'interior') {
+                    setSelectedCategories(INTERIOR_N);
+                  } else if (option.value === 'exterior') {
+                    setSelectedCategories(EXTERIOR_N);
+                  } else {
+                    setSelectedCategories([]);
+                  }
+                }}
               >
                 {option.label}
               </button>
             ))}
           </div>
+          {(filter === 'interior' || filter === 'exterior') && (
+            <div className="gallery-subfilters">
+              {(filter === 'interior' ? INTERIOR_CATEGORIES : EXTERIOR_CATEGORIES).map(opt => {
+                const optNorm = normalize(opt);
+                const active = selectedCategories.includes(optNorm);
+                return (
+                  <button
+                    key={opt}
+                    className={`filter-btn ${active ? 'active' : ''}`}
+                    onClick={() => {
+                      setSelectedCategories(prev => {
+                        const has = prev.includes(optNorm);
+                        if (has) return prev.filter(c => c !== optNorm);
+                        return [...prev, optNorm];
+                      });
+                    }}
+                  >
+                    {opt}
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
 
@@ -100,6 +195,22 @@ const Gallery = ({ images = [], showFilters = true, limit = null, isAuthenticate
                   className="gallery-image"
                   loading="lazy"
                 />
+                {/* Always-visible badge for category only */}
+                <div className="image-badges">
+                  {item.category && (
+                    <span className="badge badge--category">{item.category}</span>
+                  )}
+                </div>
+
+                {/* Hover overlay with caption and tags */}
+                <div className="gallery-overlay">
+                  <div className="gallery-overlay-content">
+                    {item.caption && <h3>{item.caption}</h3>}
+                    <div className="gallery-tags">
+                      {item.category && <span className="tag">{item.category}</span>}
+                    </div>
+                  </div>
+                </div>
                 {/* Show edit and delete buttons on image if authenticated */}
                 {isAuthenticated && (
                   <div style={{ position: "absolute", top: 8, right: 8, zIndex: 2, display: "flex", gap: "8px" }}>

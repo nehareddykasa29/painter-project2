@@ -24,6 +24,13 @@
   flex: 1;
 }
 
+.gallery-subfilters {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
 .filter-btn {
   padding: var(--spacing-sm) var(--spacing-md);
   background: var(--white);
@@ -87,6 +94,40 @@
 
 .gallery-item:hover .gallery-image {
   transform: scale(1.1);
+}
+
+/* Always-visible badges */
+.image-badges {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 2;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--white);
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+.badge--service {
+  background: rgba(25, 118, 210, 0.8); /* blue */
+}
+
+.badge--category {
+  background: rgba(46, 125, 50, 0.8); /* green */
 }
 
 /* Zoom Button */

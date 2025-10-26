@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FaHome } from 'react-icons/fa';
-import './ServicePlaceholder.css';
+import ExteriorPainting from './ExteriorPainting';
 
 const VinylAluminum = () => {
   useEffect(() => {
@@ -12,17 +10,14 @@ const VinylAluminum = () => {
   }, []);
 
   return (
-    <div className="service-placeholder-page">
-      <section className="service-placeholder-hero">
-        <img src="https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1200&q=80" alt="Vinyl & Aluminum Siding" className="service-placeholder-img" />
-        <div className="service-placeholder-content">
-          <h1><FaHome /> Vinyl & Aluminum Siding</h1>
-          <p>Refresh and protect your home’s exterior with professional siding painting and restoration.</p>
-          <Link to="/free-quote" className="btn btn-cta btn-large">Request a Free Quote</Link>
-        </div>
-      </section>
-    </div>
+    <ExteriorPainting
+      heroTitle="Vinyl & Aluminum Siding"
+      heroSubtitle="Refresh and protect your home’s exterior with professional siding painting and restoration."
+      heroImageSrc="/assets/vinyl-and-aluminium-painting.png"
+      galleryService="exterior"
+      galleryCategory="Vinyl and Aluminum Siding"
+    />
   );
 };
 
-export default VinylAluminum; 
+export default VinylAluminum;

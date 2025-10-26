@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FaPaintBrush } from 'react-icons/fa';
-import './ServicePlaceholder.css';
+import InteriorPainting from './InteriorPainting';
 
 const TexturedWalls = () => {
   useEffect(() => {
@@ -12,17 +10,14 @@ const TexturedWalls = () => {
   }, []);
 
   return (
-    <div className="service-placeholder-page">
-      <section className="service-placeholder-hero">
-        <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1200&q=80" alt="Textured Wall & Ceiling Painting" className="service-placeholder-img" />
-        <div className="service-placeholder-content">
-          <h1><FaPaintBrush /> Textured Wall & Ceiling Painting</h1>
-          <p>Add depth and style to your home with expert textured wall and ceiling painting.</p>
-          <Link to="/free-quote" className="btn btn-cta btn-large">Request a Free Quote</Link>
-        </div>
-      </section>
-    </div>
+    <InteriorPainting
+      heroTitle="Textured Wall & Ceiling Painting"
+      heroSubtitle="Add depth and style to your home with expert textured wall and ceiling painting."
+      heroImageSrc="/assets/texturedwalls.png"
+      galleryService="interior"
+      galleryCategory="Textured Wall & Ceiling Painting"
+    />
   );
 };
 
-export default TexturedWalls; 
+export default TexturedWalls;

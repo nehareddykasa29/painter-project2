@@ -33,6 +33,13 @@ const Reviews = () => {
     dispatch(fetchReviews());
   }, [dispatch]);
 
+  // Refetch reviews after successful submission
+  useEffect(() => {
+    if (submitSuccess) {
+      dispatch(fetchReviews());
+    }
+  }, [submitSuccess, dispatch]);
+
   // Print reviews to console when they change
   useEffect(() => {
     if (activeReviews && activeReviews.length > 0) {
@@ -64,61 +71,12 @@ const Reviews = () => {
     }
   };
 
-  // Static reviews as fallback
-  const staticReviews = [
-    {
-      _id: 'static-1',
-      customerName: "Deborah Bednar-Miswald",
-      comment: "Great job. Extremely happy with the work.",
-      rating: 5,
-      isApproved: true,
-      createdAt: new Date().toISOString()
-    },
-    {
-      _id: 'static-2',
-      customerName: "Chelsea",
-      comment: "Would recommend for any paint job!",
-      rating: 5,
-      isApproved: true,
-      createdAt: new Date().toISOString()
-    },
-    {
-      _id: 'static-3',
-      customerName: "Jennifer D.",
-      comment: "The Painter Guys delivered amazing quality work faster than we could have hoped for! Sami was very professional, personable, and easy to work with. Working with The Painter Guys was a positive experience and we're thankful we found them!",
-      rating: 5,
-      isApproved: true,
-      createdAt: new Date().toISOString()
-    },
-    {
-      _id: 'static-4',
-      customerName: "Kelly",
-      comment: "Sami and his crew were awesome! Sami and Christy were very responsive and answered all of our questions and concerns. The paint crew was respectable, efficient, and showed pride in their work. The cost was reasonable and fair. The entire process was seamless and a pleasure. Thanks Painter Guys!",
-      rating: 5,
-      isApproved: true,
-      createdAt: new Date().toISOString()
-    },
-    {
-      _id: 'static-5',
-      customerName: "Donald S.",
-      comment: "The Painter Guys did an awesome job on our house and shed painting project. Sami was extremely knowledgeable, gave us all the info about what they were using, and what would give us the best results. His crew was very polite, and cleaned up after every shift. We would recommend them for any painting project.",
-      rating: 5,
-      isApproved: true,
-      createdAt: new Date().toISOString()
-    },
-    {
-      _id: 'static-6',
-      customerName: "Michael",
-      comment: "Excellent work. Did exterior paint for condo association and did interior work, also would recommend them to anyone. Very neat, will use them again.",
-      rating: 5,
-      isApproved: true,
-      createdAt: new Date().toISOString()
-    }
-  ];
-
-  // Use static reviews for consistent display across all pages
-  // TODO: Update backend with these reviews for persistent storage
-  const displayedReviews = staticReviews;
+  // Use backend-fetched reviews
+  let displayedReviews = activeReviews || [];
+  // Only show approved reviews to non-admins
+  if (!isAuthenticated) {
+    displayedReviews = displayedReviews.filter(r => r.isApproved);
+  }
 
   return (
     <div className="reviews-page">
@@ -179,14 +137,11 @@ const Reviews = () => {
             >
               <div className="review-info">
                 <div className="review-name">{review.customerName}</div>
-                {/* Optionally show date */}
                 {review.createdAt && (
                   <div className="review-date">
                     {new Date(review.createdAt).toLocaleDateString()}
                   </div>
                 )}
-                {/* If you have a project field, display it; otherwise remove */}
-                {/* <div className="review-project">{review.project}</div> */}
                 <div className="review-stars">
                   {[...Array(5)].map((_, i) => (
                     <FaStar
@@ -202,7 +157,7 @@ const Reviews = () => {
                 {/* Admin-only controls */}
                 {isAuthenticated && (
                   <div className="admin-controls">
-                    <button 
+                    <button
                       className="admin-btn approve-btn"
                       onClick={() => handleEditReview(review._id, review.isApproved)}
                       title={review.isApproved ? "Approved (Click to unapprove)" : "Disapproved (Click to approve)"}

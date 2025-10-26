@@ -36,6 +36,7 @@ import FAQ from './pages/FAQ';
 import ManageUsers from './pages/ManageUsers';
 import ViewQuotes from './pages/ViewQuotes';
 import MailQuoteUpdate from './pages/MailQuoteUpdate';
+import BlockSlots from './pages/BlockSlots';
 
 import "./styles/App.css";
 
@@ -96,6 +97,7 @@ function App() {
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/manage-users" element={<ManageUsers />} />
                 <Route path="/view-quotes" element={<ViewQuotes />} />
+                <Route path="/block-slots" element={<BlockSlots />} />
 
                 {/* --- UPDATED ROUTE --- */}
                 {/* This path now captures the unique token from the email link */}

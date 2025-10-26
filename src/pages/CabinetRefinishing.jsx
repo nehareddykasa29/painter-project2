@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FaPaintBrush } from 'react-icons/fa';
-import './ServicePlaceholder.css';
+import InteriorPainting from './InteriorPainting';
 
 const CabinetRefinishing = () => {
   useEffect(() => {
@@ -12,17 +10,14 @@ const CabinetRefinishing = () => {
   }, []);
 
   return (
-    <div className="service-placeholder-page">
-      <section className="service-placeholder-hero">
-        <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1200&q=80" alt="Cabinet Refinishing" className="service-placeholder-img" />
-        <div className="service-placeholder-content">
-          <h1><FaPaintBrush /> Cabinet Refinishing</h1>
-          <p>Modernize your kitchen or bath with flawless cabinet refinishing and repainting.</p>
-          <Link to="/free-quote" className="btn btn-cta btn-large">Request a Free Quote</Link>
-        </div>
-      </section>
-    </div>
+    <InteriorPainting
+      heroTitle="Cabinet Refinishing & Repainting"
+      heroSubtitle="Modernize your kitchen or bath with flawless cabinet refinishing and repainting."
+      heroImageSrc="/assets/kitchencabinets.png"
+      galleryService="interior"
+      galleryCategory="Cabinet Refinishing/Repainting"
+    />
   );
 };
 
-export default CabinetRefinishing; 
+export default CabinetRefinishing;

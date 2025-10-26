@@ -13,7 +13,7 @@ import logoPainter from '../../public/assets/logo_painter.png';
 const residentialDropdown = {
   exterior: {
     title: 'Exterior Services',
-    mainLink: '/exterior-painting',
+    mainLink: '',
     services: [
       { path: '/exterior-painting', label: 'Exterior Painting' },
       { path: '/power-washing', label: 'Power Washing' },
@@ -24,7 +24,7 @@ const residentialDropdown = {
   },
   interior: {
     title: 'Interior Services',
-    mainLink: '/interior-painting',
+    mainLink: '',
     services: [
       { path: '/interior-painting', label: 'Interior Painting' },
       { path: '/cabinet-refinishing', label: 'Cabinet Refinishing/Repainting' },
@@ -78,6 +78,7 @@ const Header = () => {
   const adminNavLinks = [
     { path: '/manage-users', label: 'Manage Users' },
     { path: '/view-quotes', label: 'View Quotes' },
+    { path: '/block-slots', label: 'Block slots' },
   ];
 
   return (
@@ -140,9 +141,6 @@ const Header = () => {
                             <div className="dropdown-header">
                               <FaPaintBrush className="dropdown-icon-small" />
                               <h4>{residentialDropdown.exterior.title}</h4>
-                              <Link to={residentialDropdown.exterior.mainLink} className="dropdown-main-link">
-                                View All Exterior Services
-                              </Link>
                             </div>
                             <ul className="dropdown-services">
                               {residentialDropdown.exterior.services.map((item) => (
@@ -158,9 +156,6 @@ const Header = () => {
                             <div className="dropdown-header">
                               <FaHome className="dropdown-icon-small" />
                               <h4>{residentialDropdown.interior.title}</h4>
-                              <Link to={residentialDropdown.interior.mainLink} className="dropdown-main-link">
-                                View All Interior Services
-                              </Link>
                             </div>
                             <ul className="dropdown-services">
                               {residentialDropdown.interior.services.map((item) => (

@@ -19,7 +19,7 @@ import {
 } from 'react-icons/fa';
 import './InteriorPainting.css';
 
-const InteriorPainting = () => {
+const InteriorPainting = ({ heroTitle, heroSubtitle, heroImageSrc, galleryService = 'interior', galleryCategory = 'Interior Painting' }) => {
   const [currentReview, setCurrentReview] = useState(0);
 
   useEffect(() => {
@@ -78,7 +78,7 @@ const InteriorPainting = () => {
       <section 
         className="hero-section"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.25)),url(${residentialImage})`,
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.25)),url(${heroImageSrc || residentialImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
@@ -106,7 +106,7 @@ const InteriorPainting = () => {
                 background: 'transparent',
                 WebkitTextFillColor: '#ffffff'
               }}>
-                Interior Painting That Transforms Your Space
+                {heroTitle || 'Interior Painting That Transforms Your Space'}
               </h1>
               <p style={{
                 color: '#ffffff',
@@ -115,11 +115,17 @@ const InteriorPainting = () => {
                 background: 'transparent',
                 WebkitTextFillColor: '#ffffff'
               }}>
-                From cozy bedrooms to bold feature walls — we bring life and elegance to every corner of your home.
+                {heroSubtitle || 'From cozy bedrooms to bold feature walls — we bring life and elegance to every corner of your home.'}
               </p>
-              <div className="hero-buttons">
+              <div className="hero-buttons" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                 <Link to="/free-quote" className="btn btn-yellow" style={{ zIndex: 10, position: 'relative' }}>
                   Get Free Estimate
+                </Link>
+                <Link
+                  to={`/gallery?service=${encodeURIComponent(galleryService)}&category=${encodeURIComponent(galleryCategory)}`}
+                  className="btn btn-yellow"
+                >
+                  View Our Work
                 </Link>
               </div>
             </motion.div>

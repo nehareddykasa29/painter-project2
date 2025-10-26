@@ -6,6 +6,7 @@ import { toggleUploadModal, fetchGalleryImages, deleteImage, editImage } from '.
 import ImageUploadModal from '../components/ImageUploadModal';
 import GalleryComponent from '../components/Gallery';
 import EditImageModal from '../components/EditImageModal';
+import { useLocation } from 'react-router-dom';
 import './Gallery.css';
 
 const Gallery = () => {
@@ -16,6 +17,10 @@ const Gallery = () => {
   const [lightboxIdx, setLightboxIdx] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editImageData, setEditImageData] = useState(null);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const qpService = (searchParams.get('service') || '').toLowerCase();
+  const qpCategory = searchParams.get('category') || '';
 
   useEffect(() => {
     document.title = 'Project Gallery | The Painter Guys Pros';
@@ -85,6 +90,8 @@ const Gallery = () => {
           onOpenUploadModal={handleToggleUploadModal}
           onDeleteImage={handleDeleteImage}
           onEditImage={handleEditImage}
+          initialFilter={qpService || undefined}
+          initialCategory={qpCategory || undefined}
         />
       </section>
 

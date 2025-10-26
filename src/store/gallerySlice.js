@@ -14,14 +14,14 @@ export const fetchGalleryImages = createAsyncThunk(
 
 export const uploadImage = createAsyncThunk(
   "gallery/uploadImage",
-  async ({ imageUrl, caption, serviceType, token }, thunkAPI) => {
+  async ({ imageUrl, caption, serviceType, category, token }, thunkAPI) => {
     const res = await fetch(`${BACKEND_URL}/api/admin/gallery`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({ imageUrl, caption, serviceType })
+      body: JSON.stringify({ imageUrl, caption, serviceType, category })
     });
     const data = await res.json();
     if (res.ok) {
